@@ -1,14 +1,13 @@
 # mark2down
 Online Markdown editor with some special features
 
-## Installation
+## Installation & running the server
 ### Dependencies
 - python 2.x
 - web.py
 
 ...and some other will appear with new features soon.
 
-## Running the server
 ### On Linux (UN*X, Mac)
 
 - Clone & change to project directory:
