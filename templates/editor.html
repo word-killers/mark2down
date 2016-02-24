@@ -1,16 +1,29 @@
 <!DOCTYPE html>
-<!-- tohle asi bude vypadat uplne jinak -->
 <html>
 	<head>
-		<title>Editor</title>
+		<title>Mark2Down</title>
+
+		<meta charset="UTF-8">
+
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width">
+
+		<link rel="stylesheet" href="/static/css/style.css">
 	</head>
 	<body>
-		<h1>Editor</h1>
-			<form name="editor" method="post">
-				<div>
-					<textarea rows="25" cols="80" style="resize:none"></textarea>
-				</div>
-				<input type="submit">
-			</form>
+		<header>
+			<h1>Mark2Down</h1>
+		</header>
+		<div id="toolbox">
+		</div>
+		<div id="editor">
+			<textarea id="edit_area"></textarea>
+			<div id="preview">
+				<span>This will not work without JavaScript enabled.</span>
+			</div>
+		</div>
+		<footer>
+		</footer>
 	</body>
 </html>

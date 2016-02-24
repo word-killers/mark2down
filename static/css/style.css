@@ -1,0 +1,38 @@
+/* resetter */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* let body fill the whole page */
+html, body {
+	width: 100%;
+	min-height: 100vh;
+}
+
+body > header {
+	
+}
+
+#toolbox {
+
+}
+
+#editor {
+
+}
+
+#edit_area {
+	width: 50%;
+	height: 50vh;
+	resize: none;
+}
+
+#preview {
+
+}
+
+body > footer {
+
+}
