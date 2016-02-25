@@ -1,4 +1,6 @@
 # mark2down
+
+[![Join the chat at https://gitter.im/word-killers/mark2down](https://badges.gitter.im/word-killers/mark2down.svg)](https://gitter.im/word-killers/mark2down?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Online Markdown editor with some special features
 
 ## Installation & running the server
