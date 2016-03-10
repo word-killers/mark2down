@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MarkDown</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/mark2down/static/css/style2.css">
+</head>
+
+<body style="height: 100vh">
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="btn-group" role="group">
+            <Button title="Bold" type="button" class="btn btn-default navbar-btn">
+                <span class="glyphicon glyphicon-bold" aria-hidden="true"/>
+            </Button>
+            <Button title="Italic" type="button" class="btn btn-default navbar-btn">
+                <span class="glyphicon glyphicon-italic" aria-hidden="true"/>
+            </Button>
+            <Button title="StrikeThrough" type="button" class="btn btn-default navbar-btn">StrikeThrough</Button>
+            <Button title="Underline" type="button" class="btn btn-default navbar-btn">Underline</Button>
+        </div>
+        <div class="btn-group" role="group">
+            <Button title="Heading 1" type="button" class="btn btn-default navbar-btn">H1</Button>
+            <Button title="Heading 2" type="button" class="btn btn-default navbar-btn">H2</Button>
+            <Button title="Heading 3" type="button" class="btn btn-default navbar-btn">H3</Button>
+            <Button title="Heading 4" type="button" class="btn btn-default navbar-btn">H4</Button>
+            <Button title="Heading 5" type="button" class="btn btn-default navbar-btn">H5</Button>
+            <Button title="Heading 6" type="button" class="btn btn-default navbar-btn">H6</Button>
+        </div>
+    </div>
+</nav>
+
+<div style="width: 100%; position: absolute ;max-height: 100%; height: 100%">
+    <div class="col-xs-2">
+        <div class="col-xs-12 btn-group btn-group-vertical zeroPadding" role="group">
+            <button class="btn btn-default" type="button">Comments</button>
+            <button class="btn btn-default" type="button">File</button>
+            <button class="btn btn-default" type="button">Content</button>
+        </div>
+        <div>
+
+        </div>
+
+    </div>
+
+    <div id="editor" class="col-xs-5" style="min-height: 100%; height: 100%">
+        <textarea class="maxSize"></textarea>
+    </div>
+
+    <div id="preview" class="col-xs-5">
+
+    </div>
+</div>
+</body>
+</html>
