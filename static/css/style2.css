@@ -5,15 +5,23 @@
 .column-flex{
     display: -webkit-flex;
     display: flex;
+    display: -ms-flexbox;
     -webkit-flex-direction: column;
     flex-direction: column;
+    -ms-flex-direction: column;
 }
 
 .row-flex{
     display: -webkit-flex;
     display: flex;
+    display: -ms-flexbox;
     -webkit-flex-direction: row;
     flex-direction: row;
+    -ms-flex-direction: row;
+}
+
+.flex-item{
+
 }
 
 body{
@@ -33,6 +41,10 @@ textarea{
     padding: 10px;
 }
 
+.max-percent-width{
+    width: 100%;
+}
+
 .max-percent-height{
     height: 100%;
 }
@@ -42,37 +54,30 @@ textarea{
 }
 
 .item1{
+    -ms-flex: 1;
     -webkit-flex: 1;
     flex: 1;
 }
 
 .item2 {
+    -ms-flex: 2;
     -webkit-flex: 2;
     flex: 2;
 }
 
-.button-block{
-    background-color: white;
-    border-bottom: solid #CCCCFF thin;
-    border-top: solid #CCCCFF thin;
-    border-right: solid #CCCCFF thin;
-    padding: 7px 5px;
+.btn-group{
     display: inline-block;
+    border: thin solid #CCCCFF;
+    border-radius: 3px;
+}
+
+.btn{
+    background-color: transparent;
+    border: transparent;
+    padding: 5px 5px;
     float: left;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
-}
-
-.button-block-left{
-    border-left: solid #CCCCFF thin;
-    border-bottom-left-radius: 7px;
-    border-top-left-radius: 7px;
-    margin-left: 7px;
-}
-
-.button-block-right{
-    border-bottom-right-radius: 7px;
-    border-top-right-radius: 7px;
 }
 
 .button{
@@ -83,14 +88,14 @@ textarea{
     float: left;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
+
 }
 
 .button:hover{
     background-color: #CCCCFF;
-
 }
 
 
-.button-block:hover{
+.btn:hover{
     background-color: #CCCCFF;
 }
