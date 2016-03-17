@@ -33,12 +33,19 @@ nav{
     padding: 10px;
 }
 
-textarea{
+#editor{
     color: whitesmoke;
     background-color: #4d4d4c;
     resize: none;
     font-size: 16px;
     padding: 10px;
+}
+
+.table_text_area{
+    resize: none;
+    font-size: 12px;
+    width: 150px;
+    height: 30px;
 }
 
 .max-percent-width{

@@ -4,8 +4,81 @@
     <meta charset="UTF-8">
     <title>MarkDown</title>
 
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
     <link rel="stylesheet" href="/mark2down/static/css/style2.css">
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+
+    <script>
+        $(function () {
+            $("#dialog").dialog({
+                autoOpen: false
+            });
+
+            $("#tableButton").click(function () {
+                $("#dialog").dialog("open");
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $('#butonik').click(function () {
+                var $text = '';
+                var $header = '| ';
+                var $separator = '|';
+                $("#table").find('tr').each(function () {
+
+                    $(this).find('td').each(function () {
+                        $text += '| ' + $(this).find('textarea').val() +' ';
+                    });
+
+                    if($(this).find('td').length != 0){
+                        $text += '|\n';
+                    }
+
+                    $(this).find('th').each(function () {
+                        var $cell = $(this).find('textarea').val();
+                        $header += $cell + ' | ';
+                        for(var i = 0; i< $cell.length+2; i++){
+                            $separator += '-';
+                        }
+                        $separator += '|';
+                    });
+                });
+                putChar($header + '\n' + $separator + '\n' + $text);
+            })
+        });
+    </script>
+
+    <script>
+        function createTable(rows, cols) {
+            var table = document.getElementById("table");
+            while (table.hasChildNodes()){
+                table.removeChild(table.firstChild);
+            }
+            for (var i = 0; i < rows; i++) {
+                var tr = document.createElement('tr');
+                for (var j = 0; j < cols; j++) {
+                    if(i == 0){
+                        var td = document.createElement('th');
+                    }else{
+                        var td = document.createElement('td');
+                    }
+                    td.setAttribute('class','column');
+                    var textarea = document.createElement('textarea');
+                    textarea.setAttribute('class','table_text_area');
+                    td.appendChild(textarea);
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+        }
+    </script>
 
     <script>
         function putChar(char) {
@@ -38,6 +111,13 @@
 </head>
 
 <body class="max-view-height column-flex">
+
+<div id="dialog" title="Table">
+    <table id="table">
+    </table>
+    <button id="butonik">ok</button>
+</div>
+
 <nav class="flex-item">
 
     <div class="btn-group" style="float: right">
@@ -102,7 +182,7 @@
             </Button>
         </div>
         <div class="btn-group">
-            <Button title="table" type="button" class="btn">
+            <Button id="tableButton" title="table" type="button" class="btn" onclick="createTable(6,3)">
                 <i class="fa fa-table"></i>
             </Button>
             <Button title="include" type="button" class="btn">
@@ -137,5 +217,6 @@
 
     </div>
 </div>
+
 </body>
 </html>
