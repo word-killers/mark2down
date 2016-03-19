@@ -5,7 +5,8 @@ import markdown
 
 urls = (
     '/', 'Editor',
-    '/markdown', 'Markdown'
+    '/markdown', 'Markdown',
+	'/login', 'Login'
 )
 
 app = web.application(urls, globals())
@@ -25,3 +26,9 @@ class Markdown:
         data = web.input()
         md = markdown.Markdown()
         return md.convert(data.text)
+
+class Login:
+	def POST(self):
+		data = web.input()
+		(username, password) = (data.username, data.password)
+		pass
