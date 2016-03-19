@@ -4,7 +4,7 @@ import web
 import markdown
 
 urls = (
-    '/', 'Editor',
+    '/', 'Index',
     '/markdown', 'Markdown',
 	'/login', 'Login'
 )
@@ -13,9 +13,9 @@ app = web.application(urls, globals())
 templates = web.template.render('templates')
 
 
-class Editor:
+class Index:
     def GET(self):
-        return templates.editor()
+        return templates.index()
 
 
 if __name__ == "__main__":

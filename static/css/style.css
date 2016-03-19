@@ -1,38 +1,108 @@
-/* resetter */
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
-/* let body fill the whole page */
-html, body {
-	width: 100%;
-	min-height: 100vh;
-}
-
-body > header {
-	
-}
-
-#toolbox {
+#editor{
 
 }
 
-#editor {
+.column-flex{
+    display: -webkit-flex;
+    display: flex;
+    display: -ms-flexbox;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-direction: column;
+}
+
+.row-flex{
+    display: -webkit-flex;
+    display: flex;
+    display: -ms-flexbox;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-direction: row;
+}
+
+.flex-item{
 
 }
 
-#edit_area {
-	width: 50%;
-	height: 50vh;
-	resize: none;
+body{
+    margin: 0;
 }
 
-#preview {
+nav{
+    background-color: whitesmoke;
+    padding: 10px;
+}
+
+#editor{
+    color: whitesmoke;
+    background-color: #4d4d4c;
+    resize: none;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.table_text_area{
+    resize: none;
+    font-size: 12px;
+    width: 150px;
+    height: 30px;
+}
+
+.max-percent-width{
+    width: 100%;
+}
+
+.max-percent-height{
+    height: 100%;
+}
+
+.max-view-height{
+    height: 100vh;
+}
+
+.item1{
+    -ms-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+.item2 {
+    -ms-flex: 2;
+    -webkit-flex: 2;
+    flex: 2;
+}
+
+.btn-group{
+    display: inline-block;
+    border: thin solid #CCCCFF;
+    border-radius: 3px;
+}
+
+.btn{
+    background-color: transparent;
+    border: transparent;
+    padding: 5px 5px;
+    float: left;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.button{
+    width: 100%;
+    background-color: white;
+    padding: 7px 5px;
+    border: solid #CCCCFF thin;
+    float: left;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
 
 }
 
-body > footer {
+.button:hover{
+    background-color: #CCCCFF;
+}
 
+
+.btn:hover{
+    background-color: #CCCCFF;
 }
