@@ -35,7 +35,7 @@ $(function () {
                 $separator += '|';
             });
         });
-        putChar($header + '\n' + $separator + '\n' + $text);
+        putChar($header + '\n' + $separator + '\n' + $text, false);
         $('#dialog').dialog('close');
     })
 });

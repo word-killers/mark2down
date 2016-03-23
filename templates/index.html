@@ -1,3 +1,5 @@
+$def with(data)
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,82 +35,16 @@
 
 <nav class="flex-item">
 
-    <div class="btn-group" style="float: right">
-        <Button title="share" type="button" class="btn">
-            <i class="fa fa-share-alt"></i> Share
-        </Button>
-        <Button title="export" type="button" class="btn">
-            <i class="fa fa-download"></i> Export
-        </Button>
-        <Button title="login" type="button" class="btn">
-            <i class="fa fa-user"></i> Login
-        </Button>
-    </div>
-    <div>
-        <div class="btn-group">
-            <Button title="back" type="button" class="btn">
-                <i class="fa fa-rotate-left"></i>
-            </Button>
-            <Button title="forward" type="button" class="btn">
-                <i class="fa fa-rotate-right"></i>
-            </Button>
+    $for groups in data:
+        <div class="btn-group"
+             $if loop.first:
+                style="float: right"
+        >
+        $for button in groups
+                <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
         </div>
-        <div class="btn-group">
-            <Button title="Heading 1" type="button" class="btn" onclick="putChar('# ')">H1</Button>
-            <Button title="Heading 2" type="button" class="btn" onclick="putChar('## ')">H2</Button>
-            <Button title="Heading 3" type="button" class="btn" onclick="putChar('### ')">H3</Button>
-            <Button title="Heading 4" type="button" class="btn" onclick="putChar('#### ')">H4</Button>
-            <Button title="Heading 5" type="button" class="btn" onclick="putChar('##### ')">H5</Button>
-            <Button title="Heading 6" type="button" class="btn" onclick="putChar('###### ')">H6</Button>
-        </div>
-        <div class="btn-group">
-            <Button title="Bold" type="button" class="btn">
-                <i class="fa fa-bold"></i></Button>
-            <Button title="Italic" type="button" class="btn">
-                <i class="fa fa-italic"></i></Button>
-            <Button title="Underline" type="button" class="btn">
-                <i class="fa fa-underline"></i></Button>
-            <Button title="StrikeThrough" type="button" class="btn">
-                <i class="fa fa-strikethrough"></i></Button>
-            <Button title="typewriting" type="button" class="btn">T</Button>
-        </div>
-        <div class="btn-group">
-            <Button title="align-left" type="button" class="btn">
-                <i class="fa fa-align-left"></i>
-            </Button>
-            <Button title="align-center" type="button" class="btn">
-                <i class="fa fa-align-center"></i>
-            </Button>
-            <Button title="align-block" type="button" class="btn">
-                <i class="fa fa-align-justify"></i>
-            </Button>
-            <Button title="align-right" type="button" class="btn">
-                <i class="fa fa-align-right"></i>
-            </Button>
-        </div>
-        <div class="btn-group">
-            <Button title="list-ol" type="button" class="btn" onclick="putChar('1. ')">
-                <i class="fa fa-list-ol"></i>
-            </Button>
-            <Button title="list-ul" type="button" class="btn" onclick="putChar('- ')">
-                <i class="fa fa-list-ul"></i>
-            </Button>
-        </div>
-        <div class="btn-group">
-            <Button id="tableButton" title="table" type="button" class="btn" onclick="createTable(6,3)">
-                <i class="fa fa-table"></i>
-            </Button>
-            <Button title="include" type="button" class="btn">
-                <i class="fa fa-paperclip"></i>
-            </Button>
-            <Button title="graph" type="button" class="btn">
-                <i class="fa fa-bar-chart"></i>
-            </Button>
-            <Button title="code" type="button" class="btn" onclick="putChar('``` ```')">
-                <i class="fa fa-code"></i>
-            </Button>
-        </div>
-    </div>
+
+
 </nav>
 
 <div class="max-percent-height row-flex">
