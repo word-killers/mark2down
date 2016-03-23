@@ -2,70 +2,69 @@ $def with(data)
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>MarkDown</title>
+    <head>
+        <meta charset="UTF-8">
+        <title>MarkDown</title>
 
-    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
+        <link rel="stylesheet" href="../static/css/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+        <script src="../static/script/table.js"></script>
+        <script src="../static/script/scripts.js"></script>
+    </head>
 
-    <script src="../static/script/table.js"></script>
-    <script src="../static/script/scripts.js"></script>
+    <body class="max-view-height column-flex">
 
-</head>
-
-<body class="max-view-height column-flex">
-
-<div id="dialog" title="Table">
-    <table id="table">
-    </table>
-    <div class="btn-group">
-        <button id="butonik" class="btn">ok</button>
-        <button id="addRow" class="btn" onclick="addRow()">add row</button>
-        <button id="addCol" class="btn" onclick="addCol()">add col</button>
-        <button id="delRow" class="btn" onclick="delRow()">del row</button>
-        <button id="delCol" class="btn" onclick="delCol()">del col</button>
-    </div>
-</div>
-
-<nav class="flex-item">
-
-    $for groups in data:
-        <div class="btn-group"
-             $if loop.first:
-                style="float: right"
-        >
-        $for button in groups
-                <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
+        <!-- Window with table -->
+        <div id="dialog" title="Table">
+            <table id="table"></table>
+            <div class="btn-group">
+                <button id="butonik" class="btn">ok</button>
+                <button id="addRow" class="btn" onclick="addRow()">add row</button>
+                <button id="addCol" class="btn" onclick="addCol()">add col</button>
+                <button id="delRow" class="btn" onclick="delRow()">del row</button>
+                <button id="delCol" class="btn" onclick="delCol()">del col</button>
+            </div>
         </div>
 
+        <!-- navigation bar -->
+        <nav class="flex-item">
+            $for groups in data:
+                <div class="btn-group"
+                    $if loop.first:
+                    style="float: right"
+                >
+                $for button in groups
+                    <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
+                </div>
+        </nav>
 
-</nav>
+        <!-- content -->
+        <div class="max-percent-height row-flex">
+            <!-- left panel -->
+            <div class="flex-item item1">
+                <div class="btn-group max-percent-width">
+                    <button class="btn max-percent-width" type="button">Comments</button>
+                    <button class="btn max-percent-width" type="button">File</button>
+                    <button class="btn max-percent-width" type="button">Content</button>
+                </div>
+                <div>
 
-<div class="max-percent-height row-flex">
-    <div class="flex-item item1">
-        <div class="btn-group max-percent-width">
-            <button class="btn max-percent-width" type="button">Comments</button>
-            <button class="btn max-percent-width" type="button">File</button>
-            <button class="btn max-percent-width" type="button">Content</button>
+                </div>
+
+            </div>
+
+            <!-- text area -->
+            <textarea id="editor" class="flex-item item2"></textarea>
+
+            <!-- preview -->
+            <div id="preview" class="flex-item item2">
+
+            </div>
         </div>
-        <div>
-
-        </div>
-
-    </div>
-
-    <textarea id="editor" class="flex-item item2"></textarea>
-
-    <div id="preview" class="flex-item item2">
-
-    </div>
-</div>
-
-</body>
+    </body>
 </html>

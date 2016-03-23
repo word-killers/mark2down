@@ -18,7 +18,7 @@ class Index:
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
-                ["export", "<i class=\"fa fa-download\"></i> Export", ""],
+                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick=\"sendMarkdown()\""],
                 ["login", "<i class=\"fa fa-user\"></i> Login", ""]
             ], [
                 ["back", "<i class=\"fa fa-rotate-left\"></i>", ""],
@@ -61,7 +61,7 @@ class Markdown:
     def POST(self):
         data = web.input()
         md = markdown.Markdown()
-        return md.convert(data.text)
+        return md.convert(data['data'])
 
 
 class Auth:

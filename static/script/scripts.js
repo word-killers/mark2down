@@ -1,4 +1,3 @@
-
 function putChar(char, center) {
     var editor = document.getElementById("editor");
     var CaretPos = 0;
@@ -26,4 +25,17 @@ function putChar(char, center) {
         range.moveStart('character', CaretPos);
         range.select();
     }
+}
+
+function sendMarkdown(){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+            document.getElementById('preview').innerHTML = xhttp.responseText;
+        }
+    };
+
+    xhttp.open('POST', '/markdown');
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("data="+document.getElementById('editor').value);
 }

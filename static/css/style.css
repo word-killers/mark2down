@@ -1,8 +1,8 @@
-#editor{
+#editor {
 
 }
 
-.column-flex{
+.column-flex {
     display: -webkit-flex;
     display: flex;
     display: -ms-flexbox;
@@ -11,7 +11,7 @@
     -ms-flex-direction: column;
 }
 
-.row-flex{
+.row-flex {
     display: -webkit-flex;
     display: flex;
     display: -ms-flexbox;
@@ -20,20 +20,20 @@
     -ms-flex-direction: row;
 }
 
-.flex-item{
+.flex-item {
 
 }
 
-body{
+body {
     margin: 0;
 }
 
-nav{
+nav {
     background-color: whitesmoke;
     padding: 10px;
 }
 
-#editor{
+#editor {
     color: whitesmoke;
     background-color: #4d4d4c;
     resize: none;
@@ -41,26 +41,26 @@ nav{
     padding: 10px;
 }
 
-.table_text_area{
+.table_text_area {
     resize: none;
     font-size: 12px;
     width: 150px;
     height: 30px;
 }
 
-.max-percent-width{
+.max-percent-width {
     width: 100%;
 }
 
-.max-percent-height{
+.max-percent-height {
     height: 100%;
 }
 
-.max-view-height{
+.max-view-height {
     height: 100vh;
 }
 
-.item1{
+.item1 {
     -ms-flex: 1;
     -webkit-flex: 1;
     flex: 1;
@@ -72,13 +72,13 @@ nav{
     flex: 2;
 }
 
-.btn-group{
+.btn-group {
     display: inline-block;
     border: thin solid #CCCCFF;
     border-radius: 3px;
 }
 
-.btn{
+.btn {
     background-color: transparent;
     border: transparent;
     padding: 5px 5px;
@@ -87,7 +87,7 @@ nav{
     transition-duration: 0.4s;
 }
 
-.button{
+.button {
     width: 100%;
     background-color: white;
     padding: 7px 5px;
@@ -98,11 +98,10 @@ nav{
 
 }
 
-.button:hover{
+.button:hover {
     background-color: #CCCCFF;
 }
 
-
-.btn:hover{
+.btn:hover {
     background-color: #CCCCFF;
 }
