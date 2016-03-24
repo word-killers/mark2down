@@ -1,6 +1,8 @@
 # mark2down
 Online Markdown editor with some special features
 
+![Travis](https://travis-ci.org/word-killers/mark2down.svg?branch=master)
+
 ## Installation & running the server
 ### Dependencies
 - python 2.x
@@ -28,9 +30,3 @@ terminal.
 
 In case of errors when running `server.py` try instead running it with `$ python server.py` or `$ python2 server.py`.
 For more info (production server etc.) see http://webpy.org.
-
-### On Windows
-I have no clue yet. Will find out soon.
-
-## Usage
-Yes.
