@@ -1,9 +1,25 @@
 $(function () {
+
     $("#dialog").dialog({
         autoOpen: false,
         resizable: true,
         modal: true,
-        width: 'auto'
+        height: 600,
+        width: 700,
+        buttons: {
+            "Add Row": function(){
+                addRow();
+            },
+            "Add Col": function(){
+                addCol();
+            },
+            "Del Row": function(){
+                delRow();
+            },
+            "Del Col": function(){
+                delCol();
+            }
+        }
     });
 
     $("#tableButton").click(function () {

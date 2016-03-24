@@ -2,6 +2,10 @@
 
 }
 
+#dialog{
+    overflow: auto;
+}
+
 .column-flex {
     display: -webkit-flex;
     display: flex;

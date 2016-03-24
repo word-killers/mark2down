@@ -6,29 +6,27 @@ $def with(data)
         <meta charset="UTF-8">
         <title>MarkDown</title>
 
-        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+        <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
+        <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+        <script src="../static/jquery/jquery-1.12.2.min.js"></script>
+        <script src="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
 
-        <link rel="stylesheet" href="../static/css/style.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">-->
+        <link rel="stylesheet" href="../static/font-awesome-4.5.0/css/font-awesome.min.css">
 
         <script src="../static/script/table.js"></script>
         <script src="../static/script/scripts.js"></script>
+        <link rel="stylesheet" href="../static/css/style.css">
     </head>
 
     <body class="max-view-height column-flex">
 
         <!-- Window with table -->
         <div id="dialog" title="Table">
+
             <table id="table"></table>
-            <div class="btn-group">
-                <button id="butonik" class="btn">ok</button>
-                <button id="addRow" class="btn" onclick="addRow()">add row</button>
-                <button id="addCol" class="btn" onclick="addCol()">add col</button>
-                <button id="delRow" class="btn" onclick="delRow()">del row</button>
-                <button id="delCol" class="btn" onclick="delCol()">del col</button>
-            </div>
         </div>
 
         <!-- navigation bar -->
