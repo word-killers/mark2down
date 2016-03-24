@@ -7,16 +7,19 @@ $(function () {
         height: 600,
         width: 700,
         buttons: {
-            "Add Row": function(){
+            "OK": function () {
+                generateTable();
+            },
+            "Add Row": function () {
                 addRow();
             },
-            "Add Col": function(){
+            "Add Col": function () {
                 addCol();
             },
-            "Del Row": function(){
+            "Del Row": function () {
                 delRow();
             },
-            "Del Col": function(){
+            "Del Col": function () {
                 delCol();
             }
         }
@@ -27,34 +30,33 @@ $(function () {
     });
 });
 
-$(function () {
-    $('#butonik').click(function () {
-        var $text = '';
-        var $header = '| ';
-        var $separator = '|';
-        $("#table").find('tr').each(function () {
+function generateTable() {
+    var $text = '';
+    var $header = '| ';
+    var $separator = '|';
+    $("#table").find('tr').each(function () {
 
-            $(this).find('td').each(function () {
-                $text += '| ' + $(this).find('textarea').val() + ' ';
-            });
-
-            if ($(this).find('td').length != 0) {
-                $text += '|\n';
-            }
-
-            $(this).find('th').each(function () {
-                var $cell = $(this).find('textarea').val();
-                $header += $cell + ' | ';
-                for (var i = 0; i < $cell.length + 2; i++) {
-                    $separator += '-';
-                }
-                $separator += '|';
-            });
+        $(this).find('td').each(function () {
+            $text += '| ' + $(this).find('textarea').val() + ' ';
         });
-        putChar($header + '\n' + $separator + '\n' + $text, false);
-        $('#dialog').dialog('close');
-    })
-});
+
+        if ($(this).find('td').length != 0) {
+            $text += '|\n';
+        }
+
+        $(this).find('th').each(function () {
+            var $cell = $(this).find('textarea').val();
+            $header += $cell + ' | ';
+            for (var i = 0; i < $cell.length + 2; i++) {
+                $separator += '-';
+            }
+            $separator += '|';
+        });
+    });
+    putChar($header + '\n' + $separator + '\n' + $text, false);
+    $('#dialog').dialog('close');
+
+};
 
 function createTable(rows, cols) {
     var table = document.getElementById("table");
