@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+	<html>
+		<head>
+		<meta charset="UTF-8">
+		<title> MarkDown </title>
+		<link rel="stylesheet" href="../static/css/style_verzovani.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+		</head>
+		<body>	
+		
+			<!-- Descriptions of windows -->
+			<div id="up">
+				<div class="description">Local changes</div>
+				<div class="description" style="margin-left: 70px; margin-right: 70px">Result</div>
+				<div class="description" >Changes from server</div>				
+			</div>
+			
+			<!-- Main windows -->
+			<div id="versioning">					
+				<div title="right" class="window"></div>
+				<Button title="right" type="button" class="btn1">
+					<i class="fa fa-chevron-right"></i></Button>					
+				<textarea title="result" class="window"></textarea>				
+				<Button title="left" type="button" class="btn1"> 
+					<i class="fa fa-chevron-left"></i></Button>					
+				<div title="right" class="window"></div>						
+			</div>
+			
+			<!-- Bottom -->
+			<div id="down">			
+				<div class="legend">											
+					<div class="l"><span style="background: Silver"></span>Deleted</div>
+					<div class="l"><span style="background: LightBlue"></span>Changed</div>
+					<div class="l"><span style="background: LightGreen"></span>Inserted</div>													
+				</div>				
+				<div class="btndown">
+					<Button title="cancel" type="button" class="btn2" >Cancel</Button>
+					<Button title="finish" type="button" class="btn2" style="right: 30px">Finish</Button>				
+				</div>
+			</div>
+				
+		</body>
+	</html>	
