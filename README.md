@@ -1,32 +1,52 @@
-# mark2down
-Online Markdown editor with some special features
+# Mark2Down
+Online Markdown editor with some special features. Server-side is written in [Python](http://python.org/) using [web.py](http://webpy.org) library.
 
-![Travis](https://travis-ci.org/word-killers/mark2down.svg?branch=master)
+[![Build Status](https://travis-ci.org/word-killers/mark2down.svg?branch=master)](https://travis-ci.org/word-killers/mark2down)
+[![codecov.io](https://codecov.io/github/word-killers/mark2down/coverage.svg?branch=master)](https://codecov.io/github/word-killers/mark2down?branch=master)
 
-## Installation & running the server
-### Dependencies
-- python 2.x
-- web.py
+Live Demo: https://mark2down.herokuapp.com/
 
-...and some other will appear with new features soon.
-
-### On Linux (UN*X, Mac)
-
-- Clone & change to project directory:
-
+## Instalation & Development Server
+- Make sure that the right version of Python - __Python 2.x.x__ is installed:
 ```
-$ git clone https://github.com/word-killers/mark2down.git
-$ cd mark2down
+> python --version
 ```
-- make `server.py` executable and run: 
-
+The output should be similar to this (the version might slightly differ):
 ```
-$ chmod +x server.py
-$ ./server.py
+Python 2.7.11
 ```
 
-Now, you should be to able view the Editor page at <http://localhost:8080/>. To stop the server, use [Ctrl] + [C] in the
-terminal.
+If not, you may use `python2` command instead or install the appropriate version.
 
-In case of errors when running `server.py` try instead running it with `$ python server.py` or `$ python2 server.py`.
-For more info (production server etc.) see http://webpy.org.
+- And clone this repository:
+```
+> git clone https://github.com/word-killers/mark2down.git
+> cd mark2down
+```
+
+- Next, install required dependencies:
+
+```
+> pip install -r requirements.txt
+```
+> Note: Pip for Python 2 is required. ([Install howto](https://pip.pypa.io/en/stable/installing/))
+
+- Now, you should be able to run the development server.
+  - On Linux/Mac/UN*X:
+
+```
+> cd mark2down
+> chmod +x server.py
+> ./server.py
+```
+
+  - On Windows:
+```
+> python server.py
+```
+
+The server should be running on http://localhost:8080/.
+
+## Production Server
+The steps are almost the same but instead of running the server from the python script, clone the project to the server root and run the web server. Server setup for Apache, Nginx and Lighttpd is described in [web.py 
+documentation](http://webpy.org/install#prod).
