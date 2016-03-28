@@ -18,7 +18,7 @@ class Index:
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
-                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick=\"sendMarkdown()\""],
+                ["export", "<i class=\"fa fa-download\"></i> Export",""],
                 ["login", "<i class=\"fa fa-user\"></i> Login", ""]
             ], [
                 ["back", "<i class=\"fa fa-rotate-left\"></i>", ""],

@@ -10,8 +10,8 @@ $def with(data)
         <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
         <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
         <script src="../static/jquery/jquery-1.12.2.min.js"></script>
-        <script src="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
+        <script src="../static/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="../static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
 
         <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">-->
         <link rel="stylesheet" href="../static/font-awesome-4.5.0/css/font-awesome.min.css">
@@ -21,7 +21,7 @@ $def with(data)
         <link rel="stylesheet" href="../static/css/style.css">
     </head>
 
-    <body class="max-view-height column-flex">
+    <body class="max-view-height column-flex" onload="init()">
 
         <!-- Window with table -->
         <div id="dialog" title="Table">
@@ -56,13 +56,16 @@ $def with(data)
 
             </div>
 
-            <!-- text area -->
-            <textarea id="editor" class="flex-item item2"></textarea>
-
-            <!-- preview -->
-            <div id="preview" class="flex-item item2">
+            <div id="editor_div" class="flex-item item2">
+                <!-- text area -->
+                <textarea id="editor" onkeyup="onChange()" wrap="hard"></textarea>
 
             </div>
+
+            <!-- preview -->
+            <article id="preview" class="flex-item item2">
+
+            </article>
         </div>
     </body>
 </html>
