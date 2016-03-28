@@ -1,5 +1,5 @@
 # Mark2Down
-Online Markdown editor with some special features. Server-side is written in [Python](http://python.org/) using [web.py](http://webpy.org) library.
+Online [Markdown](https://daringfireball.net/projects/markdown/) editor with some special features. Server-side is written in [Python](http://python.org/) using [web.py](http://webpy.org) library.
 
 [![Build Status](https://travis-ci.org/word-killers/mark2down.svg?branch=master)](https://travis-ci.org/word-killers/mark2down)
 [![codecov.io](https://codecov.io/github/word-killers/mark2down/coverage.svg?branch=master)](https://codecov.io/github/word-killers/mark2down?branch=master)
@@ -32,7 +32,7 @@ If not, you may use `python2` command instead or install the appropriate version
 > Note: Pip for Python 2 is required. ([Install howto](https://pip.pypa.io/en/stable/installing/))
 
 - Now, you should be able to run the development server.
-  - On Linux/Mac/UN*X:
+On Linux/Mac/UN*X:
 
 ```
 > cd mark2down
@@ -40,13 +40,13 @@ If not, you may use `python2` command instead or install the appropriate version
 > ./server.py
 ```
 
-  - On Windows:
+On Windows:
 ```
 > python server.py
 ```
 
-The server should be running on http://localhost:8080/.
+The server should be running on [http://localhost:8080/].
 
 ## Production Server
-The steps are almost the same but instead of running the server from the python script, clone the project to the server root and run the web server. Server setup for Apache, Nginx and Lighttpd is described in [web.py 
+The steps are almost the same but instead of running the server from the python script, clone the project to the server root and run the web server. Server setup for Apache and Lighttpd is described in [web.py 
 documentation](http://webpy.org/install#prod).
