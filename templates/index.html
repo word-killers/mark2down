@@ -16,6 +16,9 @@ $def with(data)
         <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">-->
         <link rel="stylesheet" href="../static/font-awesome-4.5.0/css/font-awesome.min.css">
 
+        <script src="../static/mermaid/mermaid.min.js"></script>
+        <link rel="stylesheet" href="../static/mermaid/mermaid.css">
+
         <script src="../static/script/table.js"></script>
         <script src="../static/script/scripts.js"></script>
         <link rel="stylesheet" href="../static/css/style.css">
@@ -44,7 +47,7 @@ $def with(data)
         <!-- content -->
         <div class="max-percent-height row-flex">
             <!-- left panel -->
-            <div class="flex-item item1">
+            <div id="left_panel" class="flex-item item1">
                 <div class="btn-group max-percent-width">
                     <button class="btn max-percent-width" type="button">Comments</button>
                     <button class="btn max-percent-width" type="button">File</button>
@@ -56,16 +59,16 @@ $def with(data)
 
             </div>
 
-            <div id="editor_div" class="flex-item item2">
-                <!-- text area -->
-                <textarea id="editor" onkeyup="onChange()" wrap="hard"></textarea>
 
-            </div>
+            <!-- text area -->
+            <textarea id="editor" class="flex-item item2" onkeyup="onChange()" wrap="hard"></textarea>
+
 
             <!-- preview -->
             <article id="preview" class="flex-item item2">
 
             </article>
+
         </div>
     </body>
 </html>

@@ -2,6 +2,7 @@
 
 import web
 import markdown
+import extension
 
 urls = (
 	'/', 'Index',
@@ -47,8 +48,8 @@ class Index:
             ], [
                 ["table", "<i class=\"fa fa-table\"></i>", "id=\"tableButton\" onclick=\"createTable(6, 3)\""],
                 ["include", "<i class=\"fa fa-paperclip\"></i>", ""],
-                ["graph", "<i class=\"fa fa-bar-chart\"></i>", ""],
-                ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```  ```', true)\""]
+                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('````graph\\n\\n```',false)\""],
+                ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', true)\""]
             ]
         ]
         return templates.index(data)
@@ -60,7 +61,7 @@ if __name__ == "__main__":
 class Markdown:
     def POST(self):
         data = web.input()
-        md = markdown.Markdown()
+        md = markdown.Markdown(extensions=[extension.Extensions(),'markdown.extensions.tables', 'markdown.extensions.sane_lists'])
         return md.convert(data['data'])
 
 

@@ -31,15 +31,16 @@ function putChar(char, center) {
     sendMarkdown();
 }
 
-function sendMarkdown(){
+function sendMarkdown() {
     var editor = document.getElementById('editor').value;
-    if(editor.length == 0){
+    if (editor.length == 0) {
         document.getElementById('preview').innerHTML = "";
-    }else {
+    } else {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 document.getElementById('preview').innerHTML = xhttp.responseText;
+                mermaid.init(undefined, ".mermaid");
             }
         };
 
@@ -49,12 +50,14 @@ function sendMarkdown(){
     }
 }
 
-function onChange(){
+function onChange() {
     window.clearTimeout(timer);
-    timer = window.setTimeout(function(){sendMarkdown();}, 2000);
+    timer = window.setTimeout(function () {
+        sendMarkdown();
+    }, 2000);
 }
 
-function onScroll() {
+function initScroll() {
     var $elements = $('textarea#editor, article#preview');
     var sync = function (e) {
         var $other = $elements.not(this).off('scroll'), other = $other.get(0);
@@ -68,7 +71,7 @@ function onScroll() {
     $elements.on('scroll', sync);
 }
 
-function init(){
+function init() {
     sendMarkdown();
-    onScroll();
+    initScroll();
 }
