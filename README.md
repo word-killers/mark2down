@@ -32,6 +32,7 @@ If not, you may use `python2` command instead or install the appropriate version
 > Note: Pip for Python 2 is required. ([Install howto](https://pip.pypa.io/en/stable/installing/))
 
 - Now, you should be able to run the development server.
+
 On Linux/Mac/UN*X:
 
 ```
