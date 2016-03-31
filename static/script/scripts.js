@@ -1,5 +1,25 @@
 var timer;
 
+$(document).ready(function () {
+    $(window).resize(function () {
+        var body = $('body');
+        var preview = $('#preview');
+        var panel = $('#left_panel');
+
+        if(body.outerWidth()<1100){
+            preview.hide();
+        }else{
+            preview.show();
+        }
+
+        if(body.outerWidth()<700){
+            panel.hide();
+        }else{
+            panel.show();
+        }
+    });
+});
+
 function putChar(char, center) {
     var editor = document.getElementById("editor");
     var CaretPos = 0;
@@ -28,12 +48,12 @@ function putChar(char, center) {
         range.select();
     }
 
-    sendMarkdown();
+    onChange();
 }
 
 function sendMarkdown() {
     var editor = document.getElementById('editor').value;
-    if (editor.length == 0) {
+    if (editor.trim().length == 0) {
         document.getElementById('preview').innerHTML = "";
     } else {
         var xhttp = new XMLHttpRequest();
@@ -54,24 +74,38 @@ function onChange() {
     window.clearTimeout(timer);
     timer = window.setTimeout(function () {
         sendMarkdown();
-    }, 2000);
+    }, 1000);
 }
 
 function initScroll() {
     var $elements = $('textarea#editor, article#preview');
-    var sync = function (e) {
+    var sync = function () {
         var $other = $elements.not(this).off('scroll'), other = $other.get(0);
         var percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
         other.scrollTop = percentage * (other.scrollHeight - other.offsetHeight);
         setTimeout(function () {
             $other.on('scroll', sync);
-        }, 10);
-    }
+        }, 1000);
+    };
 
     $elements.on('scroll', sync);
 }
 
+function initTab() {
+    var editor = document.getElementById("editor");
+
+    editor.onkeydown = function (event) {
+
+        if (event.keyCode == 9) { // tab was pressed
+            putChar('\t');
+            editor.focus();
+            return false;
+        }
+    }
+}
+
 function init() {
+    initTab();
     sendMarkdown();
     initScroll();
 }

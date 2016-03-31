@@ -61,7 +61,12 @@ if __name__ == "__main__":
 class Markdown:
     def POST(self):
         data = web.input()
-        md = markdown.Markdown(extensions=[extension.Extensions(),'markdown.extensions.tables', 'markdown.extensions.sane_lists'])
+        md = markdown.Markdown(extensions=
+                               [extension.Extensions(),
+                                'markdown.extensions.tables',   #tables
+                                'markdown.extensions.sane_lists', #using lists like in normal mardkown
+                                'markdown_include.include' #option to include other files
+                                ])
         return md.convert(data['data'])
 
 
