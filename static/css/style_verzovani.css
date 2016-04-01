@@ -1,17 +1,17 @@
 body{
-	background: whitesmoke;
 	margin: 0;
 }
+
 #up{
 	height: auto;
 	display: -webkit-flex;
     display: flex;
-    display: -ms-flexbox;
-	background-color: whitesmoke;	
+    display: -ms-flexbox;	
 	margin-left: 20px;
 	margin-right: 20px;
 	margin-top: 20px;	
 }
+
 .description{	
 	-ms-flex: 1;
     -webkit-flex: 1;
@@ -22,16 +22,14 @@ body{
 	height: 90vh;
 	display: -webkit-flex;
     display: flex;
-    display: -ms-flexbox;
-	background-color: whitesmoke;	
+    display: -ms-flexbox;		
 }
 
 .window{
 	-ms-flex: 1;
     -webkit-flex: 1;
     flex: 1;
-	overflow: auto;
-	background-color: white;	
+	overflow: auto;	
 	border: black 1px solid;
 	font-size: 16px;
 	margin: 20px;
@@ -43,6 +41,8 @@ body{
 	top: 300px;	
 	width: 30px;
 	height: 30px;
+	background-color: transparent;
+    border: transparent;
 }
 
 .btn1:hover{
@@ -54,7 +54,6 @@ body{
 	display: -webkit-flex;
     display: flex;
     display: -ms-flexbox;
-	background-color: whitesmoke;
 	margin-left: 20px;
 	margin-right: 20px;	
 }
@@ -74,8 +73,7 @@ body{
     float: left;
     height: 15px;
     width: 50px;
-    margin-right: 5px;	
-    border: 1px solid gray;
+    margin-right: 5px;	   
 	border-radius: 3px;
 	display: inline;
 } 
@@ -91,11 +89,11 @@ body{
 .btn2{
 	position: relative;
     height: 25px;
-	float: right;	  
+	float: right;	
+	background-color: transparent;
+    border: transparent;
 }
 
 .btn2:hover{
     background-color: #CCCCFF;
 }
-
-
