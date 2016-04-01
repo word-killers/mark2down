@@ -73,8 +73,7 @@ class Markdown:
 
 class Test:
     def GET(self):
-        neco = web.template.render('tests')
-        return neco.javascript()
+        return templates.test()
 
 class Auth:
     def POST(self):
