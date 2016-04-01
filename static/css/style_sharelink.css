@@ -1,0 +1,32 @@
+body{
+	margin: 0;	
+}
+
+#window{
+	overflow:auto;
+	margin-top: 50px;
+	height: 842px;
+	width: 596px;
+	border: black 1px solid;
+	font-size: 16px;
+	margin-left: auto;
+	margin-right: auto;	
+}
+
+#button{
+	height: 5vh;
+	width: 596px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.btn{
+	margin-top: 30px;
+	background-color: transparent;
+    border: transparent;
+	width: 100%;
+}
+
+.btn:hover{
+    background-color: #CCCCFF;
+}
