@@ -7,7 +7,8 @@ import extension
 urls = (
 	'/', 'Index',
 	'/markdown', 'Markdown',
-	'/auth', 'Auth'
+	'/auth', 'Auth',
+    '/test', 'Test'
 )
 
 app = web.application(urls, globals())
@@ -25,31 +26,31 @@ class Index:
                 ["back", "<i class=\"fa fa-rotate-left\"></i>", ""],
                 ["forward", "<i class=\"fa fa-rotate-right\"></i>", ""]
             ], [
-                ["Heading 1", "H1", "onclick=\"putChar('# ', false)\""],
-                ["Heading 2", "H2", "onclick=\"putChar('## ', false)\""],
-                ["Heading 3", "H3", "onclick=\"putChar('### ', false)\""],
-                ["Heading 4", "H4", "onclick=\"putChar('#### ', false)\""],
-                ["Heading 5", "H5", "onclick=\"putChar('##### ', false)\""],
-                ["Heading 6", "H6", "onclick=\"putChar('###### ', false)\""],
+                ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\""],
+                ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\""],
+                ["Heading 3", "H3", "onclick=\"putChar('### ', 4)\""],
+                ["Heading 4", "H4", "onclick=\"putChar('#### ', 5)\""],
+                ["Heading 5", "H5", "onclick=\"putChar('##### ', 6)\""],
+                ["Heading 6", "H6", "onclick=\"putChar('###### ', 7)\""],
             ], [
-                ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('__  __', true)\""],
-                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('_  _', true)\""],
-                ["Underline", "<i class=\"fa fa-underline\"></i>", "onclick=\"putChar('++  ++', true)\""],
-                ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>", "onclick=\"putChar('~~  ~~', true)\""],
-                ["typewriting", "T", "onclick=\"putChar('```  ```', true)\""],
+                ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('__  __', 3)\""],
+                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('_  _', 2)\""],
+                ["Underline", "<i class=\"fa fa-underline\"></i>", "onclick=\"putChar('++  ++', 3)\""],
+                ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>", "onclick=\"putChar('~~  ~~', 3)\""],
+                ["typewriting", "T", "onclick=\"putChar('```  ```', 4)\""],
             ], [
-                ["align-left", "<i class=\"fa fa-align-left\"></i>", "onclick=\"putChar('<<\\n')\""],
-                ["align-center", "<i class=\"fa fa-align-center\"></i>", "onclick=\"putChar('><\\n')\""],
-                ["align-block", "<i class=\"fa fa-align-justify\"></i>", "onclick=\"putChar('<>\\n')\""],
-                ["align-right", "<i class=\"fa fa-align-right\"></i>", "onclick=\"putChar('>>\\n')\""],
+                ["align-left", "<i class=\"fa fa-align-left\"></i>", "onclick=\"putChar('<<\\n', 3)\""],
+                ["align-center", "<i class=\"fa fa-align-center\"></i>", "onclick=\"putChar('><\\n', 3)\""],
+                ["align-block", "<i class=\"fa fa-align-justify\"></i>", "onclick=\"putChar('<>\\n', 3)\""],
+                ["align-right", "<i class=\"fa fa-align-right\"></i>", "onclick=\"putChar('>>\\n', 3)\""],
             ], [
-                ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>", "onclick=\"putChar('1. ', false)\""],
-                ["odrazkovy seznam", "<i class=\"fa fa-list-ul\"></i>", "onclick=\"putChar('- ', false)\""],
+                ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>", "onclick=\"putChar('1. ', 3)\""],
+                ["odrazkovy seznam", "<i class=\"fa fa-list-ul\"></i>", "onclick=\"putChar('- ', 2)\""],
             ], [
                 ["table", "<i class=\"fa fa-table\"></i>", "id=\"tableButton\" onclick=\"createTable(6, 3)\""],
                 ["include", "<i class=\"fa fa-paperclip\"></i>", ""],
-                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('````graph\\n\\n```',false)\""],
-                ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', true)\""]
+                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('````graph\\n\\n```', 10)\""],
+                ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\""]
             ]
         ]
         return templates.index(data)
@@ -61,6 +62,7 @@ if __name__ == "__main__":
 class Markdown:
     def POST(self):
         data = web.input()
+        print data
         md = markdown.Markdown(extensions=
                                [extension.Extensions(),
                                 'markdown.extensions.tables',   #tables
@@ -69,6 +71,10 @@ class Markdown:
                                 ])
         return md.convert(data['data'])
 
+class Test:
+    def GET(self):
+        neco = web.template.render('tests')
+        return neco.javascript()
 
 class Auth:
     def POST(self):

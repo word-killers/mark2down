@@ -20,35 +20,45 @@ $(document).ready(function () {
     });
 });
 
-function putChar(char, center) {
+function putChar(char, position) {
+
+    var CaretPos = getCursorPosition();
+    putStringToEditor(char, CaretPos);
+    CaretPos += position;
+    setCursorPosition(CaretPos);
+    
+    onChange();
+}
+
+function putStringToEditor(string, position){
+    document.getElementById('editor').value = editor.value.substring(0, position) + string + editor.value.substring(position);
+}
+
+function getCursorPosition(){
     var editor = document.getElementById("editor");
-    var CaretPos = 0;
+
     if (document.selection) {
         editor.focus();
         var Sel = document.selection.createRange();
         Sel.moveStart('character', -editor.value.length);
-        CaretPos = Sel.text.length;
+        return Sel.text.length;
     }
     else if (editor.selectionStart || editor.selectionStart == '0')
-        CaretPos = editor.selectionStart;
+        return  editor.selectionStart;
+}
 
-    editor.value = editor.value.substring(0, CaretPos) + char + editor.value.substring(CaretPos);
-
-    CaretPos += center ? char.length / 2 : char.length;
-
+function setCursorPosition(position){
     if (editor.setSelectionRange) {
         editor.focus();
-        editor.setSelectionRange(CaretPos, CaretPos);
+        editor.setSelectionRange(position, position);
     }
     else if (editor.createTextRange()) {
         var range = editor.createTextRange();
         range.collapse(true);
-        range.moveEnd('character', CaretPos);
-        range.moveStart('character', CaretPos);
+        range.moveEnd('character', position);
+        range.moveStart('character', position);
         range.select();
     }
-
-    onChange();
 }
 
 function sendMarkdown() {
@@ -76,6 +86,7 @@ function onChange() {
         sendMarkdown();
     }, 1000);
 }
+
 
 function initScroll() {
     var $elements = $('textarea#editor, article#preview');
