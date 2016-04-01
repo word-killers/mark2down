@@ -11,8 +11,7 @@ before_script:
  - npm install -g grunt
 
 script:
-  coverage run tests.py
-  grunt test --verbose --force
+  coverage run tests.py grunt.js /templates/test.html
 
 
 after_success:
