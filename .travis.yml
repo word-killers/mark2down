@@ -7,7 +7,12 @@ install:
   - "pip install codecov"
   - "pip install -r requirements.txt"
 
-script: coverage run tests.py
-  
+before_script:
+ -sudo npm install -g grunt
+
+script:
+  coverage run tests.py grunt test
+
+
 after_success:
   - codecov
