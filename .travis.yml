@@ -14,7 +14,7 @@ before_script:
  - npm install grunt-contrib-qunit
 
 script:
-  #coverage run tests.py
+  coverage run tests.py
   grunt test --verbose --force
 
 

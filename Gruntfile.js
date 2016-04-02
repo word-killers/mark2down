@@ -1,10 +1,17 @@
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
 
-    gruntConfig.qunit = {
-        src: ['templates/test.html']
-    };
+    grunt.initConfig({
+        qunit: {
+            urls: {
+                options: {
+                    urls: [
+                        'https://mark2down.herokuapp.com/test'
+                    ]
+                }
+            }
+        }
+    });
 
-    grunt.registerTask('test', ['qunit:src']);
-    grunt.registerTask('travis', ['lint', 'test']);
+    grunt.registerTask('test', ['qunit']);
 };
