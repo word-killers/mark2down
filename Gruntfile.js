@@ -11,7 +11,7 @@ module.exports = function (grunt) {
             urls: {
                 options: {
                     urls: [
-                        'http://localhost:8080/test'
+                        'https://mark2down.herokuapp.com/test'
                     ]
                 }
             }
