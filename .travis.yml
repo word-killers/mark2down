@@ -12,13 +12,10 @@ before_script:
  - npm install -g grunt-init
  - npm install grunt --save-dev
  - npm install grunt-contrib-qunit
- - npm install grunt-codecov.io --save-dev
- - npm install grunt-build-info --save-dev
 
 script:
   - coverage run tests.py
   - grunt test --verbose --force
-
 
 after_success:
   - codecov
