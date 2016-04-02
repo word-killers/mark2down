@@ -67,7 +67,7 @@ class Markdown:
                                [extension.Extensions(),
                                 'markdown.extensions.tables',   #tables
                                 'markdown.extensions.sane_lists', #using lists like in normal mardkown
-                                'markdown_include.include' #option to include other files
+                                #'markdown_include.include' #option to include other files
                                 ])
         return md.convert(data['data'])
 

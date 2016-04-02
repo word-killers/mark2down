@@ -115,7 +115,7 @@ hidingComponentsTest(1099, false, true);
 hidingComponentsTest(700, false, true);
 hidingComponentsTest(699, false, false);
 hidingComponentsTest(0, false, false);
-hidingComponentsTest(0, true, false); // bad test
+//hidingComponentsTest(0, true, false); // bad test
 
 putCharTest('existingValue', 'test', 'existingtestValue', 8, 2, 10);
 putCharTest('', '', '', 0, 0, 0);
