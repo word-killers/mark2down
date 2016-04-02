@@ -1,5 +1,6 @@
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-build-info');
     grunt.loadNpmTasks('grunt-codecov.io');
 
     grunt.initConfig({
