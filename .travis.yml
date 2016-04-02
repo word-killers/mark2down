@@ -8,8 +8,8 @@ install:
   - "pip install -r requirements.txt"
 
 before_script:
- - npm update -g npm
  - npm install -g grunt-cli
+ - npm install -g grunt-init
 
 script:
   #coverage run tests.py
