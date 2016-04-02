@@ -7,6 +7,13 @@ module.exports = function (grunt) {
                 files: [
                     {src: 'templates/test.html'}
                 ]
+            },
+            urls: {
+                options: {
+                    urls: [
+                        'http://localhost:8080/test'
+                    ]
+                }
             }
         }
     });
