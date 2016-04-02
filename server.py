@@ -5,9 +5,9 @@ import markdown
 import extension
 
 urls = (
-	'/', 'Index',
-	'/markdown', 'Markdown',
-	'/auth', 'Auth',
+    '/', 'Index',
+    '/markdown', 'Markdown',
+    '/auth', 'Auth',
     '/test', 'Test'
 )
 
@@ -20,7 +20,7 @@ class Index:
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
-                ["export", "<i class=\"fa fa-download\"></i> Export",""],
+                ["export", "<i class=\"fa fa-download\"></i> Export", ""],
                 ["login", "<i class=\"fa fa-user\"></i> Login", ""]
             ], [
                 ["back", "<i class=\"fa fa-rotate-left\"></i>", ""],
@@ -49,7 +49,7 @@ class Index:
             ], [
                 ["table", "<i class=\"fa fa-table\"></i>", "id=\"tableButton\" onclick=\"createTable(6, 3)\""],
                 ["include", "<i class=\"fa fa-paperclip\"></i>", ""],
-                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('````graph\\n\\n```', 10)\""],
+                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('```graph\\n\\n```', 10)\""],
                 ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\""]
             ]
         ]
@@ -59,21 +59,26 @@ class Index:
 if __name__ == "__main__":
     app.run()
 
+
 class Markdown:
     def POST(self):
         data = web.input()
-        print data
         md = markdown.Markdown(extensions=
                                [extension.Extensions(),
-                                'markdown.extensions.tables',   #tables
-                                'markdown.extensions.sane_lists', #using lists like in normal mardkown
-                                #'markdown_include.include' #option to include other files
+                                'markdown.extensions.tables',  # tables
+                                'markdown.extensions.sane_lists',  # using lists like in normal mardkown
+                                'markdown.extensions.toc',
+                                # 'markdown_include.include' #option to include other files
                                 ])
-        return md.convert(data['data'])
+
+        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' + md.toc + '</toc></reply>'
+        return md.convert(data)
+
 
 class Test:
     def GET(self):
         return templates.test()
+
 
 class Auth:
     def POST(self):

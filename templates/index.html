@@ -2,73 +2,81 @@ $def with(data)
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>MarkDown</title>
+<head>
+    <meta charset="UTF-8">
+    <title>MarkDown</title>
 
-        <!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
-        <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
-        <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
-        <script src="/static/jquery/jquery-1.12.2.min.js"></script>
-        <script src="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
+    <!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
+    <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
+    <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
+    <script src="/static/jquery/jquery-1.12.2.min.js"></script>
+    <script src="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
 
-        <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">-->
-        <link rel="stylesheet" href="/static/font-awesome-4.5.0/css/font-awesome.min.css">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">-->
+    <link rel="stylesheet" href="/static/font-awesome-4.5.0/css/font-awesome.min.css">
 
-        <script src="/static/mermaid/mermaid.min.js"></script>
-        <link rel="stylesheet" href="/static/mermaid/mermaid.css">
+    <script src="/static/mermaid/mermaid.min.js"></script>
+    <link rel="stylesheet" href="/static/mermaid/mermaid.css">
 
-        <script src="/static/script/table.js"></script>
-        <script src="/static/script/scripts.js"></script>
-        <link rel="stylesheet" href="/static/css/style.css">
-    </head>
+    <script src="/static/script/table.js"></script>
+    <script src="/static/script/scripts.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
 
-    <body class="max-view-height column-flex" onload="init()">
+<body class="max-view-height column-flex" onload="init()">
 
-        <!-- Window with table -->
-        <div id="dialog" title="Table">
+<!-- Window with table -->
+<div id="dialog" title="Table">
 
-            <table id="table"></table>
-        </div>
+    <table id="table"></table>
+</div>
 
-        <!-- navigation bar -->
-        <nav class="flex-item">
-            $for groups in data:
-                <div class="btn-group"
-                    $if loop.first:
-                    style="float: right"
-                >
-                $for button in groups
-                    <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
-                </div>
-        </nav>
+<!-- navigation bar -->
+<nav class="flex-item">
+    $for groups in data:
+    <div class="btn-group"
+         $if loop.first:
+         style="float: right"
+    >
+        $for button in groups
+        <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
+    </div>
+</nav>
 
-        <!-- content -->
-        <div class="max-percent-height row-flex">
-            <!-- left panel -->
-            <div id="left_panel" class="flex-item item1">
-                <div class="btn-group max-percent-width">
-                    <button class="btn max-percent-width" type="button">Comments</button>
-                    <button class="btn max-percent-width" type="button">File</button>
-                    <button class="btn max-percent-width" type="button">Content</button>
-                </div>
-                <div>
-
-                </div>
-
-            </div>
-
-
-            <!-- text area -->
-            <textarea id="editor" class="flex-item item2" onkeyup="onChange()" wrap="hard"></textarea>
-
-
-            <!-- preview -->
-            <article id="preview" class="flex-item item2">
-
-            </article>
+<!-- content -->
+<div class="max-percent-height row-flex">
+    <!-- left panel -->
+    <div id="left_panel" class="flex-item item1">
+        <div class="btn-group max-percent-width">
+            <button id="commentsBtn" class="btn panel-btn" type="button" onclick="hideShowComponent('comments')">
+                Comments
+            </button>
+            <button id="fileBtn" class="btn panel-btn" type="button" onclick="hideShowComponent('repository')">File
+            </button>
+            <button id="contentBtn" class="btn panel-btn" type="button" onclick="hideShowComponent('toc')">Content
+            </button>
 
         </div>
-    </body>
+        <div class="panel-content" id="toc">toc</div>
+
+        <div class="panel-content" id="comments" style="display: none">comments</div>
+
+        <div class="panel-content" id="repository" style="display: none">repository</div>
+
+
+    </div>
+
+
+    <!-- text area -->
+    <textarea id="editor" class="flex-item item2" onkeyup="onChange()" wrap="hard"></textarea>
+
+
+    <!-- preview -->
+    <article id="preview" class="flex-item item2">
+
+    </article>
+
+</div>
+</body>
 </html>

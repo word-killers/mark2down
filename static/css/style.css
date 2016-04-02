@@ -94,6 +94,19 @@ nav {
     transition-duration: 0.4s;
 }
 
+.panel-btn {
+    width: 33%
+}
+
+#left_panel {
+    min-width: 300px;
+    max-width: 20%;
+}
+
+a{
+    word-wrap: break-word;
+}
+
 .button {
     width: 100%;
     background-color: white;

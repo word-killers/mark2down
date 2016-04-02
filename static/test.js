@@ -88,6 +88,24 @@ function onChangeTest(){
     })
 }
 
+function hideShowComponentTest(idComponent){
+    QUnit.test('show or hide component', function (assert) {
+
+        hideShowComponent(idComponent);
+
+        var components = document.getElementsByClassName('panel-content');
+        var bool = false;
+        for(var i = 0; i<components.length; i++){
+            if(components[i].id == idComponent){
+                bool = true;
+            }else{
+                bool = false;
+            }
+            assert.equal($('#'+components[i].id).is(':visible'), bool, 'component '+ components[i].id + ' is visible: '+ bool);
+        }
+    });
+}
+
 putStringToEditorTest('', 0, '', '');
 putStringToEditorTest('', 0, 'existingValue', 'existingValue');
 putStringToEditorTest('test', 0, 'test', "");
@@ -115,7 +133,6 @@ hidingComponentsTest(1099, false, true);
 hidingComponentsTest(700, false, true);
 hidingComponentsTest(699, false, false);
 hidingComponentsTest(0, false, false);
-//hidingComponentsTest(0, true, false); // bad test
 
 putCharTest('existingValue', 'test', 'existingtestValue', 8, 2, 10);
 putCharTest('', '', '', 0, 0, 0);
@@ -127,3 +144,7 @@ putCharTest('existingValue', 'test', 'existingValuetest', 13, 10, 17);
 putCharTest('existingValue', 'test', 'testexistingValue', -100, 10, 10);
 
 onChangeTest();
+
+hideShowComponentTest('toc');
+hideShowComponentTest('comments');
+hideShowComponentTest('repository');

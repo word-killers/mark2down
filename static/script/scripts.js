@@ -69,14 +69,17 @@ function sendMarkdown() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
-                document.getElementById('preview').innerHTML = xhttp.responseText;
+                var response = xhttp.responseXML;
+                document.getElementById('preview').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
+                document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
+
                 mermaid.init(undefined, ".mermaid");
             }
         };
 
         xhttp.open('POST', '/markdown');
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("data=" + editor);
+        xhttp.send("data=" + encodeURIComponent(editor));
     }
 }
 
@@ -86,6 +89,12 @@ function onChange() {
         sendMarkdown();
     }, 1000);
 }
+
+function hideShowComponent(idComponent){
+    $('.panel-content').hide();
+    $('#'+idComponent).show();
+}
+
 
 
 function initScroll() {
@@ -108,7 +117,7 @@ function initTab() {
     editor.onkeydown = function (event) {
 
         if (event.keyCode == 9) { // tab was pressed
-            putChar('\t');
+            putChar('\t', 1);
             editor.focus();
             return false;
         }
@@ -119,4 +128,5 @@ function init() {
     initTab();
     sendMarkdown();
     initScroll();
+    $(window).resize();
 }
