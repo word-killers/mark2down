@@ -12,6 +12,7 @@ before_script:
  - npm install -g grunt-init
  - npm install grunt --save-dev
  - npm install grunt-contrib-qunit
+ - npm install grunt-codecov.io --save-dev
 
 script:
   - coverage run tests.py

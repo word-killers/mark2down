@@ -1,5 +1,6 @@
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-codecov.io');
 
     grunt.initConfig({
         qunit: {
@@ -9,6 +10,13 @@ module.exports = function (grunt) {
                         'https://mark2down.herokuapp.com/test'
                     ]
                 }
+            }
+        },
+
+        codecov_io: {
+            option: { },
+            files: {
+                'dest/default_options': ['templates/test']
             }
         }
     });
