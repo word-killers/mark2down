@@ -15,7 +15,7 @@ before_script:
 
 script:
   #coverage run tests.py
-  grunt test --verbose --force
+  coverage grunt test --verbose --force
 
 
 after_success:
