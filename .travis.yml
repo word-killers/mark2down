@@ -10,6 +10,7 @@ install:
 before_script:
  - npm install -g grunt-cli
  - npm install -g grunt-init
+ - npm install grunt --save-dev
 
 script:
   #coverage run tests.py
