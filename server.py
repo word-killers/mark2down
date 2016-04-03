@@ -59,15 +59,16 @@ class Index:
 class Markdown:
     def POST(self):
         data = web.input()
+        ext = extension.Extensions()
         md = markdown.Markdown(extensions=
-                               [extension.Extensions(),
+                               [ext,
                                 'markdown.extensions.tables',  # tables
                                 'markdown.extensions.sane_lists',  # using lists like in normal mardkown
                                 'markdown.extensions.toc',
                                 # 'markdown_include.include' #option to include other files
                                 ])
 
-        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' + md.toc + '</toc></reply>'
+        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' + md.toc + '</toc><comments>'+ ext.comment_list +'</comments></reply>'
         return data
 
 

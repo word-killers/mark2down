@@ -65,6 +65,9 @@ function sendMarkdown() {
     var editor = document.getElementById('editor').value;
     if (editor.trim().length == 0) {
         document.getElementById('preview').innerHTML = "";
+        document.getElementById('toc').innerHTML = ""
+        document.getElementById('comments').innerHTML = ""
+
     } else {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -72,6 +75,7 @@ function sendMarkdown() {
                 var response = xhttp.responseXML;
                 document.getElementById('preview').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
                 document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
+                document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
 
                 mermaid.init(undefined, ".mermaid");
             }

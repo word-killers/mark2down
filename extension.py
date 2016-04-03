@@ -34,11 +34,14 @@ class Preprocessors(Preprocessor):
         pattern = re.compile('@\[([a-zA-Z0-9-_]+)\]')
         new_lines = []
         Extensions.remember_lines = []
+        Extensions.comment_list = '<ul>\n'
         self.graph = ""
         self.is_graph = False
         for index in range(len(lines)):
             if self.is_comment(lines[index]):
-                new_lines.append('\n---\n__Comment:__ ' + lines[index].strip(' \n\r\t\f/') + '\n\n---')
+                form_line = lines[index].strip(' \n\r\t\f/')
+                new_lines.append('\n---\n__Comment:__ ' + form_line + '\n\n---')
+                Extensions.comment_list += '<li>'+form_line+'</li>\n'
             else:
                 m = pattern.match(lines[index])
                 if m is not None:
@@ -49,6 +52,7 @@ class Preprocessors(Preprocessor):
         if len(self.graph) > 0:
             new_lines.append(self.graph)
 
+        Extensions.comment_list += '</ul>'
         return new_lines
 
     def is_comment(self, line):
@@ -76,6 +80,7 @@ class Preprocessors(Preprocessor):
 
 class Extensions(Extension):
     remember_lines = []
+    comment_list = ""
 
     def extendMarkdown(self, md, md_globals):
         md.preprocessors.add("GraphComment", Preprocessors(md), '_end')
