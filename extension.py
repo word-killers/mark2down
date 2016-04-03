@@ -2,6 +2,7 @@ from markdown.treeprocessors import Treeprocessor
 from markdown.preprocessors import Preprocessor
 # from markdown.postprocessors import Postprocessor
 from markdown.extensions import Extension
+import re
 
 
 # class MyPostprocessor(Postprocessor):
@@ -30,13 +31,18 @@ class Preprocessors(Preprocessor):
     graph = ""
 
     def run(self, lines):
+        pattern = re.compile('@\[([a-zA-Z0-9-_]+)\]')
         new_lines = []
         Extensions.remember_lines = []
         self.graph = ""
         self.is_graph = False
         for index in range(len(lines)):
             if not self.is_comment(lines[index]):
-                new_lines.append(self.graph_parser(lines[index]))
+                m = pattern.match(lines[index])
+                if m is not None:
+                    new_lines.append('\n---\nAnnotation: __' + m.group(1) + '__\n\n---')
+                else:
+                    new_lines.append(self.graph_parser(lines[index]))
 
         if len(self.graph) > 0:
             new_lines.append(self.graph)
