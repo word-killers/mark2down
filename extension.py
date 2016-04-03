@@ -37,10 +37,12 @@ class Preprocessors(Preprocessor):
         self.graph = ""
         self.is_graph = False
         for index in range(len(lines)):
-            if not self.is_comment(lines[index]):
+            if self.is_comment(lines[index]):
+                new_lines.append('\n---\n__Comment:__ ' + lines[index].strip(' \n\r\t\f/') + '\n\n---')
+            else:
                 m = pattern.match(lines[index])
                 if m is not None:
-                    new_lines.append('\n---\nAnnotation: __' + m.group(1) + '__\n\n---')
+                    new_lines.append('\n---\n__Annotation:__ ' + m.group(1) + '\n\n---')
                 else:
                     new_lines.append(self.graph_parser(lines[index]))
 
