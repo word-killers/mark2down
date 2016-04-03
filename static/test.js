@@ -31,7 +31,7 @@ function sendMarkdownTest(editorValue, expectedValue) {
             var result = document.getElementById('preview').innerHTML;
             assert.equal(result, expectedValue, "expected: '" + expectedValue + "'; result: '" + result + "'");
             done();
-        }, 500);
+        }, 1000);
     });
 }
 
@@ -84,7 +84,7 @@ function onChangeTest(){
             var result = document.getElementById('preview').innerHTML;
             assert.equal(result, '<p>test</p>');
             done();
-        }, 1500);
+        }, 2000);
     })
 }
 
