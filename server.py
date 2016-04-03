@@ -68,7 +68,7 @@ class Markdown:
                                 ])
 
         data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' + md.toc + '</toc></reply>'
-        return md.convert(data)
+        return data
 
 
 class Test:
