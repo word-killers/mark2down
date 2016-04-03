@@ -56,10 +56,6 @@ class Index:
         return templates.index(data)
 
 
-if __name__ == "__main__":
-    app.run()
-
-
 class Markdown:
     def POST(self):
         data = web.input()
@@ -80,7 +76,5 @@ class Test:
         return templates.test()
 
 
-class Auth:
-    def POST(self):
-        token = web.input().auth
-        pass
+if __name__ == "__main__":
+    app.run()
