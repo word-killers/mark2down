@@ -62,7 +62,8 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-
-
-
+#IntelliJ IDEA files
 .idea
+
+#Session storage
+sessions/
