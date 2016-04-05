@@ -1,1 +1,1 @@
-web: python server.py $PORT $CLIENT_SECRET
+web: python server.py $PORT $CLIENT_ID $CLIENT_SECRET
