@@ -43,6 +43,10 @@ nav {
     border-radius: 3px;
 }
 
+.mermaidTooltip{
+    display:none;
+}
+
 .btn, .panel-btn {
     background-color: transparent;
     border: transparent;
@@ -58,6 +62,17 @@ nav {
 
 .btn:hover {
     background-color: #CCCCFF;
+}
+
+#toc ul{
+    list-style-type:none;
+    padding-left: 15px;
+
+}
+
+#toc a{
+    color: black;
+    text-decoration: none;
 }
 
 @media only screen and (max-width: 1100px) {
