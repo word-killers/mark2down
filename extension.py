@@ -15,16 +15,41 @@ import re
 
 class Treeprocessors(Treeprocessor):
     def run(self, root):
+        self.alignment(root)
+
         if len(Extensions.remember_lines) > 0:
             i = 0
-
             for child in root:
                 if child.text == '```graph':
                     child.text = Extensions.remember_lines[i]
                     child.tag = 'div'
                     child.set('class', 'mermaid')
-                    child.set('style', 'text-align: center')
                     i += 1
+
+    def alignment(self, root):
+        last_child = None
+        list = root.getchildren()
+
+        for child in list:
+            if child.text == '}}':
+                align = 'text-align: right'
+            elif child.text == '{{':
+                align = 'text-align: left'
+            elif child.text == '{}':
+                align = 'text-align: justify'
+            elif child.text == '}{':
+                align = 'text-align: center'
+            else:
+                align = ''
+
+            if align:
+                child.text = ''
+                child.tag = 'div'
+                child.set('style', align)
+                last_child = child
+
+            if last_child:
+                last_child.append(child)
 
 
 class Preprocessors(Preprocessor):
@@ -42,7 +67,7 @@ class Preprocessors(Preprocessor):
             if self.is_comment(lines[index]):
                 form_line = lines[index].strip(' \n\r\t\f/')
                 new_lines.append('\n---\n__Comment:__ ' + form_line + '\n\n---')
-                Extensions.comment_list += '<li>'+form_line+'</li>\n'
+                Extensions.comment_list += '<li>' + form_line + '</li>\n'
             else:
                 m = pattern.match(lines[index])
                 if m is not None:
@@ -104,5 +129,3 @@ class Extensions(Extension):
 
         strong_tag = SimpleTagPattern(self.STRONG_RE, 'strong')
         md.inlinePatterns['strong'] = strong_tag
-
-
