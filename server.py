@@ -57,9 +57,6 @@ class Index:
                 ["export", "<i class=\"fa fa-download\"></i> Export", ""],
                 ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'"']
             ], [
-                ["back", "<i class=\"fa fa-rotate-left\"></i>", ""],
-                ["forward", "<i class=\"fa fa-rotate-right\"></i>", ""]
-            ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\""],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\""],
                 ["Heading 3", "H3", "onclick=\"putChar('### ', 4)\""],
