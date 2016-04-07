@@ -91,7 +91,7 @@ class Markdown:
     def POST(self):
         data = web.input()
         ext = extension.Extensions()
-        md = markdown.Markdown(extensions=
+        md = markdown.Markdown(safe_mode='escape' ,extensions=
                                [ext,
                                 'markdown.extensions.tables',  # tables
                                 'markdown.extensions.sane_lists',  # using lists like in normal mardkown
