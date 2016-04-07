@@ -1,22 +1,16 @@
 var timer;
+var scrollTimer;
+var sync;
 
 $(document).ready(function () {
     $(window).resize(function () {
         var body = $('body');
         var preview = $('#preview');
         var panel = $('#left_panel');
+        
+        $('#content').height($(window).outerHeight() - $('#navigation').outerHeight());
+        $('#panel_contents').height($('#content').height() - $('#panel_buttons').height());
 
-        if(body.outerWidth()<1100){
-            preview.hide();
-        }else{
-            preview.show();
-        }
-
-        if(body.outerWidth()<700){
-            panel.hide();
-        }else{
-            panel.show();
-        }
     });
 });
 
@@ -26,15 +20,15 @@ function putChar(char, position) {
     putStringToEditor(char, CaretPos);
     CaretPos += position;
     setCursorPosition(CaretPos);
-    
+
     onChange();
 }
 
-function putStringToEditor(string, position){
+function putStringToEditor(string, position) {
     document.getElementById('editor').value = editor.value.substring(0, position) + string + editor.value.substring(position);
 }
 
-function getCursorPosition(){
+function getCursorPosition() {
     var editor = document.getElementById("editor");
 
     if (document.selection) {
@@ -44,10 +38,10 @@ function getCursorPosition(){
         return Sel.text.length;
     }
     else if (editor.selectionStart || editor.selectionStart == '0')
-        return  editor.selectionStart;
+        return editor.selectionStart;
 }
 
-function setCursorPosition(position){
+function setCursorPosition(position) {
     if (editor.setSelectionRange) {
         editor.focus();
         editor.setSelectionRange(position, position);
@@ -94,25 +88,32 @@ function onChange() {
     }, 1000);
 }
 
-function hideShowComponent(idComponent){
+function hideShowComponent(idComponent) {
     $('.panel-content').hide();
-    $('#'+idComponent).show();
+    $('#' + idComponent).show();
 }
 
 
-
 function initScroll() {
-    var $elements = $('textarea#editor, article#preview');
-    var sync = function () {
-        var $other = $elements.not(this).off('scroll'), other = $other.get(0);
-        var percentage = this.scrollTop / (this.scrollHeight - this.offsetHeight);
-        other.scrollTop = percentage * (other.scrollHeight - other.offsetHeight);
-        setTimeout(function () {
-            $other.on('scroll', sync);
-        }, 1000);
+    sync = function () {
+        window.clearTimeout(scrollTimer);
+        var self = this;
+        scrollTimer = window.setTimeout(function () {
+            scroll(self);
+        }, 600);
     };
 
-    $elements.on('scroll', sync);
+    $('textarea#editor, article#preview').scroll(sync);
+}
+
+function scroll(self) {
+    var $elements = $('textarea#editor, article#preview');
+    var $other = $elements.not(self).off('scroll'), other = $other.get(0);
+    var percentage = self.scrollTop / (self.scrollHeight - self.offsetHeight);
+    other.scrollTop = percentage * (other.scrollHeight - other.offsetHeight);
+    setTimeout(function() {
+        $elements.scroll(sync);
+    }, 100);
 }
 
 function initTab() {
@@ -132,5 +133,6 @@ function init() {
     initTab();
     sendMarkdown();
     initScroll();
+    $('#editor').scroll();
     $(window).resize();
 }

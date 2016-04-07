@@ -1,10 +1,11 @@
 $def with(data)
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="max-height: 100vh; height: 100vh; min-height: 100vh">
 <head>
     <meta charset="UTF-8">
     <title>MarkDown</title>
+
 
     <!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
     <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
@@ -24,7 +25,7 @@ $def with(data)
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
-<body class="max-view-height column-flex" onload="init()">
+<body onload="init()">
 
 <!-- Window with table -->
 <div id="dialog" title="Table">
@@ -33,7 +34,7 @@ $def with(data)
 </div>
 
 <!-- navigation bar -->
-<nav class="flex-item">
+<nav id="navigation">
     $for groups in data:
     <div class="btn-group"
          $if loop.first:
@@ -45,38 +46,45 @@ $def with(data)
 </nav>
 
 <!-- content -->
-<div class="max-percent-height row-flex">
-    <!-- left panel -->
-    <div id="left_panel" class="flex-item item1">
-        <div class="btn-group max-percent-width">
-            <button id="commentsBtn" class="btn panel-btn" type="button" onclick="hideShowComponent('comments')">
-                Comments
-            </button>
-            <button id="fileBtn" class="btn panel-btn" type="button" onclick="hideShowComponent('repository')">File
-            </button>
-            <button id="contentBtn" class="btn panel-btn" type="button" onclick="hideShowComponent('toc')">Content
-            </button>
+<div id="content">
+    <div class="max-percent-height">
+        <!-- left panel -->
+        <div id="left_panel" class="max-percent-height" style="float: left">
+            <div id="panel_buttons" class="max-percent-width">
+                    <button id="commentsBtn" class="btn panel-btn" onclick="hideShowComponent('comments')">
+                        Comments
+                    </button>
+                    <button id="fileBtn" class="btn panel-btn" onclick="hideShowComponent('repository')">
+                        File
+                    </button>
+                    <button id="contentBtn" style="float: none" class="btn panel-btn" onclick="hideShowComponent('toc')">
+                        Content
+                    </button>
+            </div>
+
+            <div id="panel_contents" style="display: flex; overflow: auto"> <!--todo-->
+                <div class="panel-content" id="toc">toc</div>
+
+                <div class="panel-content" id="comments" style="display: none">comments</div>
+
+                <div class="panel-content" id="repository" style="display: none">repository</div>
+            </div>
+
 
         </div>
-        <div class="panel-content" id="toc">toc</div>
+        <!-- text area -->
 
-        <div class="panel-content" id="comments" style="display: none">comments</div>
+        <textarea style="float: left; border: none; padding: 0; margin: 0" id="editor" class="max-percent-height" onkeyup="onChange()"
+                  wrap="hard"></textarea>
 
-        <div class="panel-content" id="repository" style="display: none">repository</div>
 
+        <!-- preview -->
+        <article style="float: left" id="preview" class="max-percent-height">
 
+        </article>
     </div>
-
-
-    <!-- text area -->
-    <textarea id="editor" class="flex-item item2" onkeyup="onChange()" wrap="hard"></textarea>
-
-
-    <!-- preview -->
-    <article id="preview" class="flex-item item2">
-
-    </article>
-
 </div>
+
+
 </body>
 </html>
