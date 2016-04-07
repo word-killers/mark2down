@@ -1,9 +1,29 @@
 #!/usr/bin/env python2
 
-import web
+import sys
+
+import web, urllib, requests
 import markdown
 import extension
 
+# read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
+if len(sys.argv) == 4:
+	client_id = sys.argv[2]
+	client_secret = sys.argv[3]
+else:
+	client_id = 0
+	client_secret = 0
+
+	print  """
+	Warning: Bad arguments.
+	Usage: ./server.py <PORT> <OAUTH_CLIENT_ID> <OAUTH_CLIENT_SECRET>
+	Application will run without OAuth (no ability to login).
+	"""
+
+# OAuth scopes (permissions)
+scopes = ['repo', 'user']
+
+# URL handling
 urls = (
     '/', 'Index',
     '/markdown', 'Markdown',
@@ -11,17 +31,31 @@ urls = (
     '/test', 'Test'
 )
 
+# Application setup
 app = web.application(urls, globals())
 templates = web.template.render('templates')
+web.config.debug = False # disable debug mode because of sessions support
 
+# Session setup
+session = web.session.Session(
+	app,
+	web.session.DiskStore('sessions'),
+	initializer = {
+		'access_token' : 0
+	}
+)
 
 class Index:
     def GET(self):
+        login_link = "https://github.com/login/oauth/authorize?" + urllib.urlencode({
+            "client_id" : client_id,
+            "scope" : ','.join(scopes)
+        })
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
                 ["export", "<i class=\"fa fa-download\"></i> Export", ""],
-                ["login", "<i class=\"fa fa-user\"></i> Login", ""]
+                ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'"']
             ], [
                 ["back", "<i class=\"fa fa-rotate-left\"></i>", ""],
                 ["forward", "<i class=\"fa fa-rotate-right\"></i>", ""]
@@ -76,6 +110,29 @@ class Test:
     def GET(self):
         return templates.test()
 
+class Auth:
+	def GET(self):
+		input = web.input()
+		if 'code' in input:
+			response = requests.post(
+				'https://github.com/login/oauth/access_token',
+				data = {
+					'client_id' : client_id,
+					'client_secret' : client_secret,
+					'code' : input.code
+				},
+				headers = {
+					'Accept' : 'application/json'
+				}
+			)
+			json = response.json()
+			if 'access_token' in json:
+				session.access_token = json['access_token']
+				raise web.seeother('/')
+			else:
+				return "Failed to get the access token"
+		else:
+			return "Failed to get the access code"
 
 if __name__ == "__main__":
     app.run()
