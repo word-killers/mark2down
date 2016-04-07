@@ -4,13 +4,8 @@ var sync;
 
 $(document).ready(function () {
     $(window).resize(function () {
-        var body = $('body');
-        var preview = $('#preview');
-        var panel = $('#left_panel');
-        
         $('#content').height($(window).outerHeight() - $('#navigation').outerHeight());
         $('#panel_contents').height($('#content').height() - $('#panel_buttons').height());
-
     });
 });
 
@@ -59,8 +54,8 @@ function sendMarkdown() {
     var editor = document.getElementById('editor').value;
     if (editor.trim().length == 0) {
         document.getElementById('preview').innerHTML = "";
-        document.getElementById('toc').innerHTML = ""
-        document.getElementById('comments').innerHTML = ""
+        document.getElementById('toc').innerHTML = "";
+        document.getElementById('comments').innerHTML = "";
 
     } else {
         var xhttp = new XMLHttpRequest();
