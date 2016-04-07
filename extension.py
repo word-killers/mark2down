@@ -57,7 +57,7 @@ class Preprocessors(Preprocessor):
     graph = ""
 
     def run(self, lines):
-        pattern = re.compile('@\[([a-zA-Z0-9-_]+)\]')
+        pattern = re.compile('@\[([a-zA-Z0-9-_ ]+)\]')
         new_lines = []
         Extensions.remember_lines = []
         Extensions.comment_list = '<ul>\n'
