@@ -1,11 +1,10 @@
 $def with(data)
 
 <!DOCTYPE html>
-<html lang="en" style="max-height: 100vh; height: 100vh; min-height: 100vh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>MarkDown</title>
-
 
     <!--<script src="//code.jquery.com/jquery-1.10.2.js"></script>-->
     <!--<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
@@ -49,42 +48,35 @@ $def with(data)
 <div id="content">
     <div class="max-percent-height">
         <!-- left panel -->
-        <div id="left_panel" class="max-percent-height" style="float: left">
+        <div id="left_panel">
             <div id="panel_buttons" class="max-percent-width">
-                    <button id="commentsBtn" class="panel-btn" onclick="hideShowComponent('comments')">
-                        Comments
-                    </button>
-                    <button id="fileBtn" class="panel-btn" onclick="hideShowComponent('repository')">
-                        File
-                    </button>
-                    <button id="contentBtn" style="float: none" class="panel-btn" onclick="hideShowComponent('toc')">
-                        Content
-                    </button>
+                <button id="commentsBtn" class="panel-btn" onclick="hideShowComponent('comments')">
+                    Comments
+                </button>
+                <button id="fileBtn" class="panel-btn" onclick="hideShowComponent('repository')">
+                    File
+                </button>
+                <button id="contentBtn" class="panel-btn float_none" onclick="hideShowComponent('toc')">
+                    Content
+                </button>
             </div>
 
-            <div id="panel_contents" style="display: flex; overflow: auto"> <!--todo-->
-                <div class="panel-content" id="toc">toc</div>
-
-                <div class="panel-content" id="comments" style="display: none">comments</div>
-
-                <div class="panel-content" id="repository" style="display: none">repository</div>
+            <div id="panel_contents">
+                <div id="toc" class="panel-content"></div>
+                <div id="comments" class="panel-content display_none"></div>
+                <div id="repository" class="panel-content display_none"></div>
             </div>
-
 
         </div>
         <!-- text area -->
 
-        <textarea style="float: left; border: none; padding: 0; margin: 0" id="editor" class="max-percent-height" onkeyup="onChange()"
-                  wrap="hard"></textarea>
-
+        <textarea id="editor" class="max-percent-height" onkeyup="onChange()" wrap="hard"></textarea>
 
         <!-- preview -->
-        <article style="float: left" id="preview" class="max-percent-height">
+        <article id="preview" class="max-percent-height">
 
         </article>
     </div>
 </div>
-
-
 </body>
 </html>
