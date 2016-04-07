@@ -62,11 +62,14 @@ function sendMarkdown() {
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 var response = xhttp.responseXML;
+                $('#preview').off('scroll');
                 document.getElementById('preview').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
                 document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
                 document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
 
                 mermaid.init(undefined, ".mermaid");
+
+                $('textarea#editor').scroll();
             }
         };
 
@@ -95,7 +98,7 @@ function initScroll() {
         var self = this;
         scrollTimer = window.setTimeout(function () {
             scroll(self);
-        }, 600);
+        }, 300);
     };
 
     $('textarea#editor, article#preview').scroll(sync);
