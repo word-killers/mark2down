@@ -9,7 +9,6 @@ install:
   - "npm update -g npm; npm install"
 
 script:
-  - npm run ci
   - npm test
 
 after_success:

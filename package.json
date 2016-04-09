@@ -10,29 +10,11 @@
     "url": "https://github.com/word-killers/mark2down.git"
   },
   "devDependencies": {
-    "jasmine-core": "^2.3.4",
     "karma": "^0.13.3",
-    "karma-chrome-launcher": "^0.2.0",
-    "karma-firefox-launcher": "^0.1.6",
-    "karma-jasmine": "^0.3.6",
     "karma-qunit": "~0.1.1",
-    "load-grunt-tasks": "^3.2.0",
-    "qunitjs": "^1.18.0",
-    "codecov.io": "~0.1.5",
-    "karma-phantomjs-launcher": "0.2.1",
     "karma-coverage": "~0.5.0",
-    "grunt": "^0.4.5",
-    "grunt-bump": "^0.3.1",
-    "grunt-eslint": "^16.0.0",
-    "grunt-karma": "^0.12.0",
-    "grunt-npm": "0.0.2",
-    "phantomjs": "~1.9.18"
-  },
-  "peerDependencies": {
-    "qunitjs": "^1.14.0"
   },
   "scripts": {
     "test": "grunt karma:test",
-    "ci": "npm test && codecov < coverage/cobertura/cobertura-coverage.xml"
   }
 }
