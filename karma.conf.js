@@ -4,7 +4,7 @@ module.exports = function (config) {
         autoWatch: true,
         frameworks: ['qunit'],
         files: [
-            'static/script*.js',
+            'static/script/*.js',
             'static/test.js'
         ],
 
