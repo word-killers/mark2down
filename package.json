@@ -15,6 +15,6 @@
     "karma-coverage": "~0.5.0"
   },
   "scripts": {
-    "test": "grunt karma:test"
+    "test": "karma start"
   }
 }
