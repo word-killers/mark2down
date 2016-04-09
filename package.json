@@ -26,6 +26,7 @@
     "karma-jasmine": "0.3.8"
   },
   "scripts": {
-    "test": "grunt karma:test"
+    "test": "grunt karma:test",
+    "ci": "npm test && codecov < coverage/cobertura/cobertura-coverage.xml"
   }
 }

@@ -12,7 +12,7 @@ module.exports = function (config) {
             'karma-qunit',
             'karma-coverage',
             'karma-phantomjs-launcher',
-            'karma-html2js-preprocessor'    
+            'karma-html2js-preprocessor'
 
         ],
         browsers: ['PhantomJS'],
@@ -21,6 +21,15 @@ module.exports = function (config) {
         preprocessors: {
             '*.js': ['coverage'],
             'tests/**/*.html' : ['html2js']
-        }
+        },
+
+        coverageReporter: {
+        dir : 'coverage/',
+        reporters: [
+            { type: 'html', subdir: 'html' },
+            { type: 'lcovonly', subdir: 'lcov' },
+            { type: 'cobertura', subdir: 'cobertura' }
+        ]
+    }
     });
 };
