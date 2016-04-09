@@ -1,17 +1,15 @@
-module.exports = function (grunt) {
-    grunt.loadNpmTasks('grunt-contrib-qunit');
+'use strict';
 
-    grunt.initConfig({
-        qunit: {
-            urls: {
-                options: {
-                    urls: [
-                        'https://mark2down.herokuapp.com/test'
-                    ]
-                }
-            }
-        },
-    });
+module.exports = function(grunt) {
 
-    grunt.registerTask('test', ['qunit']);
+  grunt.initConfig({
+
+    karma: {
+      test: {
+        configFile: 'karma.conf.js'
+      }
+    }
+  });
+
+  grunt.loadNpmTasks('grunt-karma');
 };
