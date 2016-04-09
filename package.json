@@ -12,9 +12,9 @@
   "devDependencies": {
     "karma": "^0.13.3",
     "karma-qunit": "~0.1.1",
-    "karma-coverage": "~0.5.0",
+    "karma-coverage": "~0.5.0"
   },
   "scripts": {
-    "test": "grunt karma:test",
+    "test": "grunt karma:test"
   }
 }
