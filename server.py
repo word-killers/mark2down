@@ -4,7 +4,9 @@ import sys
 
 import web, urllib, requests
 import markdown
-import extension
+import alignment_extension
+import graph_com_ann_extension
+import highlight_extension
 from markdown.extensions.toc import TocExtension
 
 # read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
@@ -35,7 +37,7 @@ urls = (
 # Application setup
 app = web.application(urls, globals())
 templates = web.template.render('templates')
-web.config.debug = False # disable debug mode because of sessions support
+#web.config.debug = False # disable debug mode because of sessions support
 
 # Session setup
 session = web.session.Session(
@@ -66,7 +68,7 @@ class Index:
                 ["Heading 6", "H6", "onclick=\"putChar('###### ', 7)\""],
             ], [
                 ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('++  ++', 3)\""],
-                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('~~  ~~', 2)\""],
+                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('~~  ~~', 3)\""],
                 ["Underline", "<i class=\"fa fa-underline\"></i>", "onclick=\"putChar('__  __', 3)\""],
                 ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>", "onclick=\"putChar('--  --', 3)\""],
                 ["typewriting", "T", "onclick=\"putChar('```  ```', 4)\""],
@@ -91,16 +93,20 @@ class Index:
 class Markdown:
     def POST(self):
         data = web.input()
-        ext = extension.Extensions()
-        md = markdown.Markdown(safe_mode='escape' ,extensions=
-                               [ext,
+        graph_com_ann_ext = graph_com_ann_extension.Extensions()
+        highlight_ext = highlight_extension.HighlightExtension()
+        alignment_ext = alignment_extension.Extensions()
+        md = markdown.Markdown(safe_mode='escape', extensions=
+                               [graph_com_ann_ext,  # graph, comment, annotation
+                                highlight_ext,  # strong, italic, underline, cross
+                                alignment_ext,  # alignment
                                 'markdown.extensions.tables',  # tables
                                 'markdown.extensions.sane_lists',  # using lists like in normal mardkown
-                                TocExtension(slugify=self.code),
-                                # 'markdown_include.include' #option to include other files
+                                TocExtension(slugify=self.code),  # table of contents
+                                'markdown_include.include' # option to include other files
                                 ])
 
-        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' + md.toc + '</toc><comments>'+ ext.comment_list +'</comments></reply>'
+        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' +  '</toc><comments>'+ graph_com_ann_ext.comment_list +'</comments></reply>'
         return data
 
     def code(self, value, separator):
