@@ -9,7 +9,7 @@ install:
   - "npm update -g npm; npm install"
 
 script:
-  - npm test
+  - npm run ci
 
 after_success:
   - codecov

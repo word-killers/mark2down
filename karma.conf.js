@@ -1,6 +1,7 @@
 module.exports = function (config) {
     config.set({
         basePath: '',
+        autoWatch: true,
         frameworks: ['qunit'],
         files: [
             'tests/**/*.js',
@@ -9,27 +10,27 @@ module.exports = function (config) {
             'static/script/**/scripts.js'
         ],
         plugins: [
-            'karma-qunit',
             'karma-coverage',
+            'karma-qunit',
             'karma-phantomjs-launcher',
             'karma-html2js-preprocessor'
 
         ],
         browsers: ['PhantomJS'],
-        singleRun: true,
         reporters: ['progress', 'coverage'],
         preprocessors: {
             '*.js': ['coverage'],
-            'tests/**/*.html' : ['html2js']
+            'tests/**/*.html': ['html2js']
         },
+        singleRun: true,
 
         coverageReporter: {
-        dir : 'coverage/',
-        reporters: [
-            { type: 'html', subdir: 'html' },
-            { type: 'lcovonly', subdir: 'lcov' },
-            { type: 'cobertura', subdir: 'cobertura' }
-        ]
-    }
+            dir: 'coverage/',
+            reporters: [
+                {type: 'html', subdir: 'html'},
+                {type: 'lcovonly', subdir: 'lcov'},
+                {type: 'cobertura', subdir: 'cobertura'}
+            ]
+        }
     });
 };
