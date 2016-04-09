@@ -1,7 +1,11 @@
 
 function putStringToEditorTest(input, position, expectedValue, existingValue) {
     QUnit.test("put string to editor", function (assert) {
-        document.body.innerHTML = __html__['tests/test.html'];
+        for( var n in __html__){
+            document.body.innerHTML = __html__[n];
+            break;
+        }
+
         var editor = document.getElementById('editor');
         editor.value = existingValue;
 

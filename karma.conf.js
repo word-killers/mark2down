@@ -1,13 +1,13 @@
 module.exports = function (config) {
     config.set({
-        basePath: '',
+        basePath: 'static/script',
         autoWatch: true,
         frameworks: ['qunit'],
         files: [
-            'tests/**/*.js',
-            'tests/**/*.html',
-            'static/jquery/jquery-1.12.2.min.js',
-            'static/script/**/scripts.js'
+            '../../tests/*.js',
+            '../../tests/*.html',
+            '../jquery/jquery-1.12.2.min.js',
+            'scripts.js'
         ],
         plugins: [
             'karma-coverage',
@@ -20,12 +20,12 @@ module.exports = function (config) {
         reporters: ['progress', 'coverage'],
         preprocessors: {
             '*.js': ['coverage'],
-            'tests/**/*.html': ['html2js']
+            '../../tests/*.html': ['html2js']
         },
         singleRun: true,
 
         coverageReporter: {
-            dir: 'coverage/',
+            dir: '../../coverage/',
             reporters: [
                 {type: 'html', subdir: 'html'},
                 {type: 'lcovonly', subdir: 'lcov'},
