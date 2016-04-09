@@ -6,16 +6,11 @@ python:
 install:
   - "pip install codecov"
   - "pip install -r requirements.txt"
-
-before_script:
- - npm install -g grunt-cli
- - npm install -g grunt-init
- - npm install grunt --save-dev
- - npm install grunt-contrib-qunit
+  - "npm update -g npm; npm install"
 
 script:
-  - coverage run tests.py
-  - grunt test --verbose --force
+  - npm run ci
+  - npm test
 
 after_success:
   - codecov
