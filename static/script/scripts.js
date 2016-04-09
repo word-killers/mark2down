@@ -20,7 +20,8 @@ function putChar(char, position) {
 }
 
 function putStringToEditor(string, position) {
-    document.getElementById('editor').value = editor.value.substring(0, position) + string + editor.value.substring(position);
+    var editor = document.getElementById('editor');
+    editor.value = editor.value.substring(0, position) + string + editor.value.substring(position);
 }
 
 function getCursorPosition() {
