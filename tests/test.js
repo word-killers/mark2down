@@ -1,11 +1,15 @@
+var HTML;
+
+QUnit.begin(function( details ) {
+    for( var n in __html__){
+        HTML = __html__[n];
+        break;
+    }
+});
 
 function putStringToEditorTest(input, position, expectedValue, existingValue) {
     QUnit.test("put string to editor", function (assert) {
-        for( var n in __html__){
-            document.body.innerHTML = __html__[n];
-            break;
-        }
-
+        document.body.innerHTML = HTML;
         var editor = document.getElementById('editor');
         editor.value = existingValue;
 
@@ -15,9 +19,10 @@ function putStringToEditorTest(input, position, expectedValue, existingValue) {
     });
 }
 
-/*
+
 function cursorPositionTest(setPosition, expectPosition, existionValue) {
     QUnit.test("cursor position", function (assert) {
+        document.body.innerHTML = HTML;
         var editor = document.getElementById('editor');
         editor.value = existionValue;
 
@@ -29,7 +34,7 @@ function cursorPositionTest(setPosition, expectPosition, existionValue) {
 
 function sendMarkdownTest(editorValue, expectedValue) {
     QUnit.test("Sever response and preview set", function (assert) {
-
+        document.body.innerHTML = HTML;
         document.getElementById('editor').value = editorValue;
         var done = assert.async();
         sendMarkdown();
@@ -41,10 +46,10 @@ function sendMarkdownTest(editorValue, expectedValue) {
         }, 1000);
     });
 }
-
+/*
 function hidingComponentsTest(windowWidth, previewVisible, panelVisible) {
     QUnit.test("hiding components; width: " + windowWidth, function (assert) {
-
+        document.body.innerHTML = HTML;
         var body = $('body');
         var width = body.outerWidth();
         body.outerWidth(windowWidth);
@@ -62,9 +67,10 @@ function hidingComponentsTest(windowWidth, previewVisible, panelVisible) {
         body.outerWidth(width);
     });
 }
-
+*/
 function putCharTest(editorValue, inputValue, expectedValue, oldPosition, newPosition, expectedPosition) { //todo
     QUnit.test(" put char test", function (assert) {
+        document.body.innerHTML = HTML;
         var editor = document.getElementById('editor');
         editor.value = editorValue;
         setCursorPosition(oldPosition);
@@ -79,8 +85,10 @@ function putCharTest(editorValue, inputValue, expectedValue, oldPosition, newPos
     });
 }
 
+
 function onChangeTest(){
     QUnit.test('on change test', function (assert) {
+        document.body.innerHTML = HTML;
         var editor = document.getElementById('editor');
         editor.value = 'test';
         onChange();
@@ -97,7 +105,7 @@ function onChangeTest(){
 
 function hideShowComponentTest(idComponent){
     QUnit.test('show or hide component', function (assert) {
-
+        document.body.innerHTML = HTML;
         hideShowComponent(idComponent);
 
         var components = document.getElementsByClassName('panel-content');
@@ -112,7 +120,7 @@ function hideShowComponentTest(idComponent){
         }
     });
 }
-*/
+
 putStringToEditorTest('', 0, '', '');
 putStringToEditorTest('', 0, 'existingValue', 'existingValue');
 putStringToEditorTest('test', 0, 'test', "");
@@ -122,7 +130,7 @@ putStringToEditorTest('test', 3, 'exiteststingValue', "existingValue");
 putStringToEditorTest('test', -10, 'testexistingValue', "existingValue");
 putStringToEditorTest('test', 13, 'existingValuetest', "existingValue");
 putStringToEditorTest(' ', 8, 'existing Value', "existingValue");
-/*
+
 cursorPositionTest(0, 0, "");
 cursorPositionTest(10, 0, "");
 cursorPositionTest(0, 0, "abcde fg hijkl mnop qrstuvwxyz");
@@ -131,8 +139,11 @@ cursorPositionTest(30, 30, "abcde fg hijkl mnop qrstuvwxyz");
 cursorPositionTest(31, 30, "abcde fg hijkl mnop qrstuvwxyz");
 cursorPositionTest(-200, 0, "abcde fg hijkl mnop qrstuvwxyz");
 
+/*
 sendMarkdownTest('', '');
 sendMarkdownTest('test', '<p>test</p>');
+
+onChangeTest();
 
 hidingComponentsTest(2000, true, true);
 hidingComponentsTest(1101, true, true);
@@ -141,6 +152,7 @@ hidingComponentsTest(700, false, true);
 hidingComponentsTest(699, false, false);
 hidingComponentsTest(0, false, false);
 
+*/
 putCharTest('existingValue', 'test', 'existingtestValue', 8, 2, 10);
 putCharTest('', '', '', 0, 0, 0);
 putCharTest('', '', '', 1, 10, 0);
@@ -150,9 +162,6 @@ putCharTest('existingValue', '', 'existingValue', 13, 0, 13);
 putCharTest('existingValue', 'test', 'existingValuetest', 13, 10, 17);
 putCharTest('existingValue', 'test', 'testexistingValue', -100, 10, 10);
 
-onChangeTest();
-
 hideShowComponentTest('toc');
 hideShowComponentTest('comments');
 hideShowComponentTest('repository');
-*/

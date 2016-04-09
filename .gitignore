@@ -67,3 +67,6 @@ target/
 
 #Session storage
 sessions/
+
+#node.js
+node_modules/
