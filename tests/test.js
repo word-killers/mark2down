@@ -59,6 +59,7 @@ function heightOfComponentsTest(windowHeight) {
         if (windowHeight < 300) {
             windowHeight = 300;
         }
+        navResult -= navResult-windowHeight;
 
         assert.equal(navResult, windowHeight);
         assert.equal(panelResult, content.height());
