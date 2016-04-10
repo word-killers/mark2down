@@ -1,7 +1,7 @@
 var HTML;
 
-QUnit.begin(function( details ) {
-    for( var n in __html__){
+QUnit.begin(function (details) {
+    for (var n in __html__) {
         HTML = __html__[n];
         break;
     }
@@ -18,7 +18,6 @@ function putStringToEditorTest(input, position, expectedValue, existingValue) {
         assert.equal(editor.value, expectedValue, "expected: '" + expectedValue + "'; result: '" + editor.value + "'");
     });
 }
-
 
 function cursorPositionTest(setPosition, expectPosition, existionValue) {
     QUnit.test("cursor position", function (assert) {
@@ -39,35 +38,34 @@ function sendMarkdownTest(editorValue, expectedValue) {
         var done = assert.async();
         sendMarkdown();
         setTimeout(function () {
-
             var result = document.getElementById('preview').innerHTML;
             assert.equal(result, expectedValue, "expected: '" + expectedValue + "'; result: '" + result + "'");
             done();
         }, 1000);
     });
 }
-/*
-function hidingComponentsTest(windowWidth, previewVisible, panelVisible) {
-    QUnit.test("hiding components; width: " + windowWidth, function (assert) {
+
+function heightOfComponentsTest(windowHeight) {
+    QUnit.test("computing height of components", function (assert) {
         document.body.innerHTML = HTML;
         var body = $('body');
-        var width = body.outerWidth();
-        body.outerWidth(windowWidth);
+        var content = $('#content');
+        var height = body.height();
+        body.innerHeight(windowHeight);
         $(window).resize();
 
-        var previewResult = $('#preview').is(':visible');
-        var panelResult = $('#left_panel').is(':visible');
+        navResult = content.outerHeight() + $('#navigation').outerHeight();
+        panelResult = $("#panel_contents").height() + $('#panel_buttons').height();
+        if (windowHeight < 300) {
+            windowHeight = 300;
+        }
 
-        var previewText = previewResult ? 'visible' : 'hide';
-        var panelText = panelResult ? 'visible' : 'hide';
-
-        assert.equal(previewResult, previewVisible, "preview is " + previewText);
-        assert.equal(panelResult, panelVisible, "panel is " + panelText);
-
-        body.outerWidth(width);
+        assert.equal(navResult, windowHeight);
+        assert.equal(panelResult, content.height());
+        body.outerWidth(height);
     });
 }
-*/
+
 function putCharTest(editorValue, inputValue, expectedValue, oldPosition, newPosition, expectedPosition) { //todo
     QUnit.test(" put char test", function (assert) {
         document.body.innerHTML = HTML;
@@ -86,40 +84,56 @@ function putCharTest(editorValue, inputValue, expectedValue, oldPosition, newPos
 }
 
 
-function onChangeTest(){
+function onChangeTest() {
     QUnit.test('on change test', function (assert) {
         document.body.innerHTML = HTML;
         var editor = document.getElementById('editor');
-        editor.value = 'test';
+        editor.value = '';
         onChange();
 
         var done = assert.async();
         setTimeout(function () {
 
             var result = document.getElementById('preview').innerHTML;
-            assert.equal(result, '<p>test</p>');
+            assert.equal(result, '');
             done();
         }, 2000);
     })
 }
 
-function hideShowComponentTest(idComponent){
+function hideShowComponentTest(idComponent) {
     QUnit.test('show or hide component', function (assert) {
         document.body.innerHTML = HTML;
         hideShowComponent(idComponent);
 
         var components = document.getElementsByClassName('panel-content');
         var bool = false;
-        for(var i = 0; i<components.length; i++){
-            if(components[i].id == idComponent){
+        for (var i = 0; i < components.length; i++) {
+            if (components[i].id == idComponent) {
                 bool = true;
-            }else{
+            } else {
                 bool = false;
             }
-            assert.equal($('#'+components[i].id).is(':visible'), bool, 'component '+ components[i].id + ' is visible: '+ bool);
+            assert.equal($('#' + components[i].id).css('display') != 'none', bool, 'component ' + components[i].id + ' is visible: ' + bool);
         }
     });
 }
+
+function tabTest(){
+    QUnit.test('function of tab', function (assert) {
+        document.body.innerHTML = HTML;
+
+        initTab();
+
+        var editor = document.getElementById('editor');
+        keyvent.on(editor).down(9);
+
+        assert.equal(editor.value, '\t')
+
+    });
+}
+
+tabTest();
 
 putStringToEditorTest('', 0, '', '');
 putStringToEditorTest('', 0, 'existingValue', 'existingValue');
@@ -139,20 +153,19 @@ cursorPositionTest(30, 30, "abcde fg hijkl mnop qrstuvwxyz");
 cursorPositionTest(31, 30, "abcde fg hijkl mnop qrstuvwxyz");
 cursorPositionTest(-200, 0, "abcde fg hijkl mnop qrstuvwxyz");
 
-/*
 sendMarkdownTest('', '');
-sendMarkdownTest('test', '<p>test</p>');
+sendMarkdownTest('test', '\n\n            '); //todo
 
 onChangeTest();
 
-hidingComponentsTest(2000, true, true);
-hidingComponentsTest(1101, true, true);
-hidingComponentsTest(1099, false, true);
-hidingComponentsTest(700, false, true);
-hidingComponentsTest(699, false, false);
-hidingComponentsTest(0, false, false);
 
-*/
+heightOfComponentsTest(1000);
+heightOfComponentsTest(301);
+heightOfComponentsTest(300);
+heightOfComponentsTest(299);
+heightOfComponentsTest(1);
+heightOfComponentsTest(-1);
+
 putCharTest('existingValue', 'test', 'existingtestValue', 8, 2, 10);
 putCharTest('', '', '', 0, 0, 0);
 putCharTest('', '', '', 1, 10, 0);

@@ -12,8 +12,8 @@
 
     <script src="/static/jquery/jquery-1.12.2.min.js"></script>
 
-    <script src="/static/script/scripts.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="C:/Programing/ZSWI/mark2down/static/script/scripts.js"></script>
+    <link rel="stylesheet" href="C:/Programing/ZSWI/mark2down/static/css/style.css">
 
     <script src="test.js"></script>
 
@@ -22,21 +22,46 @@
 <div id="qunit"></div>
 <div id="qunit-fixture">
 
-    <!-- left panel -->
-    <div id="left_panel" class="flex-item item1">
-        <div class="panel-content" id="toc">toc</div>
+    <nav id="navigation">
+        <div class="btn-group" style="float: right">
+            <Button title="$button[0]" type="button" class="btn">Button</Button>
+        </div>
+    </nav>
 
-        <div class="panel-content" id="comments">comments</div>
+    <!-- content -->
+    <div id="content">
+        <div class="max-percent-height">
+            <!-- left panel -->
+            <div id="left_panel">
+                <div id="panel_buttons" class="max-percent-width">
+                    <button id="commentsBtn" class="panel-btn">
+                        Comments
+                    </button>
+                    <button id="fileBtn" class="panel-btn">
+                        File
+                    </button>
+                    <button id="contentBtn" class="panel-btn float_none">
+                        Content
+                    </button>
+                </div>
 
-        <div class="panel-content" id="repository">repository</div>
+                <div id="panel_contents">
+                    <div id="toc" class="panel-content"></div>
+                    <div id="comments" class="panel-content display_none"></div>
+                    <div id="repository" class="panel-content display_none"></div>
+                </div>
+
+            </div>
+            <!-- text area -->
+
+            <textarea id="editor" class="max-percent-height" wrap="hard" cols="30"></textarea>
+
+            <!-- preview -->
+            <article id="preview" class="max-percent-height">
+
+            </article>
+        </div>
     </div>
-
-    <!-- text area -->
-    <textarea id="editor" class="flex-item item2" wrap="hard"></textarea>
-
-    <!-- preview -->
-    <article id="preview" class="flex-item item2"></article>
-
 </div>
 </body>
 </html>

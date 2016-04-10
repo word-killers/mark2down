@@ -4,9 +4,10 @@ module.exports = function (config) {
         autoWatch: true,
         frameworks: ['qunit'],
         files: [
+            '../jquery/jquery-1.12.2.min.js',
+            '../keyvent.min.js',
             '../../tests/*.js',
             '../../tests/*.html',
-            '../jquery/jquery-1.12.2.min.js',
             'scripts.js'
         ],
         plugins: [

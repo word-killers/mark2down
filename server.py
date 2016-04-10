@@ -106,7 +106,7 @@ class Markdown:
                                 'markdown_include.include' # option to include other files
                                 ])
 
-        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' +  '</toc><comments>'+ graph_com_ann_ext.comment_list +'</comments></reply>'
+        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data['data']) + '</preview><toc>' + md.toc + '</toc><comments>'+ graph_com_ann_ext.comment_list +'</comments></reply>'
         return data
 
     def code(self, value, separator):
