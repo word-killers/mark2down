@@ -10,7 +10,7 @@ $(document).ready(function () {
 });
 
 
-$(function () {
+function initPreviewDialog() {
 
     $("#previewDialog").dialog({
         autoOpen: false,
@@ -28,7 +28,7 @@ $(function () {
         $("#previewDialog").dialog("open");
     });
 
-});
+}
 
 function putChar(char, position) {
 
@@ -81,6 +81,8 @@ function finalPreview(elementID) {
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 document.getElementById(elementID).innerHTML =  xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
+
+                mermaid.init(undefined, ".mermaid");
             }
         };
         sendAjax("True", xhttp)
@@ -169,6 +171,7 @@ function init() {
     initTab();
     sendMarkdown();
     initScroll();
+    initPreviewDialog();
     $('#editor').scroll();
     $(window).resize();
 }
