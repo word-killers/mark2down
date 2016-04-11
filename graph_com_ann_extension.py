@@ -21,6 +21,10 @@ class Preprocessors(Preprocessor):
     graph = ""
     new_lines = []
 
+    def __init__(self, md, config):
+        super(Preprocessor, self).__init__(md)
+        self.final = config['final']
+
     def run(self, lines):
         self.init()
         pattern = re.compile('@\[([a-zA-Z0-9-_ ]+)\]')
@@ -49,14 +53,16 @@ class Preprocessors(Preprocessor):
         if line.strip(' \n\r\t\f').startswith('//'):
             form_line = line.strip(' \n\r\t\f/')
             Extensions.comment_list += '<li>' + form_line + '</li>\n'
-            self.new_lines.append('\n---\n++Comment:++ ' + form_line + '\n\n---')
+            if not self.final:
+                self.new_lines.append('\n---\n++Comment:++ ' + form_line + '\n\n---')
             return True
         return False
 
     def annotation(self, line, pattern):
         m = pattern.match(line)
         if m:
-            self.new_lines.append('\n---\n++Annotation:++ ' + m.group(1) + '\n\n---')
+            if not self.final:
+                self.new_lines.append('\n---\n++Annotation:++ ' + m.group(1) + '\n\n---')
             return True
         return False
 
@@ -84,6 +90,12 @@ class Extensions(Extension):
     remember_lines = []
     comment_list = ""
 
+    def __init__(self, final):
+        self.config = {
+            'final': [False, 'Say if  is final printable version']
+        }
+        self.setConfig('final', final)
+
     def extendMarkdown(self, md, md_globals):
-        md.preprocessors.add("GraphCommentAnnotation", Preprocessors(md), '_end')
+        md.preprocessors.add("GraphCommentAnnotation", Preprocessors(md, self.getConfigs()), '_end')
         md.treeprocessors.add("Graph", Treeprocessors(md), '_end')

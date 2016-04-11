@@ -93,7 +93,7 @@ class Index:
 class Markdown:
     def POST(self):
         data = web.input()
-        graph_com_ann_ext = graph_com_ann_extension.Extensions()
+        graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'])
         highlight_ext = highlight_extension.HighlightExtension()
         alignment_ext = alignment_extension.Extensions()
         md = markdown.Markdown(safe_mode='escape', extensions=

@@ -76,7 +76,7 @@ function sendMarkdown() {
 
         xhttp.open('POST', '/markdown');
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("data=" + encodeURIComponent(editor));
+        xhttp.send("data=" + encodeURIComponent(editor) + "&final=False");
     }
 }
 
@@ -91,7 +91,6 @@ function hideShowComponent(idComponent) {
     $('.panel-content').hide();
     $('#' + idComponent).show();
 }
-
 
 function initScroll() {
     sync = function () {
@@ -110,7 +109,7 @@ function scroll(self) {
     var $other = $elements.not(self).off('scroll'), other = $other.get(0);
     var percentage = self.scrollTop / (self.scrollHeight - self.offsetHeight);
     other.scrollTop = percentage * (other.scrollHeight - other.offsetHeight);
-    setTimeout(function() {
+    setTimeout(function () {
         $elements.scroll(sync);
     }, 100);
 }
