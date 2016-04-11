@@ -7,6 +7,13 @@ nav {
     padding: 10px;
 }
 
+#previewDialog{
+    margin-left: auto;
+    margin-right: auto;
+    height: 297mm;
+    width: 210mm;
+}
+
 #editor {
     color: whitesmoke;
     background-color: #4d4d4c;

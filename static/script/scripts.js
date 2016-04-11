@@ -9,6 +9,27 @@ $(document).ready(function () {
     });
 });
 
+
+$(function () {
+
+    $("#previewDialog").dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 500,
+        width: 1000
+    });
+
+    $("#previewOpen").click(function () {
+
+        finalPreview('previewDialog');
+        mermaid.init(undefined, ".mermaid");
+
+        $("#previewDialog").dialog("open");
+    });
+
+});
+
 function putChar(char, position) {
 
     var CaretPos = getCursorPosition();
@@ -51,9 +72,23 @@ function setCursorPosition(position) {
     }
 }
 
-function sendMarkdown() {
+function finalPreview(elementID) {
     var editor = document.getElementById('editor').value;
     if (editor.trim().length == 0) {
+        document.getElementById(elementID).innerHTML = "";
+    } else {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById(elementID).innerHTML =  xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
+            }
+        };
+        sendAjax("True", xhttp)
+    }
+}
+
+function sendMarkdown() {
+    if (document.getElementById('editor').value.trim().length == 0) {
         document.getElementById('preview').innerHTML = "";
         document.getElementById('toc').innerHTML = "";
         document.getElementById('comments').innerHTML = "";
@@ -73,11 +108,14 @@ function sendMarkdown() {
                 $('textarea#editor').scroll();
             }
         };
-
-        xhttp.open('POST', '/markdown');
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("data=" + encodeURIComponent(editor) + "&final=False");
+        sendAjax("False", xhttp);
     }
+}
+
+function sendAjax(final, xhttp) {
+    xhttp.open('POST', '/markdown');
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("data=" + encodeURIComponent(document.getElementById('editor').value) + "&final=" + final);
 }
 
 function onChange() {

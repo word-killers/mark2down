@@ -85,6 +85,8 @@ class Index:
                 ["include", "<i class=\"fa fa-paperclip\"></i>", ""],
                 ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('```graph\\n\\n```', 10)\""],
                 ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\""]
+            ], [
+                ["preview", "Preview", "id=\"previewOpen\""]
             ]
         ]
         return templates.index(data)
