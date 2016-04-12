@@ -60,6 +60,7 @@ class Index:
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='createPDF()'"],
+                ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='print()'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\""],
@@ -97,7 +98,7 @@ class Index:
 class Markdown:
     def POST(self):
         data = web.input()
-        graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'])
+        graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'], data['annotations'].split(',,,'))
         highlight_ext = highlight_extension.HighlightExtension()
         alignment_ext = alignment_extension.Extensions()
         md = markdown.Markdown(safe_mode='escape', extensions=
@@ -111,7 +112,7 @@ class Markdown:
          ])
 
         data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data[
-                                                                                          'data']) + '</preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments></reply>'
+                                                                                          'data']) + '</preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>'+graph_com_ann_ext.annotation_list+'</annotations></reply>'
         return data
 
     def code(self, value, separator):

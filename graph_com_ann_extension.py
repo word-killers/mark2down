@@ -20,10 +20,13 @@ class Preprocessors(Preprocessor):
     is_graph = False
     graph = ""
     new_lines = []
+    addLines = True
+    prohibitedAnnotation = []
 
     def __init__(self, md, config):
         super(Preprocessor, self).__init__(md)
         self.final = config['final']
+        self.prohibitedAnnotation = config['annotations']
 
     def run(self, lines):
         self.init()
@@ -32,7 +35,8 @@ class Preprocessors(Preprocessor):
         for index in range(len(lines)):
             if not self.comment(lines[index]):
                 if not self.annotation(lines[index], pattern):
-                    self.new_lines.append(self.graph_parser(lines[index]))
+                    if self.addLines:
+                        self.new_lines.append(self.graph_parser(lines[index]))
 
         self.on_end()
         return self.new_lines
@@ -40,6 +44,8 @@ class Preprocessors(Preprocessor):
     def init(self):
         Extensions.remember_lines = []
         Extensions.comment_list = '<ul>\n'
+        Extensions.annotation_list = ''
+        self.addLines = True
         self.graph = ""
         self.is_graph = False
         self.new_lines = []
@@ -48,6 +54,7 @@ class Preprocessors(Preprocessor):
         if len(self.graph) > 0:
             self.new_lines.append(self.graph)
         Extensions.comment_list += '</ul>'
+        Extensions.annotation_list = Extensions.annotation_list[:-3]
 
     def comment(self, line):
         if line.strip(' \n\r\t\f').startswith('//'):
@@ -61,10 +68,20 @@ class Preprocessors(Preprocessor):
     def annotation(self, line, pattern):
         m = pattern.match(line)
         if m:
+            Extensions.annotation_list += m.group(1)+',,,'
             if not self.final:
                 self.new_lines.append('\n---\n++Annotation:++ ' + m.group(1) + '\n\n---')
+            else:
+                self.print_annotation(m.group(1))
             return True
         return False
+
+    def print_annotation(self, annotation):
+        for one in self.prohibitedAnnotation:
+            if one == annotation:
+                self.addLines = False
+                return
+        self.addLines = True
 
     def graph_parser(self, line):
         form_line = line.lower().strip(' \n\r\t\f')
@@ -88,13 +105,16 @@ class Preprocessors(Preprocessor):
 
 class Extensions(Extension):
     remember_lines = []
+    annotation_list = ''
     comment_list = ""
 
-    def __init__(self, final):
+    def __init__(self, final, annotations):
         self.config = {
-            'final': [False, 'Say if  is final printable version']
+            'final': [False, 'Say if  is final printable version'],
+            'annotations': [[], 'Names of prohibited annotations']
         }
         self.setConfig('final', final)
+        self.setConfig('annotations', annotations)
 
     def extendMarkdown(self, md, md_globals):
         md.preprocessors.add("GraphCommentAnnotation", Preprocessors(md, self.getConfigs()), '_end')

@@ -1,0 +1,14 @@
+@media print{
+    svg{
+        height: auto;
+    }
+
+    @page{
+        size: 0;
+        margin: 30mm;
+    }
+
+    body{
+        margin: 0;
+    }
+}
