@@ -134,6 +134,23 @@ function tabTest(){
     });
 }
 
+function printTest(annotations){
+    QUnit.test('function of tab', function (assert) {
+        annotation = annotations;
+        document.body.innerHTML = HTML;
+        initPrintDialog();
+        print();
+        var dialog = document.getElementById('printDialog');
+        var form = dialog.getElementsByTagName('form');
+        assert.equal(form.length,1,'Dialog must contain one form.');
+        var labels = form[0].getElementsByTagName('label');
+        assert.equal(labels.length, annotations.length, 'Bad number of inputs');
+        for(var i = 0;i<annotations.length;i++){
+            assert.equal(labels[i].textContent || labels[i].innerText, annotations[i]);
+        }
+    });
+}
+
 tabTest();
 
 putStringToEditorTest('', 0, '', '');
@@ -179,3 +196,5 @@ putCharTest('existingValue', 'test', 'testexistingValue', -100, 10, 10);
 hideShowComponentTest('toc');
 hideShowComponentTest('comments');
 hideShowComponentTest('repository');
+
+printTest(['annotation1', 'annotation2','annotation3']);
