@@ -1,12 +1,14 @@
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
+from markdown.util import etree
 
 
 class Treeprocessors(Treeprocessor):
     def run(self, root):
-        last_child = None
+        element = etree.Element('div')
 
         for child in root.getchildren():
+
             if child.text == '}}':
                 align = 'text-align: right'
             elif child.text == '{{':
@@ -18,14 +20,14 @@ class Treeprocessors(Treeprocessor):
             else:
                 align = ''
 
-            if align:
-                child.text = ''
-                child.tag = 'div'
-                child.set('style', align)
-                last_child = child
-
-            if last_child:
-                last_child.append(child)
+            if align != '':
+                root.append(element)
+                element = etree.Element('div')
+                element.set('style', align)
+            else:
+                element.append(child)
+            root.remove(child)
+        root.append(element)
 
 
 class Extensions(Extension):
