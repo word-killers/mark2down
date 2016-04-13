@@ -22,7 +22,7 @@ function initPreviewDialog() {
 
     $("#previewOpen").click(function () {
 
-        finalPreview('previewDialog',[], true);
+        finalPreview('previewDialog', [], true);
         mermaid.init(undefined, ".mermaid");
 
         $("#previewDialog").dialog("open");
@@ -95,7 +95,7 @@ function finalPreview(elementID, checkboxes, loadGraph) {
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 document.getElementById(elementID).innerHTML = xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
-                if(loadGraph){
+                if (loadGraph) {
                     mermaid.init(undefined, ".mermaid");
                 }
             }
@@ -132,11 +132,11 @@ function sendMarkdown() {
 
 function print() {
     var f = document.createElement('form');
-    for (var index = 0;index < annotation.length; index++) {
+    for (var index = 0; index < annotation.length; index++) {
         var l = document.createElement('label');
         var i = document.createElement('input');
         i.setAttribute('type', "checkbox");
-        i.setAttribute('id', 'checkbox'+index);
+        i.setAttribute('id', 'checkbox' + index);
         l.appendChild(i);
         l.innerHTML += annotation[index];
         f.appendChild(l);
@@ -150,16 +150,15 @@ function print() {
 function printPreview() {
     var index = 0;
     var checkboxes = [];
-    do{
-        var checkbox = document.getElementById('checkbox'+index);
-        if(checkbox != null){
-            if(checkbox.checked){
+    do {
+        var checkbox = document.getElementById('checkbox' + index);
+        if (checkbox != null) {
+            if (checkbox.checked) {
                 checkboxes.push(annotation[index]);
             }
             index++;
         }
-    }while(checkbox != null);
-
+    } while (checkbox != null);
 
 
     finalPreview('help', checkboxes, false);
@@ -185,17 +184,34 @@ function printPreview() {
     }, 1000);
 }
 
+
+function downloadHTML() {
+    finalPreview('help', [], false);
+
+    setTimeout(function () {
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.download = "export.html";
+        $('#help').css('display','block');
+        mermaid.init(undefined, '.mermaid');
+        a.href = "data:text/html," + '<html><head><title>export</title><meta charset="UTF-8"></head><body>' + encodeURIComponent(document.getElementById("help").innerHTML) + '</body></html>';
+        a.click();
+        $('#help').css('display','none');
+        document.body.removeChild(a);
+    }, 1000);
+}
+
 function sendAjax(final, xhttp, checkboxes) {
     xhttp.open('POST', '/markdown');
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var ann = '';
-    if(checkboxes.length > 0){
+    if (checkboxes.length > 0) {
         ann = checkboxes[0];
-        for (var i = 1;i < checkboxes.length; i++){
+        for (var i = 1; i < checkboxes.length; i++) {
             ann += ',,,' + checkboxes[i];
         }
     }
-    xhttp.send("data=" + encodeURIComponent(document.getElementById('editor').value) + "&final=" + final+ '&annotations='+ann);
+    xhttp.send("data=" + encodeURIComponent(document.getElementById('editor').value) + "&final=" + final + '&annotations=' + ann);
 }
 
 function onChange() {

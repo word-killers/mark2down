@@ -59,7 +59,7 @@ function heightOfComponentsTest(windowHeight) {
         if (windowHeight < 300) {
             windowHeight = 300;
         }
-        navResult -= navResult-windowHeight;
+        navResult -= navResult - windowHeight;
 
         assert.equal(navResult, windowHeight);
         assert.equal(panelResult, content.height());
@@ -120,7 +120,7 @@ function hideShowComponentTest(idComponent) {
     });
 }
 
-function tabTest(){
+function tabTest() {
     QUnit.test('function of tab', function (assert) {
         document.body.innerHTML = HTML;
 
@@ -134,7 +134,7 @@ function tabTest(){
     });
 }
 
-function printTest(annotations){
+function printTest(annotations) {
     QUnit.test('function of tab', function (assert) {
         annotation = annotations;
         document.body.innerHTML = HTML;
@@ -142,10 +142,10 @@ function printTest(annotations){
         print();
         var dialog = document.getElementById('printDialog');
         var form = dialog.getElementsByTagName('form');
-        assert.equal(form.length,1,'Dialog must contain one form.');
+        assert.equal(form.length, 1, 'Dialog must contain one form.');
         var labels = form[0].getElementsByTagName('label');
         assert.equal(labels.length, annotations.length, 'Bad number of inputs');
-        for(var i = 0;i<annotations.length;i++){
+        for (var i = 0; i < annotations.length; i++) {
             assert.equal(labels[i].textContent || labels[i].innerText, annotations[i]);
         }
     });
@@ -197,4 +197,4 @@ hideShowComponentTest('toc');
 hideShowComponentTest('comments');
 hideShowComponentTest('repository');
 
-printTest(['annotation1', 'annotation2','annotation3']);
+printTest(['annotation1', 'annotation2', 'annotation3']);

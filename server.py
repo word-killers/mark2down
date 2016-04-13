@@ -59,7 +59,7 @@ class Index:
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
-                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='createPDF()'"],
+                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='downloadHTML()'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='print()'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'"']
             ], [
