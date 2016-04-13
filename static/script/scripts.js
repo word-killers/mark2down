@@ -1,48 +1,19 @@
 var timer;
 var scrollTimer;
 var sync;
-var annotation = [];
+var loadMermaid = false;
 
 $(document).ready(function () {
     $(window).resize(function () {
         $('#content').height($(window).outerHeight() - $('#navigation').outerHeight());
         $('#panel_contents').height($('#content').height() - $('#panel_buttons').height());
+        if(loadMermaid){
+            mermaid.init(undefined,'.mermaid');
+        }
     });
 });
 
-function initPreviewDialog() {
-
-    $("#previewDialog").dialog({
-        autoOpen: false,
-        resizable: true,
-        modal: true,
-        height: 500,
-        width: 1000
-    });
-
-    $("#previewOpen").click(function () {
-
-        finalPreview('previewDialog', [], true);
-        mermaid.init(undefined, ".mermaid");
-
-        $("#previewDialog").dialog("open");
-    });
-
-}
-
-function initPrintDialog() {
-    $('#printDialog').dialog({
-        autoOpen: false,
-        resizable: true,
-        modal: true,
-        buttons: {
-            'Print': function () {
-                printPreview();
-            }
-        }
-
-    })
-}
+// work with editor ----------------------------------------------------------------------------------------------------
 
 function putChar(char, position) {
 
@@ -73,6 +44,7 @@ function getCursorPosition() {
 }
 
 function setCursorPosition(position) {
+    var editor = document.getElementById('editor');
     if (editor.setSelectionRange) {
         editor.focus();
         editor.setSelectionRange(position, position);
@@ -86,23 +58,7 @@ function setCursorPosition(position) {
     }
 }
 
-function finalPreview(elementID, checkboxes, loadGraph) {
-    var editor = document.getElementById('editor').value;
-    if (editor.trim().length == 0) {
-        document.getElementById(elementID).innerHTML = "";
-    } else {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (xhttp.readyState == 4 && xhttp.status == 200) {
-                document.getElementById(elementID).innerHTML = xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
-                if (loadGraph) {
-                    mermaid.init(undefined, ".mermaid");
-                }
-            }
-        };
-        sendAjax("True", xhttp, checkboxes)
-    }
-}
+// communication with server -------------------------------------------------------------------------------------------
 
 function sendMarkdown() {
     if (document.getElementById('editor').value.trim().length == 0) {
@@ -121,7 +77,9 @@ function sendMarkdown() {
                 document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
                 annotation = response.getElementsByTagName('annotations')[0].innerHTML.split(',,,');
 
-                mermaid.init(undefined, ".mermaid");
+                if(loadMermaid) {
+                    mermaid.init(undefined, ".mermaid");
+                }
 
                 $('textarea#editor').scroll();
             }
@@ -130,88 +88,39 @@ function sendMarkdown() {
     }
 }
 
-function print() {
-    var f = document.createElement('form');
-    for (var index = 0; index < annotation.length; index++) {
-        var l = document.createElement('label');
-        var i = document.createElement('input');
-        i.setAttribute('type', "checkbox");
-        i.setAttribute('id', 'checkbox' + index);
-        l.appendChild(i);
-        l.innerHTML += annotation[index];
-        f.appendChild(l);
-        f.appendChild(document.createElement('br'))
-    }
-    document.getElementById('printDialog').innerHTML = '';
-    document.getElementById('printDialog').appendChild(f);
-    $('#printDialog').dialog('open');
-}
-
-function printPreview() {
-    var index = 0;
-    var checkboxes = [];
-    do {
-        var checkbox = document.getElementById('checkbox' + index);
-        if (checkbox != null) {
-            if (checkbox.checked) {
-                checkboxes.push(annotation[index]);
+function finalPreview(elementID, checkboxes, loadGraph) {
+    var editor = document.getElementById('editor').value;
+    if (editor.trim().length == 0) {
+        document.getElementById(elementID).innerHTML = "";
+    } else {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById(elementID).innerHTML = xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
+                if (loadGraph && loadMermaid) {
+                    mermaid.init(undefined, ".mermaid");
+                }
             }
-            index++;
-        }
-    } while (checkbox != null);
-
-
-    finalPreview('help', checkboxes, false);
-    setTimeout(function () {
-        var win = window.open("", "print", "");
-        win.document.write('<html><head><title>print</title>');
-        win.document.write('<meta charset="UTF-8">');
-        win.document.write('<script src="/static/mermaid/mermaid.min.js"></script>');
-        win.document.write('<link rel="stylesheet" href="/static/mermaid/mermaid.css">');
-        win.document.write('<link rel="stylesheet" href="/static/css/print.css">');
-        win.document.write('<script>mermaid.init(undefined, ".mermaid");</script>');
-        win.document.write('</head><body>');
-        win.document.write(document.getElementById('help').innerHTML);
-        win.document.write('</body></html>');
-
-        win.document.close();
-        win.focus();
-
-        setTimeout(function () {
-            win.print();
-            win.close();
-        }, 100);
-    }, 1000);
+        };
+        sendAjax("True", xhttp, checkboxes)
+    }
 }
 
-
-function downloadHTML() {
-    finalPreview('help', [], false);
-
-    setTimeout(function () {
-        var a = document.createElement("a");
-        document.body.appendChild(a);
-        a.download = "export.html";
-        $('#help').css('display','block');
-        mermaid.init(undefined, '.mermaid');
-        a.href = "data:text/html," + '<html><head><title>export</title><meta charset="UTF-8"></head><body>' + encodeURIComponent(document.getElementById("help").innerHTML) + '</body></html>';
-        a.click();
-        $('#help').css('display','none');
-        document.body.removeChild(a);
-    }, 1000);
-}
-
-function sendAjax(final, xhttp, checkboxes) {
+function sendAjax(final, xhttp, checkedAnnotation) {
     xhttp.open('POST', '/markdown');
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var ann = '';
-    if (checkboxes.length > 0) {
-        ann = checkboxes[0];
-        for (var i = 1; i < checkboxes.length; i++) {
-            ann += ',,,' + checkboxes[i];
+    if (checkedAnnotation.length > 0) {
+        ann = checkedAnnotation[0];
+        for (var i = 1; i < checkedAnnotation.length; i++) {
+            ann += ',,,' + checkedAnnotation[i];
         }
     }
-    xhttp.send("data=" + encodeURIComponent(document.getElementById('editor').value) + "&final=" + final + '&annotations=' + ann);
+    xhttp.send(
+        "data=" + encodeURIComponent(document.getElementById('editor').value) +
+        "&final=" + final +
+        '&annotations=' + ann
+    );
 }
 
 function onChange() {
@@ -221,10 +130,7 @@ function onChange() {
     }, 1000);
 }
 
-function hideShowComponent(idComponent) {
-    $('.panel-content').hide();
-    $('#' + idComponent).show();
-}
+// scroll --------------------------------------------------------------------------------------------------------------
 
 function initScroll() {
     sync = function () {
@@ -248,6 +154,53 @@ function scroll(self) {
     }, 100);
 }
 
+// other function ------------------------------------------------------------------------------------------------------
+
+function switchMermaid() {
+    loadMermaid = !loadMermaid;
+    if(loadMermaid){
+        mermaid.init(undefined,'.mermaid');
+    }
+    changeRenderMermaidColor()
+}
+
+function changeRenderMermaidColor(){
+    if(loadMermaid){
+        $('#mermaidBtn').css('color','green');
+    }else{
+        $('#mermaidBtn').css('color','red');
+    }
+}
+
+function hideShowComponent(idComponent) {
+    $('.panel-content').hide();
+    $('#' + idComponent).show();
+}
+
+function initPreviewDialog() {
+
+    $("#previewDialog").dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 500,
+        width: 1000
+    });
+
+    $("#previewOpen").click(function () {
+
+        finalPreview('previewDialog', [], false);
+
+        setTimeout(function () {
+            $("#previewDialog").dialog("open");
+            if(loadMermaid) {
+                mermaid.init(undefined, ".mermaid");
+            }
+        },1000);
+    });
+
+}
+
 function initTab() {
     var editor = document.getElementById("editor");
 
@@ -269,4 +222,5 @@ function init() {
     initPrintDialog();
     $('#editor').scroll();
     $(window).resize();
+    changeRenderMermaidColor();
 }

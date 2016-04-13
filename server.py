@@ -59,8 +59,8 @@ class Index:
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
-                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='downloadHTML()'"],
-                ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='print()'"],
+                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()'"],
+                ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\""],
@@ -89,7 +89,8 @@ class Index:
                 ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('```graph\\n\\n```', 10)\""],
                 ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\""]
             ], [
-                ["preview", "Preview", "id=\"previewOpen\""]
+                ["preview", "Preview", "id=\"previewOpen\""],
+                ["render", 'Render Mermaid', "onclick='switchMermaid();' id='mermaidBtn'"]
             ]
         ]
         return templates.index(data)

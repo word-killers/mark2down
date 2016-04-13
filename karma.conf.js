@@ -6,10 +6,13 @@ module.exports = function (config) {
         files: [
             '../jquery/jquery-1.12.2.min.js',
             '../jquery/jquery-ui-1.11.4/jquery-ui.min.js',
+            '../mermaid/mermaid.min.js',
             '../keyvent.min.js',
             '../../tests/*.js',
             '../../tests/*.html',
-            'scripts.js'
+            'scripts.js',
+            'export.js',
+            'table.js'
         ],
         plugins: [
             'karma-coverage',

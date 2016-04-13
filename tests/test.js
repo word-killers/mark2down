@@ -84,7 +84,6 @@ function putCharTest(editorValue, inputValue, expectedValue, oldPosition, newPos
     });
 }
 
-
 function onChangeTest() {
     QUnit.test('on change test', function (assert) {
         document.body.innerHTML = HTML;
@@ -134,12 +133,39 @@ function tabTest() {
     });
 }
 
-function printTest(annotations) {
+function switchMermaidTest(oldValue) {
+    QUnit.test('function of tab', function (assert) {
+        document.body.innerHTML = HTML;
+        loadMermaid = oldValue;
+        switchMermaid();
+        assert.equal(loadMermaid,!oldValue, 'Bad value');
+        if(!oldValue){
+            assert.equal($('#mermaidBtn').css('color'), 'rgb(0, 128, 0)');
+        }else{
+            assert.equal($('#mermaidBtn').css('color'), 'rgb(255, 0, 0)');
+        }
+    });
+}
+
+function changeRenderMermaidColorTest() {
+    QUnit.test('function of tab', function (assert) {
+        document.body.innerHTML = HTML;
+        loadMermaid = true;
+        changeRenderMermaidColor();
+        assert.equal($('#mermaidBtn').css('color'), 'rgb(0, 128, 0)');
+        loadMermaid = false;
+        changeRenderMermaidColor();
+        assert.equal($('#mermaidBtn').css('color'), 'rgb(255, 0, 0)');
+    });
+}
+
+// export.js ===========================================================================================================
+
+function createExportDialogCheckboxesTest(annotations) {
     QUnit.test('function of tab', function (assert) {
         annotation = annotations;
         document.body.innerHTML = HTML;
-        initPrintDialog();
-        print();
+        createExportDialogCheckboxes();
         var dialog = document.getElementById('printDialog');
         var form = dialog.getElementsByTagName('form');
         assert.equal(form.length, 1, 'Dialog must contain one form.');
@@ -150,6 +176,30 @@ function printTest(annotations) {
         }
     });
 }
+
+function getCheckedAnnotationTest(annotations, checked) {
+    QUnit.test('function of tab', function (assert) {
+        annotation = annotations;
+        document.body.innerHTML = HTML;
+        createExportDialogCheckboxes();
+        for (var i = 0; i < checked.length; i++) {
+            document.getElementById('checkbox' + checked[i]).checked = true;
+        }
+        var annot = getCheckedAnnotation();
+
+        var counter = 0;
+        for (i = 0; i < annot.length; i++) {
+            for (var j = 0; j < checked.length; j++) {
+                if (annot[i] == annotations[checked[j]]) {
+                    counter++;
+                }
+            }
+        }
+        assert.equal(counter, checked.length, 'Bad number of checked annotations');
+    });
+
+}
+
 
 tabTest();
 
@@ -197,4 +247,15 @@ hideShowComponentTest('toc');
 hideShowComponentTest('comments');
 hideShowComponentTest('repository');
 
-printTest(['annotation1', 'annotation2', 'annotation3']);
+createExportDialogCheckboxesTest(['annotation1', 'annotation2', 'annotation3']);
+createExportDialogCheckboxesTest([]);
+
+getCheckedAnnotationTest(['annotation1', 'annotation2', 'annotation3'],[0]);
+getCheckedAnnotationTest(['annotation1', 'annotation2', 'annotation3'],[1,2]);
+getCheckedAnnotationTest(['annotation1', 'annotation2', 'annotation3'],[]);
+getCheckedAnnotationTest([],[]);
+
+switchMermaidTest(true);
+switchMermaidTest(false);
+
+changeRenderMermaidColorTest();
