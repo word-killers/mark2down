@@ -1,12 +1,20 @@
+/** Timer for Content change */
 var timer;
+/** Timer for scrolling. */
 var scrollTimer;
+/** function for scrolling */
 var sync;
+/** If is true, graphs are parse. */
 var loadMermaid = false;
 
+/**
+ * Call after page loads. Set height of html components when window is resize.
+ */
 $(document).ready(function () {
     $(window).resize(function () {
-        $('#content').height($(window).outerHeight() - $('#navigation').outerHeight());
-        $('#panel_contents').height($('#content').height() - $('#panel_buttons').height());
+        var content = $('#content');
+        content.height($(window).outerHeight() - $('#navigation').outerHeight());
+        $('#panel_contents').height(content.height() - $('#panel_buttons').height());
         if (loadMermaid) {
             mermaid.init(undefined, '.mermaid');
         }
@@ -15,6 +23,13 @@ $(document).ready(function () {
 
 // work with editor ----------------------------------------------------------------------------------------------------
 
+/**
+ * Put input string to #editor, set cursor position and call onChange().
+ * oldPosition + position = newPosition.
+ *
+ * @param char string which will be put in #editor
+ * @param position position of cursor on end of function relative to start of input string
+ */
 function putChar(char, position) {
 
     var CaretPos = getCursorPosition();
@@ -25,31 +40,45 @@ function putChar(char, position) {
     onChange();
 }
 
+/**
+ * Put string to #editor on given position.
+ *
+ * @param string input string
+ * @param position position in #editor.
+ */
 function putStringToEditor(string, position) {
     var editor = document.getElementById('editor');
     editor.value = editor.value.substring(0, position) + string + editor.value.substring(position);
 }
 
+/**
+ * Return current cursor position in #editor.
+ * @returns {Number} position in #editor
+ */
 function getCursorPosition() {
     var editor = document.getElementById("editor");
 
-    if (document.selection) {
+    if (document.selection) { // for IE
         editor.focus();
         var Sel = document.selection.createRange();
         Sel.moveStart('character', -editor.value.length);
         return Sel.text.length;
-    }
+    }// for other browsers
     else if (editor.selectionStart || editor.selectionStart == '0')
         return editor.selectionStart;
 }
 
+/**
+ * Set cursors position in #editor.
+ * @param position new cursor position
+ */
 function setCursorPosition(position) {
     var editor = document.getElementById('editor');
-    if (editor.setSelectionRange) {
+    if (editor.setSelectionRange) { // for other browsers
         editor.focus();
         editor.setSelectionRange(position, position);
     }
-    else if (editor.createTextRange()) {
+    else if (editor.createTextRange()) { // for IE
         var range = editor.createTextRange();
         range.collapse(true);
         range.moveEnd('character', position);
@@ -60,8 +89,12 @@ function setCursorPosition(position) {
 
 // communication with server -------------------------------------------------------------------------------------------
 
+/**
+ * Using ajax to communicate with server. Send on server content of #editor and from response get preview, table of
+ * content, table of comments and list of annotations. This values are set to page elements.
+ */
 function sendMarkdown() {
-    if (document.getElementById('editor').value.trim().length == 0) {
+    if (document.getElementById('editor').value.trim().length == 0) { // if #editor is empty
         document.getElementById('preview').innerHTML = "";
         document.getElementById('toc').innerHTML = "";
         document.getElementById('comments').innerHTML = "";
@@ -81,16 +114,23 @@ function sendMarkdown() {
                     mermaid.init(undefined, ".mermaid");
                 }
 
-                $('textarea#editor').scroll();
+                $('textarea#editor').scroll(); // after set all data sync scroll position
             }
         };
         sendAjax("False", xhttp, []);
     }
 }
 
+/**
+ * Using ajax to commucite with server and get final preview of document. Preview is set to {elementID}.
+ * @param elementID element where will be final preview.
+ * @param checkboxes list of annotation which will be deleted from final preview.
+ * @param loadGraph if is true graf will be parsed.
+ * @returns {*} XML http request
+ */
 function finalPreview(elementID, checkboxes, loadGraph) {
     var editor = document.getElementById('editor').value;
-    if (editor.trim().length == 0) {
+    if (editor.trim().length == 0) { // if editor is empty
         document.getElementById(elementID).innerHTML = "";
     } else {
         var xhttp = new XMLHttpRequest();
@@ -98,7 +138,7 @@ function finalPreview(elementID, checkboxes, loadGraph) {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 if (xhttp.responseXML) {
                     var response = xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
-                }else{
+                } else {
                     response = xhttp.responseText;
                 }
                 document.getElementById(elementID).innerHTML = response;
@@ -115,11 +155,17 @@ function finalPreview(elementID, checkboxes, loadGraph) {
     return null;
 }
 
+/**
+ * Send ajax request to server.
+ * @param final if i want final preview or not.
+ * @param xhttp XML http request
+ * @param checkedAnnotation list of annotation which will be deleted from final preview
+ */
 function sendAjax(final, xhttp, checkedAnnotation) {
     xhttp.open('POST', '/markdown');
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     var ann = '';
-    if (checkedAnnotation.length > 0) {
+    if (checkedAnnotation.length > 0) { // convert list of annotations to string
         ann = checkedAnnotation[0];
         for (var i = 1; i < checkedAnnotation.length; i++) {
             ann += ',,,' + checkedAnnotation[i];
@@ -132,6 +178,9 @@ function sendAjax(final, xhttp, checkedAnnotation) {
     );
 }
 
+/**
+ * On call wait one sec. After that call sendMarkdown(). If is call repeatedly, timer is set tu one sec again.
+ */
 function onChange() {
     window.clearTimeout(timer);
     timer = window.setTimeout(function () {
@@ -141,6 +190,9 @@ function onChange() {
 
 // scroll --------------------------------------------------------------------------------------------------------------
 
+/**
+ * Initialize sync scrolling #editor and #preview. After scroll wait 300 milisec and sync.
+ */
 function initScroll() {
     sync = function () {
         window.clearTimeout(scrollTimer);
@@ -153,6 +205,10 @@ function initScroll() {
     $('textarea#editor, article#preview').scroll(sync);
 }
 
+/**
+ * Set other panel scroll to same value.
+ * @param self which panel was scroll
+ */
 function scroll(self) {
     var $elements = $('textarea#editor, article#preview');
     var $other = $elements.not(self).off('scroll'), other = $other.get(0);
@@ -165,6 +221,9 @@ function scroll(self) {
 
 // other function ------------------------------------------------------------------------------------------------------
 
+/**
+ * Switch off or on of graph parser and recolor control button.
+ */
 function switchMermaid() {
     loadMermaid = !loadMermaid;
     if (loadMermaid) {
@@ -173,6 +232,9 @@ function switchMermaid() {
     changeRenderMermaidColor()
 }
 
+/**
+ * Set color of #mermaitBtn by loadMermaid value.
+ */
 function changeRenderMermaidColor() {
     if (loadMermaid) {
         $('#mermaidBtn').css('color', 'green');
@@ -181,11 +243,18 @@ function changeRenderMermaidColor() {
     }
 }
 
+/**
+ * Hide all components if #leftPanel and show only given component.
+ * @param idComponent Id of component which would be visible.
+ */
 function hideShowComponent(idComponent) {
     $('.panel-content').hide();
     $('#' + idComponent).show();
 }
 
+/**
+ * Initialize #previewDialog and set #previewButton to open final preview.
+ */
 function initPreviewDialog() {
 
     $("#previewDialog").dialog({
@@ -210,6 +279,9 @@ function initPreviewDialog() {
 
 }
 
+/**
+ * Initialize using of tab in #editor.
+ */
 function initTab() {
     var editor = document.getElementById("editor");
 
@@ -223,6 +295,9 @@ function initTab() {
     }
 }
 
+/**
+ * Only call initialize methods.
+ */
 function init() {
     initTab();
     sendMarkdown();
