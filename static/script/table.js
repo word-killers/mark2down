@@ -1,5 +1,4 @@
-$(function () {
-
+function initTableDialog() {
     $("#dialog").dialog({
         autoOpen: false,
         resizable: true,
@@ -28,7 +27,7 @@ $(function () {
     $("#tableButton").click(function () {
         $("#dialog").dialog("open");
     });
-});
+}
 
 function generateTable() {
     var $text = '';
@@ -87,6 +86,7 @@ function delRow() {
         table.removeChild(table.lastElementChild);
     }
 }
+
 function delCol() {
     var table = document.getElementById('table');
     var length = table.childElementCount;
@@ -119,7 +119,7 @@ function addCol() {
 
 function addRow() {
     var table = document.getElementById('table');
-    var length = table.lastElementChild.childElementCount;
+    var length = table.lastElementChild != null?table.lastElementChild.childElementCount:0;
     var tr = document.createElement('tr');
     for (var j = 0; j < length; j++) {
 

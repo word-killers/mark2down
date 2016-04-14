@@ -7,8 +7,8 @@ $(document).ready(function () {
     $(window).resize(function () {
         $('#content').height($(window).outerHeight() - $('#navigation').outerHeight());
         $('#panel_contents').height($('#content').height() - $('#panel_buttons').height());
-        if(loadMermaid){
-            mermaid.init(undefined,'.mermaid');
+        if (loadMermaid) {
+            mermaid.init(undefined, '.mermaid');
         }
     });
 });
@@ -77,7 +77,7 @@ function sendMarkdown() {
                 document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
                 annotation = response.getElementsByTagName('annotations')[0].innerHTML.split(',,,');
 
-                if(loadMermaid) {
+                if (loadMermaid) {
                     mermaid.init(undefined, ".mermaid");
                 }
 
@@ -96,14 +96,23 @@ function finalPreview(elementID, checkboxes, loadGraph) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
-                document.getElementById(elementID).innerHTML = xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
+                if (xhttp.responseXML) {
+                    var response = xhttp.responseXML.getElementsByTagName('preview')[0].innerHTML;
+                }else{
+                    response = xhttp.responseText;
+                }
+                document.getElementById(elementID).innerHTML = response;
+
+
                 if (loadGraph && loadMermaid) {
                     mermaid.init(undefined, ".mermaid");
                 }
             }
         };
-        sendAjax("True", xhttp, checkboxes)
+        sendAjax("True", xhttp, checkboxes);
+        return xhttp;
     }
+    return null;
 }
 
 function sendAjax(final, xhttp, checkedAnnotation) {
@@ -158,17 +167,17 @@ function scroll(self) {
 
 function switchMermaid() {
     loadMermaid = !loadMermaid;
-    if(loadMermaid){
-        mermaid.init(undefined,'.mermaid');
+    if (loadMermaid) {
+        mermaid.init(undefined, '.mermaid');
     }
     changeRenderMermaidColor()
 }
 
-function changeRenderMermaidColor(){
-    if(loadMermaid){
-        $('#mermaidBtn').css('color','green');
-    }else{
-        $('#mermaidBtn').css('color','red');
+function changeRenderMermaidColor() {
+    if (loadMermaid) {
+        $('#mermaidBtn').css('color', 'green');
+    } else {
+        $('#mermaidBtn').css('color', 'red');
     }
 }
 
@@ -193,10 +202,10 @@ function initPreviewDialog() {
 
         setTimeout(function () {
             $("#previewDialog").dialog("open");
-            if(loadMermaid) {
+            if (loadMermaid) {
                 mermaid.init(undefined, ".mermaid");
             }
-        },1000);
+        }, 1000);
     });
 
 }
@@ -220,6 +229,7 @@ function init() {
     initScroll();
     initPreviewDialog();
     initPrintDialog();
+    initTableDialog();
     $('#editor').scroll();
     $(window).resize();
     changeRenderMermaidColor();

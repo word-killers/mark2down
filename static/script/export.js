@@ -1,13 +1,23 @@
+/**
+ * Contains all annotation it document.
+ * @type {Array}
+ */
 var annotation = [];
 
+/**
+ * Initialize #printDialog.
+ */
 function initPrintDialog() {
     $('#printDialog').dialog({
         autoOpen: false,
         resizable: true,
-        modal: true,
+        modal: true
     })
 }
 
+/**
+ * Call createExportDialogCheckboxes, set button to #printDialog and open it.
+ */
 function printDocument() {
     createExportDialogCheckboxes();
     $('#printDialog').dialog({
@@ -21,6 +31,9 @@ function printDocument() {
     $('#printDialog').dialog('open');
 }
 
+/**
+ * Call createExportDialogCheckboxes, set button to #printDialog and open it.
+ */
 function exportDocument() {
     createExportDialogCheckboxes();
     $('#printDialog').dialog({
@@ -34,12 +47,15 @@ function exportDocument() {
     $('#printDialog').dialog('open');
 }
 
+/**
+ * Open preview in new window and call print.
+ */
 function printPreview() {
     var checkboxes = getCheckedAnnotation();
     finalPreview('help', checkboxes, false);
 
     setTimeout(function () {
-        var win = window.open("", "print", "");
+        var win = window.open("", "Print", "");
         win.document.write('<html><head><title>print</title>');
         win.document.write('<meta charset="UTF-8">');
         if (loadMermaid) {
@@ -52,8 +68,8 @@ function printPreview() {
         win.document.write(document.getElementById('help').innerHTML);
         win.document.write('</body></html>');
 
-        win.document.close();
-        win.focus();
+        win.document.close(); // for IE
+        win.focus(); // for IE
 
         document.getElementById('help').innerHTML = '';
         setTimeout(function () {
@@ -63,15 +79,18 @@ function printPreview() {
     }, 1000);
 }
 
+/**
+ * Download html of markdown code.
+ */
 function exportPreview() {
     var checkboxes = getCheckedAnnotation();
-    finalPreview('help', checkboxes, false);
+    finalPreview('help', checkboxes, false); // load data from server
 
     setTimeout(function () {
         var a = document.createElement("a");
         document.body.appendChild(a);
         a.download = "export.html";
-        $('#help').css('display', 'block');
+        $('#help').css('display', 'block'); // must be visible because of mermaid
         if (loadMermaid) {
             mermaid.init(undefined, ".mermaid");
         }
@@ -79,10 +98,14 @@ function exportPreview() {
         a.click();
         $('#help').css('display', 'none');
         document.body.removeChild(a);
-        document.getElementById('help').innerHTML = '';
+        document.getElementById('help').innerHTML = ''; // clear help div
     }, 1000);
 }
 
+/**
+ * Return array which contains annotations which are checked in #printDialog.
+ * @returns {Array} checked annotation in #printDialog.
+ */
 function getCheckedAnnotation() {
     var index = 0;
     var checkboxes = [];
@@ -99,6 +122,9 @@ function getCheckedAnnotation() {
     return checkboxes;
 }
 
+/**
+ * Add form to #printDialog which contains checkboxes which are defined in annotation array.
+ */
 function createExportDialogCheckboxes() {
     var f = document.createElement('form');
     for (var index = 0; index < annotation.length; index++) {

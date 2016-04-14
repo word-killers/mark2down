@@ -8,6 +8,7 @@ module.exports = function (config) {
             '../jquery/jquery-ui-1.11.4/jquery-ui.min.js',
             '../mermaid/mermaid.min.js',
             '../keyvent.min.js',
+            '../dexter.min.js',
             '../../tests/*.js',
             '../../tests/*.html',
             'scripts.js',
@@ -19,7 +20,6 @@ module.exports = function (config) {
             'karma-qunit',
             'karma-phantomjs-launcher',
             'karma-html2js-preprocessor'
-
         ],
         browsers: ['PhantomJS'],
         reporters: ['progress', 'coverage'],
