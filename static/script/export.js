@@ -20,7 +20,8 @@ function initPrintDialog() {
  */
 function printDocument() {
     createExportDialogCheckboxes();
-    $('#printDialog').dialog({
+    var printDialog = $('#printDialog');
+    printDialog.dialog({
         buttons: {
             'Print': function () {
                 printPreview();
@@ -28,7 +29,7 @@ function printDocument() {
             }
         }
     });
-    $('#printDialog').dialog('open');
+    printDialog.dialog('open');
 }
 
 /**
@@ -36,7 +37,8 @@ function printDocument() {
  */
 function exportDocument() {
     createExportDialogCheckboxes();
-    $('#printDialog').dialog({
+    var printDialog = $('#printDialog');
+    printDialog.dialog({
         buttons: {
             'Export': function () {
                 exportPreview();
@@ -44,7 +46,7 @@ function exportDocument() {
             }
         }
     });
-    $('#printDialog').dialog('open');
+    printDialog.dialog('open');
 }
 
 /**
@@ -90,13 +92,14 @@ function exportPreview() {
         var a = document.createElement("a");
         document.body.appendChild(a);
         a.download = "export.html";
-        $('#help').css('display', 'block'); // must be visible because of mermaid
+        var helpDiv = $('#help');
+        helpDiv.css('display', 'block'); // must be visible because of mermaid
         if (loadMermaid) {
             mermaid.init(undefined, ".mermaid");
         }
         a.href = "data:text/html," + '<html><head><title>export</title><meta charset="UTF-8"></head><body>' + encodeURIComponent(document.getElementById("help").innerHTML) + '</body></html>';
         a.click();
-        $('#help').css('display', 'none');
+        helpDiv.css('display', 'none');
         document.body.removeChild(a);
         document.getElementById('help').innerHTML = ''; // clear help div
     }, 1000);

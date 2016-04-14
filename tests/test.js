@@ -314,8 +314,20 @@ function generateTableTest() {
     QUnit.test('Create table', function (assert) {
         document.body.innerHTML = HTML;
         document.getElementById('editor').value = '';
-        document.getElementById('table').innerHTML = "<tr><th class=\"column\"><textarea class=\"table_text_area\">A</textarea></th><th class=\"column\"><textarea class=\"table_text_area\">B</textarea></th><th class=\"column\"><textarea class=\"table_text_area\">C</textarea></th></tr>" +
-            "<tr><td class=\"column\"><textarea class=\"table_text_area\">D</textarea></td><td class=\"column\"><textarea class=\"table_text_area\">E</textarea></td><td class=\"column\"><textarea class=\"table_text_area\">F</textarea></td></tr><tr><td class=\"column\"><textarea class=\"table_text_area\">G</textarea></td><td class=\"column\"><textarea class=\"table_text_area\">H</textarea></td><td class=\"column\"><textarea class=\"table_text_area\">I</textarea></td></tr>"
+        document.getElementById('table').innerHTML = 
+            "<tr>" +
+            "<th class=\"column\"><textarea class=\"table_text_area\">A</textarea></th>" +
+            "<th class=\"column\"><textarea class=\"table_text_area\">B</textarea></th>" +
+            "<th class=\"column\"><textarea class=\"table_text_area\">C</textarea></th>" +
+            "</tr><tr>" +
+            "<td class=\"column\"><textarea class=\"table_text_area\">D</textarea></td>" +
+            "<td class=\"column\"><textarea class=\"table_text_area\">E</textarea></td>" +
+            "<td class=\"column\"><textarea class=\"table_text_area\">F</textarea></td>" +
+            "</tr><tr>" +
+            "<td class=\"column\"><textarea class=\"table_text_area\">G</textarea></td>" +
+            "<td class=\"column\"><textarea class=\"table_text_area\">H</textarea></td>" +
+            "<td class=\"column\"><textarea class=\"table_text_area\">I</textarea></td>" +
+            "</tr>";
 
         initTableDialog();
         $('#tableButton').click();
