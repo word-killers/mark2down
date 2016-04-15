@@ -22,6 +22,7 @@ class Preprocessors(Preprocessor):
     new_lines = []
     addLines = True
     prohibitedAnnotation = []
+    annotation_list = set()
 
     def __init__(self, md, config):
         super(Preprocessor, self).__init__(md)
@@ -44,7 +45,7 @@ class Preprocessors(Preprocessor):
     def init(self):
         Extensions.remember_lines = []
         Extensions.comment_list = '<ul>\n'
-        Extensions.annotation_list = ''
+        self.annotation_list = set()
         self.addLines = True
         self.graph = ""
         self.is_graph = False
@@ -54,7 +55,9 @@ class Preprocessors(Preprocessor):
         if len(self.graph) > 0:
             self.new_lines.append(self.graph)
         Extensions.comment_list += '</ul>'
-        Extensions.annotation_list = Extensions.annotation_list[:-3]
+        for item in self.annotation_list:
+            Extensions.annotation_strings += item + ',,,'
+        Extensions.annotation_strings = Extensions.annotation_strings[:-3]
 
     def comment(self, line):
         if line.strip(' \n\r\t\f').startswith('//'):
@@ -68,7 +71,7 @@ class Preprocessors(Preprocessor):
     def annotation(self, line, pattern):
         m = pattern.match(line)
         if m:
-            Extensions.annotation_list += m.group(1)+',,,'
+            self.annotation_list.add(m.group(1))
             if not self.final:
                 self.new_lines.append('\n---\n++Annotation:++ ' + m.group(1) + '\n\n---')
             else:
@@ -105,7 +108,7 @@ class Preprocessors(Preprocessor):
 
 class Extensions(Extension):
     remember_lines = []
-    annotation_list = ''
+    annotation_strings = ""
     comment_list = ""
 
     def __init__(self, final, annotations):

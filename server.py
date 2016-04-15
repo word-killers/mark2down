@@ -113,7 +113,7 @@ class Markdown:
          ])
 
         data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview>' + md.convert(data[
-                                                                                          'data']) + '</preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>'+graph_com_ann_ext.annotation_list+'</annotations></reply>'
+                                                                                          'data']) + '</preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>'+graph_com_ann_ext.annotation_strings+'</annotations></reply>'
         return data
 
     def code(self, value, separator):
