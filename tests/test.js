@@ -103,10 +103,6 @@ function finalPreviewTest(editorText, expectedValue, annotations, parseMermaid) 
     });
 }
 
-function sendAjaxTest() {
-    //todo
-}
-
 function onChangeTest() {
     QUnit.test('on change test', function (assert) {
         document.body.innerHTML = HTML;
@@ -125,14 +121,6 @@ function onChangeTest() {
 }
 
 // scroll --------------------------------------------------------------------------------------------------------------
-
-function initScrollTest() {
-    //todo
-}
-
-function scrollTest() {
-    //todo
-}
 
 // other function ------------------------------------------------------------------------------------------------------
 
@@ -212,10 +200,6 @@ function tabTest() {
     });
 }
 
-function initTest() {
-    //todo
-}
-
 // other tests ---------------------------------------------------------------------------------------------------------
 
 function heightOfComponentsTest(windowHeight) {
@@ -251,10 +235,12 @@ function initPrintDialogTest() {
     });
 }
 
-function printDocumetTest() {
+function printDocumentTest() {
     QUnit.test('Open print dialog', function (assert) {
         document.body.innerHTML = HTML;
+        annotation = ['annotation'];
         printDocument();
+        annotation = [];
 
         assert.equal($('#printDialog').dialog('isOpen'), true);
     });
@@ -263,7 +249,9 @@ function printDocumetTest() {
 function exportDocumentTest() {
     QUnit.test('Open export dialog', function (assert) {
         document.body.innerHTML = HTML;
+        annotation = ['annotation'];
         exportDocument();
+        annotation = [];
 
         assert.equal($('#printDialog').dialog('isOpen'), true);
     });
@@ -576,7 +564,7 @@ heightOfComponentsTest(1);
 heightOfComponentsTest(-1);
 
 initPrintDialogTest();
-printDocumetTest();
+printDocumentTest();
 exportDocumentTest();
 
 createExportDialogCheckboxesTest(['annotation1', 'annotation2', 'annotation3']);
