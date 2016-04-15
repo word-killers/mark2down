@@ -16,37 +16,47 @@ function initPrintDialog() {
 }
 
 /**
- * Call createExportDialogCheckboxes, set button to #printDialog and open it.
+ * Call createExportDialogCheckboxes, set button to #printDialog and open it. If array annotations is empty, function
+ * only call printPreview().
  */
 function printDocument() {
-    createExportDialogCheckboxes();
-    var printDialog = $('#printDialog');
-    printDialog.dialog({
-        buttons: {
-            'Print': function () {
-                printPreview();
-                $(this).dialog('close');
+    if(annotation.length == 0) {
+        printPreview();
+    }else{
+        createExportDialogCheckboxes();
+        var printDialog = $('#printDialog');
+        printDialog.dialog({
+            buttons: {
+                'Print': function () {
+                    printPreview();
+                    $(this).dialog('close');
+                }
             }
-        }
-    });
-    printDialog.dialog('open');
+        });
+        printDialog.dialog('open');
+    }
 }
 
 /**
- * Call createExportDialogCheckboxes, set button to #printDialog and open it.
+ * Call createExportDialogCheckboxes, set button to #printDialog and open it. If array annotations is empty, function
+ * only call exportPreview().
  */
 function exportDocument() {
-    createExportDialogCheckboxes();
-    var printDialog = $('#printDialog');
-    printDialog.dialog({
-        buttons: {
-            'Export': function () {
-                exportPreview();
-                $(this).dialog('close');
+    if(annotation.length == 0){
+        exportPreview();
+    }else {
+        createExportDialogCheckboxes();
+        var printDialog = $('#printDialog');
+        printDialog.dialog({
+            buttons: {
+                'Export': function () {
+                    exportPreview();
+                    $(this).dialog('close');
+                }
             }
-        }
-    });
-    printDialog.dialog('open');
+        });
+        printDialog.dialog('open');
+    }
 }
 
 /**
