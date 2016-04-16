@@ -99,6 +99,7 @@ function sendMarkdown() {
         document.getElementById('previewValue').innerHTML = "";
         document.getElementById('toc').innerHTML = "";
         document.getElementById('comments').innerHTML = "";
+        annotation = [];
 
     } else {
         var xhttp = new XMLHttpRequest();
@@ -109,7 +110,12 @@ function sendMarkdown() {
                 document.getElementById('previewValue').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
                 document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
                 document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
-                annotation = response.getElementsByTagName('annotations')[0].innerHTML.split(',,,');
+                var respAnnotation = response.getElementsByTagName('annotations')[0].innerHTML;
+                if(respAnnotation == ''){
+                    annotation = [];
+                }else {
+                    annotation = respAnnotation.split(',,,');
+                }
 
                 if (loadMermaid) {
                     mermaid.init(undefined, ".mermaid");

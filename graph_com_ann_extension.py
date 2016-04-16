@@ -45,6 +45,7 @@ class Preprocessors(Preprocessor):
     def init(self):
         Extensions.remember_lines = []
         Extensions.comment_list = '<ul>\n'
+        Extensions.annotation_strings = ''
         self.annotation_list = set()
         self.addLines = True
         self.graph = ""
