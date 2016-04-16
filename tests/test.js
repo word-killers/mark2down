@@ -65,7 +65,7 @@ function sendMarkdownTest(editorValue, expectedValue) {
         var done = assert.async();
         sendMarkdown();
         setTimeout(function () {
-            var result = document.getElementById('preview').innerHTML;
+            var result = document.getElementById('previewValue').innerHTML;
             assert.equal(result, expectedValue, "expected: '" + expectedValue + "'; result: '" + result + "'");
             done();
         }, 1000);
@@ -113,7 +113,7 @@ function onChangeTest() {
         var done = assert.async();
         setTimeout(function () {
 
-            var result = document.getElementById('preview').innerHTML;
+            var result = document.getElementById('previewValue').innerHTML;
             assert.equal(result, '');
             done();
         }, 2000);
