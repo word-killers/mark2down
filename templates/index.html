@@ -11,7 +11,8 @@ $def with(data)
     <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">-->
     <script src="/static/jquery/jquery-1.12.2.min.js"></script>
     <script src="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/jquery/jquery-ui-1.11.4/jquery-ui.min.css">
+
 
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">-->
     <link rel="stylesheet" href="/static/font-awesome-4.5.0/css/font-awesome.min.css">
@@ -22,6 +23,7 @@ $def with(data)
     <script src="/static/script/table.js"></script>
     <script src="/static/script/scripts.js"></script>
     <script src="/static/script/export.js"></script>
+    <script src="/static/script/adjustmentColumns.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
@@ -75,14 +77,18 @@ $def with(data)
             </div>
 
         </div>
-        <!-- text area -->
+        <button id="showLeftPanel" title="Show left panel" type="button" class="show_left_panel_btn" onclick="showLeftPanel()">></button>
 
+        <!-- text area -->
         <textarea id="editor" class="max-percent-height" onkeyup="onChange()" wrap="hard" cols="30"></textarea>
 
         <!-- preview -->
-        <article id="preview" class="max-percent-height">
+        <button id="showPreview" title="Show preview" type="button" class="show_left_panel_btn" onclick="showPreview()"><</button>
+        <div id="preview" class="max-percent-height">
+            <article id="previewValue">
 
-        </article>
+            </article>
+        </div>
     </div>
 </div>
 </body>

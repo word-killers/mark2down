@@ -21,6 +21,7 @@ $(document).ready(function () {
     });
 });
 
+
 // work with editor ----------------------------------------------------------------------------------------------------
 
 /**
@@ -95,7 +96,7 @@ function setCursorPosition(position) {
  */
 function sendMarkdown() {
     if (document.getElementById('editor').value.trim().length == 0) { // if #editor is empty
-        document.getElementById('preview').innerHTML = "";
+        document.getElementById('previewValue').innerHTML = "";
         document.getElementById('toc').innerHTML = "";
         document.getElementById('comments').innerHTML = "";
 
@@ -105,7 +106,7 @@ function sendMarkdown() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 var response = xhttp.responseXML;
                 $('#preview').off('scroll');
-                document.getElementById('preview').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
+                document.getElementById('previewValue').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
                 document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
                 document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
                 annotation = response.getElementsByTagName('annotations')[0].innerHTML.split(',,,');
@@ -122,7 +123,7 @@ function sendMarkdown() {
 }
 
 /**
- * Using ajax to commucite with server and get final preview of document. Preview is set to {elementID}.
+ * Using ajax to communicate with server and get final preview of document. Preview is set to {elementID}.
  * @param elementID element where will be final preview.
  * @param checkboxes list of annotation which will be deleted from final preview.
  * @param loadGraph if is true graf will be parsed.
@@ -202,7 +203,7 @@ function initScroll() {
         }, 300);
     };
 
-    $('textarea#editor, article#preview').scroll(sync);
+    $('textarea#editor, article#previewValue').scroll(sync);
 }
 
 /**
@@ -210,7 +211,7 @@ function initScroll() {
  * @param self which panel was scroll
  */
 function scroll(self) {
-    var $elements = $('textarea#editor, article#preview');
+    var $elements = $('textarea#editor, article#previewValue');
     var $other = $elements.not(self).off('scroll'), other = $other.get(0);
     var percentage = self.scrollTop / (self.scrollHeight - self.offsetHeight);
     other.scrollTop = percentage * (other.scrollHeight - other.offsetHeight);
@@ -308,4 +309,7 @@ function init() {
     $('#editor').scroll();
     $(window).resize();
     changeRenderMermaidColor();
+    setTimeout(function () {
+        initAdjustmentColumns();
+    }, 1000);
 }
