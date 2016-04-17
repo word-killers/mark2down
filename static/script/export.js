@@ -20,9 +20,9 @@ function initPrintDialog() {
  * only call printPreview().
  */
 function printDocument() {
-    if(annotation.length == 0) {
+    if (annotation.length == 0) {
         printPreview();
-    }else{
+    } else {
         createExportDialogCheckboxes();
         var printDialog = $('#printDialog');
         printDialog.dialog({
@@ -42,9 +42,9 @@ function printDocument() {
  * only call exportPreview().
  */
 function exportDocument() {
-    if(annotation.length == 0){
+    if (annotation.length == 0) {
         exportPreview();
-    }else {
+    } else {
         createExportDialogCheckboxes();
         var printDialog = $('#printDialog');
         printDialog.dialog({
@@ -73,9 +73,9 @@ function printPreview() {
         if (loadMermaid) {
             win.document.write('<script src="/static/mermaid/mermaid.min.js"></script>');
             win.document.write('<link rel="stylesheet" href="/static/mermaid/mermaid.css">');
-            win.document.write('<link rel="stylesheet" href="/static/css/print.css">');
             win.document.write('<script>mermaid.init(undefined, ".mermaid");</script>');
         }
+        win.document.write('<link rel="stylesheet" href="/static/css/style_preview.css">');//todo
         win.document.write('</head><body>');
         win.document.write(document.getElementById('help').innerHTML);
         win.document.write('</body></html>');
@@ -107,7 +107,7 @@ function exportPreview() {
         if (loadMermaid) {
             mermaid.init(undefined, ".mermaid");
         }
-        a.href = "data:text/html," + '<html><head><title>export</title><meta charset="UTF-8"></head><body>' + encodeURIComponent(document.getElementById("help").innerHTML) + '</body></html>';
+        a.href = "data:text/html," + '<html><head><title>export</title><meta charset="UTF-8"><link rel="stylesheet" href="/static/css/style_preview.css"></head><body>' + encodeURIComponent(document.getElementById("help").innerHTML) + '</body></html>';
         a.click();
         helpDiv.css('display', 'none');
         document.body.removeChild(a);
