@@ -54,6 +54,9 @@ class TestMarkdown(unittest.TestCase):
         text = '{{\n\ntext'
         self.assertEqual(self.md.convert(text), '<div></div><div style="text-align: left"><p>text</p>\n</div>')
 
+    def test_alignCenter(self):
+        text = '}{\n\ntext'
+        self.assertEqual(self.md.convert(text), '<div></div><div style="text-align: center"><p>text</p>\n</div>')
 
 
 
