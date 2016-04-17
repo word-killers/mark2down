@@ -46,6 +46,10 @@ class TestMarkdown(unittest.TestCase):
         text = '--text--'
         self.assertEqual(self.md.convert(text), '<div><p><del>text</del></p>\n</div>')
 
+    def test_typeWriting(self):
+        text = '```text```'
+        self.assertEqual(self.md.convert(text), '<div><p><code>text</code></p>\n</div>')
+
 
 
 
