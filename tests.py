@@ -74,6 +74,11 @@ class TestMarkdown(unittest.TestCase):
         text = '- text'
         self.assertEqual(self.md.convert(text), '<div><ul>\n<li>text</li>\n</ul>\n</div>')
 
+    def test_comment(self):
+        text = '//text'
+        self.assertEqual(self.md.convert(text), '<div><hr />\n<p><strong>Comment:</strong> text</p>\n<hr />\n</div>')
+
+
 
 
 
