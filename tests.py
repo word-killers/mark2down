@@ -70,6 +70,10 @@ class TestMarkdown(unittest.TestCase):
         text = '1. text'
         self.assertEqual(self.md.convert(text), '<div><ol>\n<li>text</li>\n</ol>\n</div>')
 
+    def test_odrazkovySeznam(self):
+        text = '- text'
+        self.assertEqual(self.md.convert(text), '<div><ul>\n<li>text</li>\n</ul>\n</div>')
+
 
 
 
