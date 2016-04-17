@@ -86,6 +86,10 @@ class TestMarkdown(unittest.TestCase):
         text = '```graph\ngraph TD;\n A-->B;\nA-->C;\nB-->D;\nC-->D;\n```'
         self.assertEqual(self.md.convert(text), '<div><div class="mermaid">graph TD;\n A--&gt;B;\nA--&gt;C;\nB--&gt;D;\nC--&gt;D;\n</div>\n</div>')
 
+    def test_annotation(self):
+        text = '@[text]'
+        self.assertEqual(self.md.convert(text), '<div><hr />\n<p><strong>Annotation:</strong> text</p>\n<hr />\n</div>')
+
 
 
 
