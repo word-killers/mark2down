@@ -10,7 +10,7 @@ install:
   - "npm update -g npm; npm install"
 
 script:
-  - nosetests
+  - nosetests --with-coverage
   - npm run ci
 
 after_success:
