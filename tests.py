@@ -38,12 +38,11 @@ class TestMarkdown(unittest.TestCase):
         text = '~~text~~'
         self.assertEqual(self.md.convert(text), '<div><p><em>text</em></p>\n</div>')
 
-    #bug
-    #def test_underline(self):
-        #text = '__text__'
-        #self.assertEqual(self.md.convert(text), '<div><p><u>text</u></p>\n</div>')
+    def test_underline(self):
+        text = '__text__'
+        self.assertEqual(self.md.convert(text), '<div><p><ins>text</ins></p>\n</div>')
 
-    
+
 
 
 
