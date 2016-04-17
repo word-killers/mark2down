@@ -107,11 +107,22 @@ function exportPreview() {
         if (loadMermaid) {
             mermaid.init(undefined, ".mermaid");
         }
-        a.href = "data:text/html," + '<html><head><title>export</title><meta charset="UTF-8"><link rel="stylesheet" href="/static/css/style_preview.css"></head><body>' + encodeURIComponent(document.getElementById("help").innerHTML) + '</body></html>';
-        a.click();
-        helpDiv.css('display', 'none');
-        document.body.removeChild(a);
-        document.getElementById('help').innerHTML = ''; // clear help div
+
+        $.when($.get("/static/css/style_preview.css"))
+            .done(function (data) {
+                var text = "data:text/html,";
+                text += "<html><head><title>export</title><meta charset=\"UTF-8\"><style>";
+                text += encodeURIComponent(data);
+                text += "</style></head><body>";
+                text += encodeURIComponent(document.getElementById("help").innerHTML);
+                text += "</body></html>";
+                console.log(text);
+                a.href =  text;
+                a.click();
+                helpDiv.css('display', 'none');
+                document.body.removeChild(a);
+                document.getElementById('help').innerHTML = ''; // clear help div
+            });
     }, 1000);
 }
 
