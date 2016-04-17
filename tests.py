@@ -78,6 +78,9 @@ class TestMarkdown(unittest.TestCase):
         text = '//text'
         self.assertEqual(self.md.convert(text), '<div><hr />\n<p><strong>Comment:</strong> text</p>\n<hr />\n</div>')
 
+    def test_graph(self):
+        text = '```graph\n\n```'
+        self.assertEqual(self.md.convert(text), '<div><div class="mermaid">\n</div>\n</div>')
 
 
 
