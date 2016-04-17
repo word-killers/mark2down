@@ -9,6 +9,7 @@ install:
   - "npm update -g npm; npm install"
 
 script:
+  - make test
   - npm run ci
 
 after_success:
