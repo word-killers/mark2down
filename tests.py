@@ -66,6 +66,12 @@ class TestMarkdown(unittest.TestCase):
         text = '}}\n\ntext'
         self.assertEqual(self.md.convert(text), '<div></div><div style="text-align: right"><p>text</p>\n</div>')
 
+    def test_cislovanySeznam(self):
+        text = '1. text'
+        self.assertEqual(self.md.convert(text), '<div><ol>\n<li>text</li>\n</ol>\n</div>')
+
+
+
 
 # dulezita je jenom funkce test_strong ostatnich si vsimat nemusis
 # syntaxe:
