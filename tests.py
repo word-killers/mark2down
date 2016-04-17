@@ -42,6 +42,10 @@ class TestMarkdown(unittest.TestCase):
         text = '__text__'
         self.assertEqual(self.md.convert(text), '<div><p><ins>text</ins></p>\n</div>')
 
+    def test_strikeThrough(self):
+        text = '--text--'
+        self.assertEqual(self.md.convert(text), '<div><p><del>text</del></p>\n</div>')
+
 
 
 
