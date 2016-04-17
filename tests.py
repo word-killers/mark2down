@@ -34,6 +34,10 @@ class TestMarkdown(unittest.TestCase):
         text = '++text++'
         self.assertEqual(self.md.convert(text), '<div><p><strong>text</strong></p>\n</div>')
 
+    def test_italic(self):
+        text = '~~text~~'
+        self.assertEqual(self.md.convert(text), '<div><p><em>text</em></p>\n</div>')
+
 
 
 # dulezita je jenom funkce test_strong ostatnich si vsimat nemusis
