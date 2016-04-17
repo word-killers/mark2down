@@ -58,6 +58,9 @@ class TestMarkdown(unittest.TestCase):
         text = '}{\n\ntext'
         self.assertEqual(self.md.convert(text), '<div></div><div style="text-align: center"><p>text</p>\n</div>')
 
+    def test_alignBlock(self):
+        text = '{}\n\ntext'
+        self.assertEqual(self.md.convert(text), '<div></div><div style="text-align: justify"><p>text</p>\n</div>')
 
 
 
