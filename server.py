@@ -1,14 +1,17 @@
 #!/usr/bin/env python2
 
 import sys
+import re
 
-import web, urllib, requests
+import web
+
 import markdown
 import alignment_extension
 import graph_com_ann_extension
 import highlight_extension
 from markdown.extensions.toc import TocExtension
-import re
+
+import auth
 
 # read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
 if len(sys.argv) == 4:
@@ -18,11 +21,11 @@ else:
     client_id = 0
     client_secret = 0
 
-    print  """
-	Warning: Bad arguments.
-	Usage: ./server.py <PORT> <OAUTH_CLIENT_ID> <OAUTH_CLIENT_SECRET>
-	Application will run without OAuth (no ability to login).
-	"""
+    print """
+Warning: Bad arguments.
+Usage: ./server.py <PORT> <OAUTH_CLIENT_ID> <OAUTH_CLIENT_SECRET>
+Application will run without OAuth (no ability to log in).
+"""
 
 # OAuth scopes (permissions)
 scopes = ['repo', 'user']
@@ -32,30 +35,31 @@ urls = (
     '/', 'Index',
     '/markdown', 'Markdown',
     '/auth', 'Auth',
-    '/test', 'Test'
+    '/test', 'Test',
+    '/list-repos', 'List_repos',
+    '/list-repo-tree', 'List_repo_tree',
+    '/commit-file', 'Commit_file',
+    '/get-file', 'Get_file'
 )
 
 # Application setup
 app = web.application(urls, globals())
 templates = web.template.render('templates')
-# web.config.debug = False # disable debug mode because of sessions support
+web.config.debug = False  # Must be disabled because conflicts with sessions (disable only temporarily)
 
 # Session setup
 session = web.session.Session(
     app,
     web.session.DiskStore('sessions'),
     initializer={
-        'access_token': 0
+        'token': None
     }
 )
 
 
 class Index:
     def GET(self):
-        login_link = "https://github.com/login/oauth/authorize?" + urllib.urlencode({
-            "client_id": client_id,
-            "scope": ','.join(scopes)
-        })
+        login_link = auth.generate_auth_link(client_id, scopes)
         data = [
             [
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
@@ -124,28 +128,42 @@ class Markdown:
 
 class Auth:
     def GET(self):
-        input = web.input()
-        if 'code' in input:
-            response = requests.post(
-                'https://github.com/login/oauth/access_token',
-                data={
-                    'client_id': client_id,
-                    'client_secret': client_secret,
-                    'code': input.code
-                },
-                headers={
-                    'Accept': 'application/json'
-                }
-            )
-            json = response.json()
-            if 'access_token' in json:
-                session.access_token = json['access_token']
-                raise web.seeother('/')
-            else:
-                return "Failed to get the access token"
-        else:
-            return "Failed to get the access code"
+        query = web.input()
+        if 'code' in query:
+            token = auth.get_auth_token(client_id, client_secret, query['code'])
 
+            if token is None:
+                return 'Login failed - no access token received.'
+
+            session['token'] = token
+            print token
+            raise web.seeother('/')  # redirect users back to the editor
+        else:
+            return 'Login failed - no auth. code received.'
+
+
+# TODO
+class List_repos:
+    def POST(self):
+        return ''
+
+
+# TODO
+class List_repo_tree:
+    def POST(self):
+        return ''
+
+
+# TODO
+class Commit_file:
+    def POST(self):
+        return ''
+
+
+# TODO
+class Get_file:
+    def POST(self):
+        return ''
 
 if __name__ == "__main__":
     app.run()
