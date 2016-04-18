@@ -3,3 +3,4 @@ web.py==0.37
 markdown-include==0.5.1
 urllib3==1.14
 requests==2.9.1
+github3.py==0.9.5
