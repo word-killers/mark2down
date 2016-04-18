@@ -112,10 +112,8 @@ function exportPreview() {
             .done(function (data) {
                 var text = "data:text/html,";
                 text += "<html><head><title>export</title><meta charset=\"UTF-8\"><style>";
-                text += encodeURIComponent(data);
-                text += "</style></head><body>";
-                text += encodeURIComponent(document.getElementById("help").innerHTML);
-                text += "</body></html>";
+                text += encodeURIComponent(data) + "</style></head><body>";
+                text += encodeURIComponent(document.getElementById("help").innerHTML) + "</body></html>";
                 console.log(text);
                 a.href =  text;
                 a.click();

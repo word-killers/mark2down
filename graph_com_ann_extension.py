@@ -32,12 +32,14 @@ class Preprocessors(Preprocessor):
     def run(self, lines):
         self.init()
         pattern = re.compile('@\[([a-zA-Z0-9-_ ]+)\]')
+        include_pattern = re.compile('(.*)(\{!(.+)!\})(.*)')
 
         for index in range(len(lines)):
             if not self.comment(lines[index]):
                 if not self.annotation(lines[index], pattern):
-                    if self.addLines:
-                        self.new_lines.append(self.graph_parser(lines[index]))
+                    if not self.include(lines[index], include_pattern):
+                        if self.addLines:
+                            self.new_lines.append(self.graph_parser(lines[index]))
 
         self.on_end()
         return self.new_lines
@@ -59,6 +61,18 @@ class Preprocessors(Preprocessor):
         for item in self.annotation_list:
             Extensions.annotation_strings += item + ',,,'
         Extensions.annotation_strings = Extensions.annotation_strings[:-3]
+
+    def include(self, line, pattern):
+        m = pattern.match(line)
+        if m:
+            if not self.final:
+                self.new_lines.append(m.group(1))
+                self.new_lines.append('\n---\n++Include:++ ' + m.group(3) + '\n\n---')
+                self.new_lines.append(m.group(4))
+            else:
+                return False
+            return True
+        return False
 
     def comment(self, line):
         if line.strip(' \n\r\t\f').startswith('//'):
@@ -121,5 +135,5 @@ class Extensions(Extension):
         self.setConfig('annotations', annotations)
 
     def extendMarkdown(self, md, md_globals):
-        md.preprocessors.add("GraphCommentAnnotation", Preprocessors(md, self.getConfigs()), '_end')
+        md.preprocessors.add("GraphCommentAnnotation", Preprocessors(md, self.getConfigs()), '_begin')
         md.treeprocessors.add("Graph", Treeprocessors(md), '_end')

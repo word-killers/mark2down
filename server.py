@@ -102,18 +102,18 @@ class Markdown:
         graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'], data['annotations'].split(',,,'))
         highlight_ext = highlight_extension.HighlightExtension()
         alignment_ext = alignment_extension.Extensions()
-        md = markdown.Markdown(safe_mode='escape', extensions=
-        [graph_com_ann_ext,  # graph, comment, annotation
-         highlight_ext,  # strong, italic, underline, cross
-         alignment_ext,  # alignment
-         'markdown.extensions.tables',  # tables
-         'markdown.extensions.sane_lists',  # using lists like in normal mardkown
-         TocExtension(slugify=self.code, separator='-'),  # table of contents
-         'markdown_include.include'  # option to include other files
-         ])
+        md = markdown.Markdown(safe_mode='escape', extensions=[
+            'markdown_include.include',  # option to include other files
+            graph_com_ann_ext,  # graph, comment, annotation
+            highlight_ext,  # strong, italic, underline, cross
+            alignment_ext,  # alignment
+            'markdown.extensions.tables',  # tables
+            'markdown.extensions.sane_lists',  # using lists like in normal mardkown
+            TocExtension(slugify=self.code, separator='-')  # table of contents
+        ])
 
         data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview><div id="documentView">' + md.convert(data[
-                                                                                          'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>'+graph_com_ann_ext.annotation_strings+'</annotations></reply>'
+                                                                                                                 'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>' + graph_com_ann_ext.annotation_strings + '</annotations></reply>'
         return data
 
     def code(self, value, separator):
