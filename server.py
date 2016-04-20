@@ -62,36 +62,36 @@ class Index:
         login_link = auth.generate_auth_link(client_id, scopes)
         data = [
             [
-                ["share", "<i class=\"fa fa-share-alt\"></i> Share", ""],
-                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()'"],
-                ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()'"],
-                ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'"']
+                ["share", "<i class=\"fa fa-share-alt\"></i> Share", "id='btnShare'"],
+                ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
+                ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
+                ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'" id="btnLogin"']
             ], [
-                ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\""],
-                ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\""],
-                ["Heading 3", "H3", "onclick=\"putChar('### ', 4)\""],
-                ["Heading 4", "H4", "onclick=\"putChar('#### ', 5)\""],
-                ["Heading 5", "H5", "onclick=\"putChar('##### ', 6)\""],
-                ["Heading 6", "H6", "onclick=\"putChar('###### ', 7)\""],
+                ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
+                ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
+                ["Heading 3", "H3", "onclick=\"putChar('### ', 4)\" id='btnH3'"],
+                ["Heading 4", "H4", "onclick=\"putChar('#### ', 5)\" id='btnH4'"],
+                ["Heading 5", "H5", "onclick=\"putChar('##### ', 6)\" id='btnH5'"],
+                ["Heading 6", "H6", "onclick=\"putChar('###### ', 7)\" id='btnH6'"],
             ], [
-                ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('++  ++', 3)\""],
-                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('~~  ~~', 3)\""],
-                ["Underline", "<i class=\"fa fa-underline\"></i>", "onclick=\"putChar('__  __', 3)\""],
-                ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>", "onclick=\"putChar('--  --', 3)\""],
-                ["typewriting", "T", "onclick=\"putChar('```  ```', 4)\""],
+                ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('++  ++', 3)\" id='btnBold'"],
+                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('~~  ~~', 3)\" id='btnItalic'"],
+                ["Underline", "<i class=\"fa fa-underline\"></i>", "onclick=\"putChar('__  __', 3)\" id='btnUnderline'"],
+                ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>", "onclick=\"putChar('--  --', 3)\" id='btnStrikeThrough'"],
+                ["typewriting", "T", "onclick=\"putChar('```  ```', 4)\" id='btnTypewriting'"],
             ], [
-                ["align-left", "<i class=\"fa fa-align-left\"></i>", "onclick=\"putChar('{{\\n', 3)\""],
-                ["align-center", "<i class=\"fa fa-align-center\"></i>", "onclick=\"putChar('}{\\n', 3)\""],
-                ["align-block", "<i class=\"fa fa-align-justify\"></i>", "onclick=\"putChar('{}\\n', 3)\""],
-                ["align-right", "<i class=\"fa fa-align-right\"></i>", "onclick=\"putChar('}}\\n', 3)\""],
+                ["align-left", "<i class=\"fa fa-align-left\"></i>", "onclick=\"putChar('{{\\n', 3)\" id='btnAlignLeft'"],
+                ["align-center", "<i class=\"fa fa-align-center\"></i>", "onclick=\"putChar('}{\\n', 3)\" id='btnAlignCenter'"],
+                ["align-block", "<i class=\"fa fa-align-justify\"></i>", "onclick=\"putChar('{}\\n', 3)\" id='btnAlignBlock'"],
+                ["align-right", "<i class=\"fa fa-align-right\"></i>", "onclick=\"putChar('}}\\n', 3)\" id='btnAlignRight'"],
             ], [
-                ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>", "onclick=\"putChar('1. ', 3)\""],
-                ["odrazkovy seznam", "<i class=\"fa fa-list-ul\"></i>", "onclick=\"putChar('- ', 2)\""],
+                ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>", "onclick=\"putChar('1. ', 3)\" id='btnNumerate'"],
+                ["odrazkovy seznam", "<i class=\"fa fa-list-ul\"></i>", "onclick=\"putChar('- ', 2)\" id='btnList'"],
             ], [
                 ["table", "<i class=\"fa fa-table\"></i>", "id=\"tableButton\" onclick=\"createTable(6, 3)\""],
-                ["include", "<i class=\"fa fa-paperclip\"></i>", ""],
-                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('```graph\\n\\n```', 10)\""],
-                ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\""]
+                ["include", "<i class=\"fa fa-paperclip\"></i>", "id='btnInclude'"],
+                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('```graph\\n\\n```', 10)\" id='btnGraph'"],
+                ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\" id='btnCode'"]
             ], [
                 ["preview", "Preview", "id=\"previewOpen\""],
                 ["render", 'Render Mermaid', "onclick='switchMermaid();' id='mermaidBtn'"]
