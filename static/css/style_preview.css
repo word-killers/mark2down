@@ -28,6 +28,10 @@
 	background-color: #ffffff;
 }
 
+#documentView img{
+    width: 100%;
+}
+
 /*---only print style-------------------------------------------------------------------------------------------------*/
 @media print{
     svg{
