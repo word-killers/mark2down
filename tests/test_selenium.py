@@ -43,6 +43,11 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnH5').click()
         self.assertTrue("##### ", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_H6_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnH6').click()
+        self.assertTrue("###### ", driver.find_element_by_id("editor").get_attribute('value'))
+
     def tearDown(self):
         self.driver.close()
 
