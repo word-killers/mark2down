@@ -68,6 +68,11 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnStrikeThrough').click()
         self.assertTrue("--  --", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_typeWriting_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnTypewriting').click()
+        self.assertTrue("```  ```", driver.find_element_by_id("editor").get_attribute('value'))
+
     def tearDown(self):
         self.driver.close()
 
