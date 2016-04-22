@@ -73,6 +73,11 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnTypewriting').click()
         self.assertTrue("```  ```", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_alignLeft_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnAlignLeft').click()
+        self.assertTrue("{{\\n", driver.find_element_by_id("editor").get_attribute('value'))
+
     def tearDown(self):
         self.driver.close()
 
