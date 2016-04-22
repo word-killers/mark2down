@@ -48,6 +48,11 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnH6').click()
         self.assertTrue("###### ", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_bold_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnBold').click()
+        self.assertTrue("++   ++", driver.find_element_by_id("editor").get_attribute('value'))
+
     def tearDown(self):
         self.driver.close()
 
