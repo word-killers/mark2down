@@ -88,6 +88,11 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnAlignBlock').click()
         self.assertTrue("{}\\n", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_alignRight_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnAlignRight').click()
+        self.assertTrue("}}\\n", driver.find_element_by_id("editor").get_attribute('value'))
+
     def tearDown(self):
         self.driver.close()
 
