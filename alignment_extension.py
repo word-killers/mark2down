@@ -2,6 +2,14 @@ from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from markdown.util import etree
 
+"""
+Extension for Python Markdown. Add the ability to align.
+{{ left align
+}} right align
+{} block align
+}{ justify
+"""
+
 
 class Treeprocessors(Treeprocessor):
     def run(self, root):
