@@ -1,5 +1,12 @@
+/**
+ * Percentage size of buttons which can show #previw or #leftPanel
+ * @type {number}
+ */
 var showButtonsPercentWidth = 2;
 
+/**
+ * Initialize width resizing of #leftPanel, #previw and #editor.
+ */
 function initAdjustmentColumns() {
 
     $('#showLeftPanel').width(showButtonsPercentWidth +'%');
@@ -39,6 +46,12 @@ function initAdjustmentColumns() {
     });
 }
 
+/**
+ * Resize elementA to size of page width minus elemntU width and elementB width.
+ * @param uiElementID element which was resize
+ * @param elementAID element which will be resize
+ * @param elementBID third element which is on the page and will not be resize
+ */
 function adjustmentColumnSize(uiElementID, elementAID, elementBID) {
     var pageWidth = $('#content').innerWidth();
     var elementUWidth = $('#' + uiElementID).width();
@@ -57,6 +70,13 @@ function adjustmentColumnSize(uiElementID, elementAID, elementBID) {
     $('#' + uiElementID).width(elementUWidth + '%');
 }
 
+/**
+ * Set 50 percent of remaining width to #preview and #editor. Remaining width mean width of page minus width of third
+ * component.
+ * @param thirdComponentID Id of third component
+ * @param thirdComponentWidth width of third component
+ * @param percent true - thirdComponentWidth is in percentage, false - thirdComponentWidth is in pixels
+ */
 function setEditorPreviewHalf(thirdComponentID, thirdComponentWidth, percent) {
     var pageWidth = $('#content').innerWidth();
     if(!percent) {
@@ -69,10 +89,16 @@ function setEditorPreviewHalf(thirdComponentID, thirdComponentWidth, percent) {
 
 }
 
+/**
+ * Set textArea#Editor width to 100 percent minus width of buttons which can show preview and left panel.
+ */
 function setEditorHundredPerc() {
     $('#editor').width(100 - 2*showButtonsPercentWidth + '%');
 }
 
+/**
+ * Hide left control panel and show button which can show left panel.
+ */
 function hideLeftPanel() {
     $('#left_panel').hide();
     $('#showLeftPanel').show();
@@ -84,10 +110,12 @@ function hideLeftPanel() {
     }
 }
 
+/**
+ * Display left control panel and set width of panel to 20 percent.
+ */
 function showLeftPanel() {
     var panelNewWidthPercent = 20;
     var panel = $('#left_panel');
-    var pageWidth = $('#content').innerWidth();
 
     $('#showLeftPanel').hide();
 
@@ -102,6 +130,9 @@ function showLeftPanel() {
     }
 }
 
+/**
+ * Hide preview and show button which can display preview.
+ */
 function hidePreview() {
     var pageWidth = $('#content').innerWidth();
     var left_panel = $('#left_panel');
@@ -121,6 +152,9 @@ function hidePreview() {
     document.getElementById('preview').style.left = 0;
 }
 
+/**
+ * Display preview of document and hide button which display preview.
+ */
 function showPreview() {
     $('#showPreview').hide();
     $('#preview').show();

@@ -92,7 +92,7 @@ function printPreview() {
 }
 
 /**
- * Download html of markdown code.
+ * Show download dialog to download html of markdown code.
  */
 function exportPreview() {
     var checkboxes = getCheckedAnnotation();
