@@ -269,12 +269,15 @@ function initPreviewDialog() {
         resizable: true,
         modal: true,
         height: 500,
-        width: 1000
+        width: 1000,
+        resizeStop: function (event, ui) {
+            $('#previewDialog').css('width', '100%');
+        }
     });
 
     $("#previewOpen").click(function () {
 
-        finalPreview('previewDialog', [], false);
+        finalPreview('previewDialogIn', [], false);
 
         setTimeout(function () {
             $("#previewDialog").dialog("open");

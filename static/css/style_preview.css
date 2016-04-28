@@ -1,11 +1,12 @@
-#documentView{
-    font-family: "Times New Roman", serif;
+#documentView {
+    font-family: "Arial", serif;
 }
+
 /*---tables-----------------------------------------------------------------------------------------------------------*/
 #documentView table {
     border-collapse: collapse;
     width: auto;
-	font-size: 16px;
+    font-size: 16px;
 }
 
 #documentView table, #documentView td, #documentView th {
@@ -17,33 +18,38 @@
 }
 
 #documentView th {
-	background-color: #c2c2c2;
+    background-color: #c2c2c2;
 }
 
-#documentView tr:nth-child(even){
-	background-color: #f1f1f1;
+#documentView tr:nth-child(even) {
+    background-color: #f1f1f1;
 }
 
-#documentView tr:nth-child(od){
-	background-color: #ffffff;
+#documentView tr:nth-child(od) {
+    background-color: #ffffff;
 }
 
-#documentView img{
+#documentView img {
     width: 100%;
 }
 
+/*----set Padding in real preview-------------------------------------------------------------------------------------*/
+#previewDialogIn {
+    padding: 30mm;
+}
+
 /*---only print style-------------------------------------------------------------------------------------------------*/
-@media print{
-    svg{
+@media print {
+    svg {
         height: auto;
     }
 
-    @page{
+    @page {
         size: 0;
         margin: 30mm;
     }
 
-    body{
+    body {
         margin: 0;
     }
 }
