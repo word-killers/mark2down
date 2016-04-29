@@ -101,10 +101,15 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnNumerate').click()
         self.assertTrue("1. ", driver.find_element_by_id("editor").get_attribute('value'))
 
-    def test_cislovanySeznam_btn(self):
+    def test_odrazkovySeznam_btn(self):
         driver = self.driver
         driver.find_element_by_id('btnList').click()
         self.assertTrue("- ", driver.find_element_by_id("editor").get_attribute('value'))
+
+    def test_include_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnInclude').click()
+        self.assertTrue("{!  !}", driver.find_element_by_id("editor").get_attribute('value'))
 
     def tearDown(self):
         self.driver.close()
