@@ -124,6 +124,27 @@ class PythonOrgSearch(unittest.TestCase):
     def test_renderMermaid_btn(self):
         driver = self.driver
         driver.find_element_by_id('mermaidBtn').click()
+        # TODO
+
+    def test_share_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnShare').click()
+        # TODO
+
+    def test_export_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnExport').click()
+        # TODO
+
+    def test_print_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnPrint').click()
+        # TODO
+
+    def test_login_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnLogin').click()
+        # TODO
 
     def tearDown(self):
         self.driver.close()
