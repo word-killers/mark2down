@@ -121,6 +121,10 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnCode').click()
         self.assertTrue("```\\n\\t\\n```", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_renderMermaid_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('mermaidBtn').click()
+
     def tearDown(self):
         self.driver.close()
 
