@@ -111,6 +111,11 @@ class PythonOrgSearch(unittest.TestCase):
         driver.find_element_by_id('btnInclude').click()
         self.assertTrue("{!  !}", driver.find_element_by_id("editor").get_attribute('value'))
 
+    def test_image_btn(self):
+        driver = self.driver
+        driver.find_element_by_id('btnImage').click()
+        self.assertTrue("![alt text](image path \\\"Tooltip text\\\")", driver.find_element_by_id("editor").get_attribute('value'))
+
     def tearDown(self):
         self.driver.close()
 
