@@ -22,13 +22,8 @@ class TestMarkdown(unittest.TestCase):
             alignment_ext,  # alignment
             'markdown.extensions.tables',  # tables
             'markdown.extensions.sane_lists',  # using lists like in normal mardkown
-            TocExtension(slugify=self.code, separator='-')  # table of contents
+            TocExtension()  # table of contents
         ])
-
-    def code(self, value, separator):
-        value = re.sub(r"[^\w\s]", '', value)
-        value = re.sub(r"\s+", '-', value)
-        return 'header' + separator + value
 
     def test_comment(self):
         self.call_before([])

@@ -7,11 +7,11 @@ from selenium.webdriver.common.keys import Keys
 
 class PythonOrgSearch(unittest.TestCase):
     def setUp(self):
-        #self.driver = webdriver.PhantomJS(executable_path='node_modules/phantomjs/lib/phantom/bin/phantomjs')
-        self.driver = webdriver.Firefox()
-        #self.driver.set_window_size(1024, 768)
-        self.driver.get("localhost:8080")
-        #self.driver.get('https://mark2down.herokuapp.com/')
+        self.driver = webdriver.PhantomJS(executable_path='node_modules/phantomjs/lib/phantom/bin/phantomjs')
+        #self.driver = webdriver.Firefox()
+        self.driver.set_window_size(1024, 768)
+        #self.driver.get("localhost:8080")
+        self.driver.get('https://mark2down.herokuapp.com/')
 
     def test_graph_btn(self):
         driver = self.driver

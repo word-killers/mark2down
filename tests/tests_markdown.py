@@ -101,35 +101,3 @@ class TestMarkdown(unittest.TestCase):
     def test_graph_with_no_end(self):
         text = '```graph\ntext text text'
         self.assertEqual(self.md.convert(text), '<div><p>```graph</p>\n<p>text text text</p>\n</div>')
-
-
-
-
-
-# dulezita je jenom funkce test_strong ostatnich si vsimat nemusis
-# syntaxe:
-# funkce zaci def test_nejaky_nazev(self): test tam byt musi
-# v pythonu nejsou zavorky oddelju se to odsazenim
-# na konci neni strednik
-# self.assertEqual porovnava dve hodnoty.
-# self.md.convert(...) prevede text do markdown
-
-# spusteni testu bud nahranim do masteru se testy spusti automaticky a vysledek uvidis na https://travis-ci.org/word-killers/mark2down
-# ale lepsi je si to napred spustit u sebe takze do cmd napises
-# pip install nose
-# presunes se do adresare kde je tenhle soubor a pak test spustis prikazem:
-# nosetests
-
-# dale podle tlacitek v aplikaci:
-# kurziva, podtrzene, preskrtnute, strojopis
-# zarovnani: text bude napriklad '}}' a ve vysledek musi byt:
-# '<div style="text-align: right"></div>'
-#
-#  komentare: vstup '//text'
-# grafy vstup '```graph\n\n```' vystup '<div class="mermaid"></div>'
-# pak tam muzes zkusit vlozit graf a mel by vyjit v tom samem divu a vnitrek by mel byt nezmenen
-#
-# u vsech prikladu co jsem uvadel nemusi sedet entry \n to poznas kdyz to spustis. Uvidis tam ocekavanou hodnotu a vyslednou
-# vsechny vyslednky jsou obalene '<div>......\n</div>'
-
-

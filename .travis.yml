@@ -10,7 +10,7 @@ install:
   - "npm update -g npm; npm install"
 
 script:
-  - nosetests tests/tests_markdown.py tests/tests_markdown_final.py --with-coverage
+  - nosetests --with-coverage
   - npm run ci
 
 after_success:
