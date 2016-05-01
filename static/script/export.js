@@ -31,7 +31,8 @@ function printDocument() {
                     printPreview();
                     $(this).dialog('close');
                 }
-            }
+            },
+            title: 'Print'
         });
         printDialog.dialog('open');
     }
@@ -53,7 +54,9 @@ function exportDocument() {
                     exportPreview();
                     $(this).dialog('close');
                 }
-            }
+            },
+            title: 'Export'
+
         });
         printDialog.dialog('open');
     }
@@ -159,6 +162,11 @@ function createExportDialogCheckboxes() {
         f.appendChild(l);
         f.appendChild(document.createElement('br'))
     }
+
+    var label = document.createElement('p');
+    label.innerHTML = '<Strong>Select excluded annotations</Strong>';
+    label.setAttribute('style', 'margin-bottom : 10px;');
     document.getElementById('printDialog').innerHTML = '';
+    document.getElementById('printDialog').appendChild(label);
     document.getElementById('printDialog').appendChild(f);
 }
