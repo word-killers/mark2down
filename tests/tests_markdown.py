@@ -16,13 +16,13 @@ class TestMarkdown(unittest.TestCase):
         alignment_ext = alignment_extension.Extensions()
 
         self.md = markdown.Markdown(safe_mode='escape', extensions=[
+            'markdown_include.include',  # option to include other files
             graph_com_ann_ext,  # graph, comment, annotation
             highlight_ext,  # strong, italic, underline, cross
             alignment_ext,  # alignment
             'markdown.extensions.tables',  # tables
             'markdown.extensions.sane_lists',  # using lists like in normal mardkown
-            TocExtension(slugify=self.code, separator='-'),  # table of contents
-            'markdown_include.include'  # option to include other files
+            TocExtension(slugify=self.code, separator='-')  # table of contents
         ])
 
     def code(self, value, separator):
@@ -89,6 +89,10 @@ class TestMarkdown(unittest.TestCase):
     def test_annotation(self):
         text = '@[text]'
         self.assertEqual(self.md.convert(text), '<div><hr />\n<p><strong>Annotation:</strong> text</p>\n<hr />\n</div>')
+
+    def test_include(self):
+        text = '{!text!}'
+        self.assertEqual(self.md.convert(text), '<div><hr />\n<p><strong>Include:</strong> text</p>\n<hr />\n</div>')
 
 
 
