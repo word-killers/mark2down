@@ -94,6 +94,15 @@ class TestMarkdown(unittest.TestCase):
         text = '{!text!}'
         self.assertEqual(self.md.convert(text), '<div><hr />\n<p><strong>Include:</strong> text</p>\n<hr />\n</div>')
 
+    def test_header_id(self):
+        text = '#header1'
+        self.assertEqual(self.md.convert(text), '<div><h1 id="header-header1">header1</h1>\n</div>')
+
+    def test_graph_with_no_end(self):
+        text = '```graph\ntext text text'
+        self.assertEqual(self.md.convert(text), '<div><p>```graph</p>\n<p>text text text</p>\n</div>')
+
+
 
 
 
