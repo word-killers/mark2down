@@ -44,6 +44,10 @@ nav {
 }
 
 /*--------------------general--------------------*/
+#table th {
+    text-align: left;
+}
+
 .ui-resizable-helper-right{
     border-right: 2px solid #7f7f7f;
 }

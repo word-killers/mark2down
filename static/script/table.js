@@ -6,8 +6,8 @@ function initTableDialog() {
         autoOpen: false,
         resizable: true,
         modal: true,
-        height: 600,
-        width: 700,
+        height: 550,
+        width: 650,
         buttons: {
             "OK": function () {
                 generateTable();
@@ -24,7 +24,11 @@ function initTableDialog() {
             "Del Col": function () {
                 delCol();
             }
+        },
+        resizeStop: function (event, ui) {
+            $('#dialog').css('width', '100%');
         }
+        
     });
 
     $("#tableButton").click(function () { // event to open this dialog.
@@ -69,6 +73,7 @@ function generateTable() {
  */
 function createTable(rows, cols) {
     var table = document.getElementById("table");
+    table.width = "100%";
     while (table.hasChildNodes()) {
         table.removeChild(table.firstChild);
     }
