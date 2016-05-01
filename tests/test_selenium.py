@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 
 class PythonOrgSearch(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.PhantomJS(executable_path='node_modules/phantomjs/lib/phantom/bin/phantomjs')
+        self.driver = webdriver.PhantomJS()#executable_path='node_modules/phantomjs/lib/phantom/bin/phantomjs')
         #self.driver = webdriver.Firefox()
         self.driver.set_window_size(1024, 768)
         #self.driver.get("http://localhost:8080")
