@@ -130,6 +130,11 @@ class Markdown:
             TocExtension(slugify=self.code, separator='-')  # table of contents
         ])
 
+        if os.path.exists("static/{1}".format(session['token'])):
+            out = open("static/{1}/{2}".format(session['token'], data["fileName"]), "w")
+            out.write(data)
+            out.close()
+
         data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview><div id="documentView">' + md.convert(data[
                                                                                                                  'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>' + graph_com_ann_ext.annotation_strings + '</annotations></reply>'
         return data
@@ -170,7 +175,7 @@ class List_repo_tree:
 
 
 class Commit_file:
-    def POST(self):
+    def GET(self):
         os.system("cd {1} && git add -A && git commit -m {2} && git push https://{3}@github.com/{4}/{5}.git".format(
             client_id, "commit_message_here", session['token'], "tomasSimandl", "testrepomarkdown"  # TODO
         ))
