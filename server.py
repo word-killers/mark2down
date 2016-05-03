@@ -2,6 +2,7 @@
 
 import sys
 import re
+import os
 
 import web
 
@@ -65,8 +66,10 @@ class Index:
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", "id='btnShare'"],
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
-                ["login", "<i class=\"fa fa-user\"></i> Login", 'onclick="location.href=\'' + login_link + '\'" id="btnLogin"'],
-                ["help", "<i class=\"fa fa-info-circle\"></i>", 'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
+                ["login", "<i class=\"fa fa-user\"></i> Login",
+                 'onclick="location.href=\'' + login_link + '\'" id="btnLogin"'],
+                ["help", "<i class=\"fa fa-info-circle\"></i>",
+                 'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
@@ -77,22 +80,31 @@ class Index:
             ], [
                 ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('++  ++', 3)\" id='btnBold'"],
                 ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('~~  ~~', 3)\" id='btnItalic'"],
-                ["Underline", "<i class=\"fa fa-underline\"></i>", "onclick=\"putChar('__  __', 3)\" id='btnUnderline'"],
-                ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>", "onclick=\"putChar('--  --', 3)\" id='btnStrikeThrough'"],
+                ["Underline", "<i class=\"fa fa-underline\"></i>",
+                 "onclick=\"putChar('__  __', 3)\" id='btnUnderline'"],
+                ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>",
+                 "onclick=\"putChar('--  --', 3)\" id='btnStrikeThrough'"],
                 ["typewriting", "T", "onclick=\"putChar('```  ```', 4)\" id='btnTypewriting'"],
             ], [
-                ["align-left", "<i class=\"fa fa-align-left\"></i>", "onclick=\"putChar('{{\\n', 3)\" id='btnAlignLeft'"],
-                ["align-center", "<i class=\"fa fa-align-center\"></i>", "onclick=\"putChar('}{\\n', 3)\" id='btnAlignCenter'"],
-                ["align-block", "<i class=\"fa fa-align-justify\"></i>", "onclick=\"putChar('{}\\n', 3)\" id='btnAlignBlock'"],
-                ["align-right", "<i class=\"fa fa-align-right\"></i>", "onclick=\"putChar('}}\\n', 3)\" id='btnAlignRight'"],
+                ["align-left", "<i class=\"fa fa-align-left\"></i>",
+                 "onclick=\"putChar('{{\\n', 3)\" id='btnAlignLeft'"],
+                ["align-center", "<i class=\"fa fa-align-center\"></i>",
+                 "onclick=\"putChar('}{\\n', 3)\" id='btnAlignCenter'"],
+                ["align-block", "<i class=\"fa fa-align-justify\"></i>",
+                 "onclick=\"putChar('{}\\n', 3)\" id='btnAlignBlock'"],
+                ["align-right", "<i class=\"fa fa-align-right\"></i>",
+                 "onclick=\"putChar('}}\\n', 3)\" id='btnAlignRight'"],
             ], [
-                ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>", "onclick=\"putChar('1. ', 3)\" id='btnNumerate'"],
+                ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>",
+                 "onclick=\"putChar('1. ', 3)\" id='btnNumerate'"],
                 ["odrazkovy seznam", "<i class=\"fa fa-list-ul\"></i>", "onclick=\"putChar('- ', 2)\" id='btnList'"],
             ], [
                 ["table", "<i class=\"fa fa-table\"></i>", "id=\"tableButton\" onclick=\"createTable(6, 3)\""],
                 ["include", "<i class=\"fa fa-paperclip\"></i>", " onclick=\"putChar('{!  !}',3)\" id='btnInclude'"],
-                ["image", "<i class=\"fa fa-file-photo-o\"></i>", " onclick='putChar(\"![alt text](image path \\\"Tooltip text\\\")\", 27)' id='btnImage'"],
-                ["graph", "<i class=\"fa fa-bar-chart\"></i>", "onclick=\"putChar('```graph\\n\\n```', 10)\" id='btnGraph'"],
+                ["image", "<i class=\"fa fa-file-photo-o\"></i>",
+                 " onclick='putChar(\"![alt text](image path \\\"Tooltip text\\\")\", 27)' id='btnImage'"],
+                ["graph", "<i class=\"fa fa-bar-chart\"></i>",
+                 "onclick=\"putChar('```graph\\n\\n```', 10)\" id='btnGraph'"],
                 ["code", "<i class=\"fa fa-code\"></i>", "onclick=\"putChar('```\\n\\t\\n```', 5)\" id='btnCode'"]
             ], [
                 ["preview", "Preview", "id=\"previewOpen\""],
@@ -138,6 +150,7 @@ class Auth:
                 return 'Login failed - no access token received.'
 
             session['token'] = token
+            Create_repo(token)
             print token
             raise web.seeother('/')  # redirect users back to the editor
         else:
@@ -156,16 +169,29 @@ class List_repo_tree:
         return ''
 
 
-# TODO
 class Commit_file:
     def POST(self):
+        os.system("cd {1} && git add -A && git commit -m {2} && git push https://{3}@github.com/{4}/{5}.git".format(
+            client_id, "commit_message_here", session['token'], "tomasSimandl", "testrepomarkdown"  # TODO
+        ))
         return ''
 
 
-# TODO
 class Get_file:
     def POST(self):
         return ''
+
+
+class Create_repo:
+    def __init__(self, token):
+        print 'Testing folder'
+        if not os.path.exists(token):
+            print 'Creating {1}'.format(client_id)
+            os.makedirs(token)
+            os.system("cd {1} git clone https://{2}@github.com/{3}/{4}.git".format(
+                client_id, token, "tomasSimandl", "testrepomarkdown"  # TODO
+            ))
+
 
 if __name__ == "__main__":
     app.run()
