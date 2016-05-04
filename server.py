@@ -66,7 +66,7 @@ class Index:
                 ["share", "<i class=\"fa fa-share-alt\"></i> Share", "id='btnShare'"],
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
-                ["login", "<i class=\"fa fa-user\"></i> Login",
+                ["login", "<i class=\"fa fa-user\"></i> Log",
                  'onclick="location.href=\'' + login_link + '\'" id="btnLogin"'],
                 ["help", "<i class=\"fa fa-info-circle\"></i>",
                  'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
@@ -157,7 +157,7 @@ class Auth:
             session['token'] = token
             print token
             raise web.seeother('/')  # redirect users back to the editor
-            Create_repo(token)
+            #Create_repo(token)
         else:
             return 'Login failed - no auth. code received.'
 
