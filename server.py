@@ -46,7 +46,7 @@ urls = (
 # Application setup
 app = web.application(urls, globals())
 templates = web.template.render('templates')
-web.config.debug = False  # Must be disabled because conflicts with sessions (disable only temporarily)
+web.config.debug = True  # Must be disabled because conflicts with sessions (disable only temporarily)
 
 # Session setup
 session = web.session.Session(
@@ -130,13 +130,13 @@ class Markdown:
             TocExtension(slugify=self.code, separator='-')  # table of contents
         ])
 
+
+        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview><div id="documentView">' + md.convert(data[
+                                                                                                                 'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>' + graph_com_ann_ext.annotation_strings + '</annotations></reply>'
         if os.path.exists("static/{1}".format(session['token'])):
             out = open("static/{1}/{2}".format(session['token'], data["fileName"]), "w")
             out.write(data)
             out.close()
-
-        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview><div id="documentView">' + md.convert(data[
-                                                                                                                 'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>' + graph_com_ann_ext.annotation_strings + '</annotations></reply>'
         return data
 
     def code(self, value, separator):
@@ -155,9 +155,9 @@ class Auth:
                 return 'Login failed - no access token received.'
 
             session['token'] = token
-            Create_repo(token)
             print token
             raise web.seeother('/')  # redirect users back to the editor
+            Create_repo(token)
         else:
             return 'Login failed - no auth. code received.'
 
