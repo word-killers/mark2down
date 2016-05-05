@@ -11,6 +11,7 @@ import alignment_extension
 import graph_com_ann_extension
 import highlight_extension
 from markdown.extensions.toc import TocExtension
+from requests import get
 
 import auth
 
@@ -44,18 +45,19 @@ urls = (
 )
 
 # Application setup
-app = web.application(urls, globals())
+app = web.application(urls, locals())
 templates = web.template.render('templates')
-web.config.debug = True  # Must be disabled because conflicts with sessions (disable only temporarily)
+web.config.debug = False  # Must be disabled because conflicts with sessions (disable only temporarily)
+
+if web.config.get('_session') is None:
+    session = web.session.Session(app, web.session.DiskStore('sessions'), initializer={'token': None, 'repository': None})
+    web.config._session = session
+else:
+    session = web.config._session
+
 
 # Session setup
-session = web.session.Session(
-    app,
-    web.session.DiskStore('sessions'),
-    initializer={
-        'token': None
-    }
-)
+
 
 
 class Index:
@@ -69,7 +71,8 @@ class Index:
                 ["login", "<i class=\"fa fa-user\"></i> Login",
                  'onclick="location.href=\'' + login_link + '\'" id="btnLogin"'],
                 ["help", "<i class=\"fa fa-info-circle\"></i>",
-                 'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
+                 'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"'],
+                ["", 'click', 'onClick="getRepos()"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
@@ -130,13 +133,8 @@ class Markdown:
             TocExtension(slugify=self.code, separator='-')  # table of contents
         ])
 
-
         data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview><div id="documentView">' + md.convert(data[
                                                                                                                  'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>' + graph_com_ann_ext.annotation_strings + '</annotations></reply>'
-        if os.path.exists("static/{1}".format(session['token'])):
-            out = open("static/{1}/{2}".format(session['token'], data["fileName"]), "w")
-            out.write(data)
-            out.close()
         return data
 
     def code(self, value, separator):
@@ -154,47 +152,99 @@ class Auth:
             if token is None:
                 return 'Login failed - no access token received.'
 
-            session['token'] = token
-            print token
+            session.token = token
             raise web.seeother('/')  # redirect users back to the editor
-            Create_repo(token)
         else:
             return 'Login failed - no auth. code received.'
 
 
-# TODO
 class List_repos:
     def POST(self):
+        data = web.input().get('name')
+        if data is not None:
+            session.repository = data
+            Create_repo(session.token)
+        else:
+            response = get(
+                'https://api.github.com/users/{0}/repos'.format('word-killers'),
+                headers={
+                    'Accept': 'application/json'
+                }
+            )
+            json = response.json()
+            repo = ''
+            if len(json):
+                for one in json:
+                    if 'name' in one:
+                        repo += '<button onClick="setRepo(\'{0}\')">{0}</button>'.format(one['name'])
+
+                if repo is not '':
+                    return '<div>' + repo + '</div>'
+                else:
+                    return 'can\'t display repositories.'
+
         return ''
 
 
-# TODO
 class List_repo_tree:
     def POST(self):
-        return ''
+        return self.getDirTree('')
+
+    def getDirTree(self, path):
+        list = '<ul>'
+
+        long_path = 'repositories/{0}/{1}/{2}'.format(session.token, session.repository, path)
+        for file in os.listdir(long_path):
+            if file != '.git':
+                if len(path) == 0:
+                    new_path = file
+                else:
+                    new_path = path + '/' + file
+
+                if os.path.isdir(os.path.join(long_path, file)):
+                    list += '<li>' + file + self.getDirTree(new_path) + '</li>'
+                else:
+                    list += '<li onClick="getFile(\'{0}\');">{1}</li>'.format(new_path, file)
+        print session.get('repository')
+        return list + '</ul>'
 
 
 class Commit_file:
-    def GET(self):
-        os.system("cd {1} && git add -A && git commit -m {2} && git push https://{3}@github.com/{4}/{5}.git".format(
-            client_id, "commit_message_here", session['token'], "tomasSimandl", "testrepomarkdown"  # TODO
-        ))
-        return ''
+    def POST(self):
+        data = web.input()
+        if os.path.exists("repositories/{0}".format(session.get('token'))):
+            out = open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data.get('fileName')),
+                       "w")  # todo
+            out.write(web.input().get('data').encode(encoding="UTF-8"))
+            out.close()
+
+        os.system(
+            "cd repositories/{0}/{3} && dir && git pull https://{0}@github.com/{2}/{3}.git && git add * && git commit -m {1} && git push https://{0}@github.com/{2}/{3}.git".format(
+                session.get('token'), "commit_message_here", "tomasSimandl", session.repository  # TODO
+            ))
+        return 'ok'
 
 
 class Get_file:
     def POST(self):
-        return ''
+        print session.get('repository')
+        data = web.input()
+        text = ""
+        if data.get('fileName'):
+            file = open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data['fileName']), "r")
+            text = file.read()
+
+        return text
 
 
 class Create_repo:
     def __init__(self, token):
         print 'Testing folder'
-        if not os.path.exists(token):
-            print 'Creating {1}'.format(client_id)
-            os.makedirs(token)
-            os.system("cd {1} git clone https://{2}@github.com/{3}/{4}.git".format(
-                client_id, token, "tomasSimandl", "testrepomarkdown"  # TODO
+        if not os.path.exists('repositories/{0}'.format(token)):
+            os.makedirs('repositories/{0}'.format(token))
+        if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
+            os.system("cd repositories/{0} && git clone https://github.com/{1}/{2}.git".format(
+                token, "tomasSimandl", session.repository  # TODO
             ))
 
 

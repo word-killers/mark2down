@@ -6,6 +6,8 @@ var scrollTimer;
 var sync;
 /** If is true, graphs are parse. */
 var loadMermaid = false;
+/** file witch is edit. */
+var workingFile = '';
 
 /**
  * Call after page loads. Set height of html components when window is resize.
@@ -111,9 +113,9 @@ function sendMarkdown() {
                 document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
                 document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
                 var respAnnotation = response.getElementsByTagName('annotations')[0].innerHTML;
-                if(respAnnotation == ''){
+                if (respAnnotation == '') {
                     annotation = [];
-                }else {
+                } else {
                     annotation = respAnnotation.split(',,,');
                 }
 
@@ -322,3 +324,54 @@ function init() {
         initAdjustmentColumns();
     }, 1000);
 }
+
+function getRepos() {
+    $("#help_dialog").dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 300,
+        width: 200,
+        title: 'Repositories'
+    });
+    $("#help_dialog").html("");
+
+    $.post("/list-repos", function (data) {
+        $("#help_dialog").html(data);
+    });
+
+    $('#help_dialog').dialog("open");
+}
+
+function setRepo(repoName) {
+    $.post("/list-repos", {name: repoName}, function () {
+        $.post("/list-repo-tree", function (data) {
+            $('#repository').html(data)
+            $('#editor').val('');
+            sendMarkdown();
+        });
+    });
+    $('#help_dialog').dialog("close");
+}
+
+function getFile(fileName){
+    $.post("/get-file", {fileName: fileName}, function (data) {
+        workingFile = fileName;
+
+        $('#editor').val(data);
+        sendMarkdown();
+    })
+}
+
+function commit(){
+    if(workingFile.length > 0) {
+        $.post("/commit-file", {fileName: workingFile, data: $('#editor').val()}, function (data) {
+            if(data == 'ok'){
+                alert('Done');
+            }else{
+                alert('Error');
+            }
+        })
+    }
+}
+
