@@ -166,7 +166,7 @@ class List_repos:
             Create_repo(session.token)
         else:
             response = get(
-                'https://api.github.com/users/{0}/repos'.format('word-killers'),
+                'https://api.github.com/users/{0}/repos'.format('tomasSimandl'),
                 headers={
                     'Accept': 'application/json'
                 }
