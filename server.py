@@ -41,7 +41,9 @@ urls = (
     '/list-repos', 'List_repos',
     '/list-repo-tree', 'List_repo_tree',
     '/commit-file', 'Commit_file',
-    '/get-file', 'Get_file'
+    '/get-file', 'Get_file',
+    '/create-file', 'Create_file',
+    '/set-repo-name', 'Set_repo_name'
 )
 
 # Application setup
@@ -50,7 +52,8 @@ templates = web.template.render('templates')
 web.config.debug = False  # Must be disabled because conflicts with sessions (disable only temporarily)
 
 if web.config.get('_session') is None:
-    session = web.session.Session(app, web.session.DiskStore('sessions'), initializer={'token': None, 'repository': None})
+    session = web.session.Session(app, web.session.DiskStore('sessions'),
+                                  initializer={'token': None, 'repository': None})
     web.config._session = session
 else:
     session = web.config._session
@@ -69,10 +72,12 @@ class Index:
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login",
-                 'onclick="location.href=\'' + login_link + '\'" id="btnLogin"'],
+                 'onclick="login(\'' + login_link + '\')" id="btnLogin"'],
                 ["help", "<i class=\"fa fa-info-circle\"></i>",
                  'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"'],
-                ["", 'click', 'onClick="getRepos()"']
+                ["", 'set Repo', 'onClick="getRepos()"'],
+                ["", 'Commit', 'onClick="commit()"'],
+                ["", 'new File', 'onClick="newFileDialog()"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
@@ -143,6 +148,16 @@ class Markdown:
         return 'header' + separator + value
 
 
+class Set_repo_name:
+    def POST(self):
+        data = web.input()
+        if data.get('userName') is None:
+            return session.get('userName') is not None or session.get('token') is None
+        else:
+            session.userName = data.get('userName')
+        return ''
+
+
 class Auth:
     def GET(self):
         query = web.input()
@@ -160,35 +175,37 @@ class Auth:
 
 class List_repos:
     def POST(self):
-        data = web.input().get('name')
-        if data is not None:
-            session.repository = data
-            Create_repo(session.token)
-        else:
-            response = get(
-                'https://api.github.com/users/{0}/repos'.format('tomasSimandl'),
-                headers={
-                    'Accept': 'application/json'
-                }
-            )
-            json = response.json()
-            repo = ''
-            if len(json):
-                for one in json:
-                    if 'name' in one:
-                        repo += '<button onClick="setRepo(\'{0}\')">{0}</button>'.format(one['name'])
+        if session.get('token') is not None:
+            data = web.input().get('name')
+            if data is not None:
+                session.repository = data
+                Create_repo(session.token)
+            else:
+                response = get(
+                    'https://api.github.com/users/{0}/repos'.format(session.userName),
+                    headers={
+                        'Accept': 'application/json'
+                    }
+                )
+                json = response.json()
+                repo = ''
+                if len(json):
+                    for one in json:
+                        if 'name' in one:
+                            repo += '<button onClick="setRepo(\'{0}\')">{0}</button>'.format(one['name'])
 
-                if repo is not '':
-                    return '<div>' + repo + '</div>'
-                else:
-                    return 'can\'t display repositories.'
+                    if repo is not '':
+                        return '<div>' + repo + '</div>'
+                    else:
+                        return 'can\'t display repositories.'
 
-        return ''
+            return ''
 
 
 class List_repo_tree:
     def POST(self):
-        return self.getDirTree('')
+        if session.get('token') is not None:
+            return self.getDirTree('')
 
     def getDirTree(self, path):
         list = '<ul>'
@@ -211,30 +228,48 @@ class List_repo_tree:
 
 class Commit_file:
     def POST(self):
-        data = web.input()
-        if os.path.exists("repositories/{0}".format(session.get('token'))):
-            out = open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data.get('fileName')),
-                       "w")  # todo
-            out.write(web.input().get('data').encode(encoding="UTF-8"))
-            out.close()
+        if session.get('token') is not None and session.get('openFile') is not None:
 
-        os.system(
-            "cd repositories/{0}/{3} && dir && git pull https://{0}@github.com/{2}/{3}.git && git add * && git commit -m {1} && git push https://{0}@github.com/{2}/{3}.git".format(
-                session.get('token'), "commit_message_here", "tomasSimandl", session.repository  # TODO
+            os.system("cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git".format(
+                session.get('token'), session.userName, session.repository
             ))
-        return 'ok'
+
+            if os.path.exists("repositories/{0}".format(session.get('token'))):
+                out = open(
+                    "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
+                                                      session.get('openFile').encode(encoding='UTF-8')), "w")
+                out.write(web.input().get('data').encode(encoding="UTF-8"))
+                out.close()
+
+            os.system(
+                "cd repositories/{0}/{3} && git add * && git commit -m {1} && git push https://{0}@github.com/{2}/{3}.git".format(
+                    session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'), session.userName, session.repository
+                ))
+            return 'ok'
+        return ''
 
 
 class Get_file:
     def POST(self):
-        print session.get('repository')
-        data = web.input()
-        text = ""
-        if data.get('fileName'):
-            file = open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data['fileName']), "r")
-            text = file.read()
+        if session.get('token') is not None:
+            data = web.input()
+            text = ""
+            if data.get('fileName'):
+                if data['fileName'].find('..') is -1:
+                    file = open(
+                        "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data['fileName'].encode(encoding='UTF-8')), "r")
+                    text = file.read()
+                    session.openFile = data['fileName']
+            return text
 
-        return text
+class Create_file:
+    def POST(self):
+        if session.get('token') is not None:
+            data = web.input()
+            if data.get('fileName') and data['fileName'].find('..') is -1:
+                open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data['fileName'].encode(encoding='UTF-8')), "a").close()
+                session.openFile = data['fileName']
+            return ''
 
 
 class Create_repo:
@@ -243,8 +278,8 @@ class Create_repo:
         if not os.path.exists('repositories/{0}'.format(token)):
             os.makedirs('repositories/{0}'.format(token))
         if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
-            os.system("cd repositories/{0} && git clone https://github.com/{1}/{2}.git".format(
-                token, "tomasSimandl", session.repository  # TODO
+            os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
+                token, session.userName, session.repository  # TODO
             ))
 
 

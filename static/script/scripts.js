@@ -6,8 +6,6 @@ var scrollTimer;
 var sync;
 /** If is true, graphs are parse. */
 var loadMermaid = false;
-/** file witch is edit. */
-var workingFile = '';
 
 /**
  * Call after page loads. Set height of html components when window is resize.
@@ -323,6 +321,36 @@ function init() {
     setTimeout(function () {
         initAdjustmentColumns();
     }, 1000);
+
+    $.post('/set-repo-name', function (data) {
+        if (data == 'False') {
+            $("#help_dialog").dialog({
+                autoOpen: false,
+                resizable: true,
+                modal: true,
+                height: 300,
+                width: 200,
+                title: 'Repository',
+                buttons: [
+                    {
+                        text: 'OK',
+                        click: function () {
+                            if ($('#gitName').val() != '') {
+                                $.post('/set-repo-name', {userName: $('#gitName').val()});
+                                $('#help_dialog').dialog('close');
+                                getRepos();
+                            }
+                        }
+                    }
+                ]
+            });
+
+            var html = '<label>Write your user name or team name.</label></label><input id="gitName" type="text" name="repository">';
+            $("#help_dialog").html(html);
+
+            $("#help_dialog").dialog('open');
+        }
+    });
 }
 
 function getRepos() {
@@ -354,24 +382,64 @@ function setRepo(repoName) {
     $('#help_dialog').dialog("close");
 }
 
-function getFile(fileName){
+function getFile(fileName) {
     $.post("/get-file", {fileName: fileName}, function (data) {
-        workingFile = fileName;
 
         $('#editor').val(data);
         sendMarkdown();
     })
 }
 
-function commit(){
-    if(workingFile.length > 0) {
-        $.post("/commit-file", {fileName: workingFile, data: $('#editor').val()}, function (data) {
-            if(data == 'ok'){
-                alert('Done');
-            }else{
-                alert('Error');
-            }
-        })
-    }
+function commit() {
+    $.post("/commit-file", {data: $('#editor').val()}, function (data) {
+        if (data == 'ok') {
+            alert('Done');
+        } else {
+            alert('Error');
+        }
+    })
+
+}
+
+function newFileDialog(){
+    $("#help_dialog").dialog({
+                autoOpen: false,
+                resizable: true,
+                modal: true,
+                height: 300,
+                width: 300,
+                title: 'File name',
+                buttons: [
+                    {
+                        text: 'OK',
+                        click: function () {
+                            if ($('#fileName').val() != '') {
+                                newFile($('#fileName').val());
+                            }
+                        }
+                    }
+                ]
+            });
+
+            var html = '<label>Write name of new file.</label></label><input id="fileName" type="text" name="repository">';
+            $("#help_dialog").html(html);
+
+            $("#help_dialog").dialog('open');
+    
+}
+
+function newFile(fileName) {
+    $.post("/create-file", {fileName: fileName}, function (data) {
+        $.post("/list-repo-tree", function (data) {
+            $('#repository').html(data)
+        });
+        $('#editor').val(data);
+        sendMarkdown();
+
+    })
+}
+
+function login(link) {
+    window.location.href = link;
 }
 
