@@ -7,47 +7,25 @@ Online [Markdown](https://daringfireball.net/projects/markdown/) editor with som
 Live Demo: https://mark2down.herokuapp.com/
 
 ## Instalation & Development Server
-- Make sure that the right version of Python - __Python 2.x.x__ is installed:
+ - Install Python 2 and virtualenv, e.g. on Debian:
 ```
-> python --version
+# apt-get install python python-virtualenv
 ```
-The output should be similar to this (the version might slightly differ):
+The installation may differ on other systems.
+
+- Clone this repository
 ```
-Python 2.7.11
+$ git clone https://github.com/word-killers/mark2down.git
 ```
 
-If not, you may use `python2` command instead or install the appropriate version.
-
-- And clone this repository:
+- Create a virtual environment and install dependencies
 ```
-> git clone https://github.com/word-killers/mark2down.git
-> cd mark2down
-```
-
-- Next, install required dependencies:
-
-```
-> pip install -r requirements.txt
-```
-> Note: Pip for Python 2 is required. ([Install howto](https://pip.pypa.io/en/stable/installing/))
-
-- Now, you should be able to run the development server.
-
-On Linux/Mac/UN*X:
-
-```
-> cd mark2down
-> chmod +x server.py
-> ./server.py
+$ virtualenv mark2down -p /usr/bin/python2
+$ cd mark2down
+$ source bin/activate
+$ pip install -r requirements.txt
 ```
 
-On Windows:
-```
-> python server.py
-```
 
-The server should be running on [http://localhost:8080/].
 
 ## Production Server
-The steps are almost the same but instead of running the server from the python script, clone the project to the server root and run the web server. Server setup for Apache and Lighttpd is described in [web.py 
-documentation](http://webpy.org/install#prod).
