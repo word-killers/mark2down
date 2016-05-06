@@ -43,6 +43,10 @@ $ ./server.py 8080 <CLIENT_ID> <CLIENT_SECRET>
 ```
 > Replace \<CLIENT_ID\> and \<CLIENT_SECRET\> with the values from GitHub OAuth [Application registration](https://github.com/settings/applications/new).
 
+Now, you should be able to access the application at [http://localhost:8080](http://localhost:8080) .
+
+Use [CTRL] + [C] to exit the server and `$ deactivate` command to exit from virtualenv.
+
 ## Production Server
 The configuration is similar to plain web.py (described [here](http://webpy.org/install#prod)) except the 'CLIENT_ID' and 'CLIENT_SECRET' values passed as command line arguments to the server script. As in the original configuration, Apache and Lighttpd servers are supported.
 
