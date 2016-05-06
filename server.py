@@ -11,6 +11,7 @@ import markdown
 import alignment_extension
 import graph_com_ann_extension
 import highlight_extension
+from markdown_include.include import  MarkdownInclude
 from markdown.extensions.toc import TocExtension
 from requests import get
 
@@ -45,7 +46,9 @@ urls = (
     '/get-file', 'Get_file',
     '/create-file', 'Create_file',
     '/set-repo-name', 'Set_repo_name',
-    '/logout', 'Logout'
+    '/logout', 'Logout',
+    '/pull', 'Pull',
+    '/reset-repo', 'Reset_repo'
 )
 
 # Application setup
@@ -55,7 +58,7 @@ web.config.debug = False  # Must be disabled because conflicts with sessions (di
 
 if web.config.get('_session') is None:
     session = web.session.Session(app, web.session.DiskStore('sessions'),
-                                  initializer={'token': None, 'repository': None, 'userName' : None, 'openFile': None})
+                                  initializer={'token': None, 'repository': None, 'userName': None, 'openFile': None})
     web.config._session = session
 else:
     session = web.config._session
@@ -80,7 +83,9 @@ class Index:
                 ["", 'set Repo', 'onClick="getRepos()"'],
                 ["", 'Commit', 'onClick="commit()"'],
                 ["", 'new File', 'onClick="newFileDialog()"'],
-                ["", 'logout', 'onClick="logout()"']
+                ["", 'logout', 'onClick="logout()"'],
+                ["", 'pull', 'onClick="pull()"'],
+                ["", 'reset', 'onClick="reset()"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
@@ -131,8 +136,12 @@ class Markdown:
         graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'], data['annotations'].split(',,,'))
         highlight_ext = highlight_extension.HighlightExtension()
         alignment_ext = alignment_extension.Extensions()
+        if session.get('token') is not None and session.get('repository') is not None:
+            include = MarkdownInclude(configs={'base_path': 'repositories/{0}/{1}/'.format(session.token, session.repository), 'encoding': 'UTF-8'})
+        else:
+            include = None
         md = markdown.Markdown(safe_mode='escape', extensions=[
-            'markdown_include.include',  # option to include other files
+            include,  # option to include other files
             graph_com_ann_ext,  # graph, comment, annotation
             highlight_ext,  # strong, italic, underline, cross
             alignment_ext,  # alignment
@@ -177,12 +186,14 @@ class Auth:
         else:
             return 'Login failed - no auth. code received.'
 
+
 class Logout:
     def POST(self):
         session.repository = None
         session.token = None
         session.userName = None
         session.openFile = None
+
 
 class List_repos:
     def POST(self):
@@ -210,7 +221,7 @@ class List_repos:
                     else:
                         return 'can\'t display repositories.'
 
-            return ''
+            return 'can\'t display repositories.'
 
 
 class List_repo_tree:
@@ -249,11 +260,31 @@ class Commit_file:
                 out.close()
 
             result = subprocess.check_output(
-                "cd repositories/{0}/{3} && (git pull https://{0}@github.com/{2}/{3}.git || exit /b 0) && git add * && git commit -m {1} && git push https://{0}@github.com/{2}/{3}.git || exit /b 0 ".format(
+                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(session.get('token'),
+                        session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+
+            result += subprocess.check_output(
+                "cd repositories/{0}/{2} && git add * && git commit -m {1} || exit 0 ".format(
                     session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'),
+                    session.repository
+                ), shell=True, stderr=subprocess.STDOUT)
+
+            result += subprocess.check_output(
+                "cd repositories/{0}/{2} && git push https://{0}@github.com/{1}/{2}.git || exit 0 ".format(
+                    session.get('token'),
                     session.userName, session.repository
                 ), shell=True, stderr=subprocess.STDOUT)
-        return result
+            return result.replace(session.token, '***')
+
+class Pull:
+    def POST(self):
+        if session.get('token') is not None:
+            result = subprocess.check_output(
+                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                    session.get('token'),
+                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+            session.openFile = None
+            return result.replace(session.token, '***')
 
 
 class Get_file:
@@ -280,6 +311,15 @@ class Create_file:
                                                        data['fileName'].encode(encoding='UTF-8')), "a").close()
                 session.openFile = data['fileName']
             return ''
+
+class Reset_repo:
+    def POST(self):
+        if session.get('token') is not None:
+            result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git fetch --all && git reset --hard @{{upstream}} || exit 0".format(
+                    session.get('token'), session.repository), shell=True, stderr=subprocess.STDOUT)
+
+            return result.replace(session.token, '***')
 
 
 class Create_repo:

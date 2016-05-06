@@ -374,7 +374,7 @@ function getRepos() {
 function setRepo(repoName) {
     $.post("/list-repos", {name: repoName}, function () {
         $.post("/list-repo-tree", function (data) {
-            $('#repository').html(data)
+            $('#repository').html(data);
             $('#editor').val('');
             sendMarkdown();
         });
@@ -430,6 +430,7 @@ function newFile(fileName) {
             $('#repository').html(data)
         });
         $('#editor').val(data);
+        $('#help_dialog').dialog('close');
         sendMarkdown();
 
     })
@@ -441,7 +442,26 @@ function login(link) {
 
 function logout(){
     $.post('/logout', function () {
+        $('#editor').val('');
+        sendMarkdown();
         window.location.reload()
     });
+}
+
+function pull(){
+    $.post('/pull', function (data) {
+        $('#editor').val('');
+        sendMarkdown();
+        alert(data);
+    })
+}
+
+function reset(){
+    $.post('/reset-repo', function (data) {
+        $('#editor').val('');
+        sendMarkdown();
+        alert(data);
+    });
+    
 }
 
