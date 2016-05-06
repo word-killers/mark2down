@@ -439,3 +439,9 @@ function login(link) {
     window.location.href = link;
 }
 
+function logout(){
+    $.post('/logout', function () {
+        window.location.reload()
+    });
+}
+

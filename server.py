@@ -44,7 +44,8 @@ urls = (
     '/commit-file', 'Commit_file',
     '/get-file', 'Get_file',
     '/create-file', 'Create_file',
-    '/set-repo-name', 'Set_repo_name'
+    '/set-repo-name', 'Set_repo_name',
+    '/logout', 'Logout'
 )
 
 # Application setup
@@ -54,7 +55,7 @@ web.config.debug = False  # Must be disabled because conflicts with sessions (di
 
 if web.config.get('_session') is None:
     session = web.session.Session(app, web.session.DiskStore('sessions'),
-                                  initializer={'token': None, 'repository': None})
+                                  initializer={'token': None, 'repository': None, 'userName' : None, 'openFile': None})
     web.config._session = session
 else:
     session = web.config._session
@@ -78,7 +79,8 @@ class Index:
                  'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"'],
                 ["", 'set Repo', 'onClick="getRepos()"'],
                 ["", 'Commit', 'onClick="commit()"'],
-                ["", 'new File', 'onClick="newFileDialog()"']
+                ["", 'new File', 'onClick="newFileDialog()"'],
+                ["", 'logout', 'onClick="logout()"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
@@ -152,6 +154,8 @@ class Markdown:
 class Set_repo_name:
     def POST(self):
         data = web.input()
+        print session.userName
+        print session.token
         if data.get('userName') is None:
             return session.get('userName') is not None or session.get('token') is None
         else:
@@ -173,6 +177,12 @@ class Auth:
         else:
             return 'Login failed - no auth. code received.'
 
+class Logout:
+    def POST(self):
+        session.repository = None
+        session.token = None
+        session.userName = None
+        session.openFile = None
 
 class List_repos:
     def POST(self):
