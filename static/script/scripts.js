@@ -392,40 +392,36 @@ function getFile(fileName) {
 
 function commit() {
     $.post("/commit-file", {data: $('#editor').val()}, function (data) {
-        if (data == 'ok') {
-            alert('Done');
-        } else {
-            alert('Error');
-        }
+        alert(data);
     })
 
 }
 
-function newFileDialog(){
+function newFileDialog() {
     $("#help_dialog").dialog({
-                autoOpen: false,
-                resizable: true,
-                modal: true,
-                height: 300,
-                width: 300,
-                title: 'File name',
-                buttons: [
-                    {
-                        text: 'OK',
-                        click: function () {
-                            if ($('#fileName').val() != '') {
-                                newFile($('#fileName').val());
-                            }
-                        }
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'File name',
+        buttons: [
+            {
+                text: 'OK',
+                click: function () {
+                    if ($('#fileName').val() != '') {
+                        newFile($('#fileName').val());
                     }
-                ]
-            });
+                }
+            }
+        ]
+    });
 
-            var html = '<label>Write name of new file.</label></label><input id="fileName" type="text" name="repository">';
-            $("#help_dialog").html(html);
+    var html = '<label>Write name of new file.</label></label><input id="fileName" type="text" name="repository">';
+    $("#help_dialog").html(html);
 
-            $("#help_dialog").dialog('open');
-    
+    $("#help_dialog").dialog('open');
+
 }
 
 function newFile(fileName) {

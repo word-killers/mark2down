@@ -4,6 +4,7 @@ import sys
 import re
 import os
 
+import subprocess
 import web
 
 import markdown
@@ -230,10 +231,6 @@ class Commit_file:
     def POST(self):
         if session.get('token') is not None and session.get('openFile') is not None:
 
-            os.system("cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git".format(
-                session.get('token'), session.userName, session.repository
-            ))
-
             if os.path.exists("repositories/{0}".format(session.get('token'))):
                 out = open(
                     "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
@@ -241,12 +238,12 @@ class Commit_file:
                 out.write(web.input().get('data').encode(encoding="UTF-8"))
                 out.close()
 
-            os.system(
-                "cd repositories/{0}/{3} && git add * && git commit -m {1} && git push https://{0}@github.com/{2}/{3}.git".format(
-                    session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'), session.userName, session.repository
-                ))
-            return 'ok'
-        return ''
+            result = subprocess.check_output(
+                "cd repositories/{0}/{3} && (git pull https://{0}@github.com/{2}/{3}.git || exit /b 0) && git add * && git commit -m {1} && git push https://{0}@github.com/{2}/{3}.git || exit /b 0 ".format(
+                    session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'),
+                    session.userName, session.repository
+                ), shell=True, stderr=subprocess.STDOUT)
+        return result
 
 
 class Get_file:
@@ -257,17 +254,20 @@ class Get_file:
             if data.get('fileName'):
                 if data['fileName'].find('..') is -1:
                     file = open(
-                        "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data['fileName'].encode(encoding='UTF-8')), "r")
+                        "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
+                                                          data['fileName'].encode(encoding='UTF-8')), "r")
                     text = file.read()
                     session.openFile = data['fileName']
             return text
+
 
 class Create_file:
     def POST(self):
         if session.get('token') is not None:
             data = web.input()
             if data.get('fileName') and data['fileName'].find('..') is -1:
-                open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository, data['fileName'].encode(encoding='UTF-8')), "a").close()
+                open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
+                                                       data['fileName'].encode(encoding='UTF-8')), "a").close()
                 session.openFile = data['fileName']
             return ''
 
