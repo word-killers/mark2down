@@ -316,14 +316,54 @@ function init() {
     initPrintDialog();
     initTableDialog();
     $('#editor').scroll();
-    $(window).resize();
     changeRenderMermaidColor();
     setTimeout(function () {
         initAdjustmentColumns();
     }, 1000);
+    hideButtons();
+    $(window).resize();
 
+    setUser();
+}
+
+function hideButtons() {
+    $.post("/status", function (data) {
+        var status = data.split(' ');
+        if (status[0] == 'True') {
+            $('#btnLogout').show();
+            $('#btnSetUser').show();
+            $('#btnLogin').hide();
+        } else {
+            $('#btnLogout').hide();
+            $('#btnSetUser').hide();
+            $('#btnLogin').show();
+        }
+
+        if (status[1] == 'True' && status[2] == 'True') {
+            $('#btnSetRepo').show();
+            $('#btnCommit').show();
+            $('#btnNewFile').show();
+            $('#btnPull').show();
+            $('#btnReset').show();
+        } else {
+            if (status[1] == 'True') {
+                $('#btnSetRepo').show();
+            } else {
+                $('#btnSetRepo').hide();
+                $('#btnCommit').hide();
+                $('#btnNewFile').hide();
+                $('#btnPull').hide();
+                $('#btnReset').hide();
+            }
+        }
+
+        $(window).resize();
+    })
+}
+
+function setUser(){
     $.post('/set-repo-name', function (data) {
-        if (data == 'False') {
+        if (data == 'True') {
             $("#help_dialog").dialog({
                 autoOpen: false,
                 resizable: true,
@@ -339,6 +379,7 @@ function init() {
                                 $.post('/set-repo-name', {userName: $('#gitName').val()});
                                 $('#help_dialog').dialog('close');
                                 getRepos();
+                                hideButtons();
                             }
                         }
                     }
@@ -360,7 +401,10 @@ function getRepos() {
         modal: true,
         height: 300,
         width: 200,
-        title: 'Repositories'
+        title: 'Repositories',
+        close: function () {
+            hideButtons();
+        }
     });
     $("#help_dialog").html("");
 
@@ -440,7 +484,7 @@ function login(link) {
     window.location.href = link;
 }
 
-function logout(){
+function logout() {
     $.post('/logout', function () {
         $('#editor').val('');
         sendMarkdown();
@@ -448,7 +492,7 @@ function logout(){
     });
 }
 
-function pull(){
+function pull() {
     $.post('/pull', function (data) {
         $('#editor').val('');
         sendMarkdown();
@@ -456,12 +500,12 @@ function pull(){
     })
 }
 
-function reset(){
+function reset() {
     $.post('/reset-repo', function (data) {
         $('#editor').val('');
         sendMarkdown();
         alert(data);
     });
-    
+
 }
 

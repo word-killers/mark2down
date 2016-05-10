@@ -48,6 +48,7 @@ urls = (
     '/set-repo-name', 'Set_repo_name',
     '/logout', 'Logout',
     '/pull', 'Pull',
+    '/status', 'Status',
     '/reset-repo', 'Reset_repo'
 )
 
@@ -78,14 +79,9 @@ class Index:
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login",
                  'onclick="login(\'' + login_link + '\')" id="btnLogin"'],
+                ["logout", '<i class=\"fa fa-user\"></i> Logout', 'onClick="logout()" id="btnLogout"'],
                 ["help", "<i class=\"fa fa-info-circle\"></i>",
-                 'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"'],
-                ["", 'set Repo', 'onClick="getRepos()"'],
-                ["", 'Commit', 'onClick="commit()"'],
-                ["", 'new File', 'onClick="newFileDialog()"'],
-                ["", 'logout', 'onClick="logout()"'],
-                ["", 'pull', 'onClick="pull()"'],
-                ["", 'reset', 'onClick="reset()"']
+                 'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
             ], [
                 ["Heading 1", "H1", "onclick=\"putChar('# ', 2)\" id='btnH1'"],
                 ["Heading 2", "H2", "onclick=\"putChar('## ', 3)\" id='btnH2'"],
@@ -125,6 +121,13 @@ class Index:
             ], [
                 ["preview", "Preview", "id=\"previewOpen\""],
                 ["render", 'Render Mermaid', "onclick='switchMermaid();' id='mermaidBtn'"]
+            ], [
+                ["set user", 'Set user', 'onClick="setUser()" id="btnSetUser"'],
+                ["set repository", 'Set repo', 'onClick="getRepos()" id="btnSetRepo"'],
+                ["create new file", 'New file', 'onClick="newFileDialog()" id="btnNewFile"'],
+                ["commit", 'Commit', 'onClick="commit()" id="btnCommit"'],
+                ["pull", 'Pull', 'onClick="pull()" id="btnPull"'],
+                ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
             ]
         ]
         return templates.index(data)
@@ -166,9 +169,10 @@ class Set_repo_name:
         print session.userName
         print session.token
         if data.get('userName') is None:
-            return session.get('userName') is not None or session.get('token') is None
+            return session.get('token') is not None
         else:
             session.userName = data.get('userName')
+            session.repository = None
         return ''
 
 
@@ -321,6 +325,12 @@ class Reset_repo:
 
             return result.replace(session.token, '***')
 
+class Status:
+    def POST(self):
+        login = session.get('token') is not None
+        user = session.get('userName') is not None
+        repo = session.get('repository') is not None
+        return "{0} {1} {2}".format(login, user, repo)
 
 class Create_repo:
     def __init__(self, token):
@@ -331,7 +341,6 @@ class Create_repo:
             os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
                 token, session.userName, session.repository  # TODO
             ))
-
 
 if __name__ == "__main__":
     app.run()
