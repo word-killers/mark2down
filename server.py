@@ -346,10 +346,10 @@ class Commit_file:
                 out.write(web.input().get('data').encode(encoding="UTF-8"))
                 out.close()
 
-            os.system(
-                    'git config user.name "mark2down" && git config user.email "mark2down@email.email"')
-            # pull
             result = subprocess.check_output(
+                    'git config user.name "mark2down" && git config user.email "mark2down@email.email"', shell=True, stderr=subprocess.STDOUT)
+            # pull
+            result += subprocess.check_output(
                 "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
                     session.get('token'),
                     session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
