@@ -394,7 +394,7 @@ class Reset_repo:
     def POST(self):
         if session.get('token') is not None:
             result = subprocess.check_output(
-                "cd repositories/{0}/{1} && git fetch --all && git reset --hard @{{upstream}} || exit 0".format(
+                "cd repositories/{0}/{1} && git fetch --all && git clean -f && git reset --hard @{{upstream}} || exit 0".format(
                     session.get('token'), session.repository), shell=True, stderr=subprocess.STDOUT)
 
             return result.replace(session.token, '***')

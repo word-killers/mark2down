@@ -568,6 +568,7 @@ function pull() {
  */
 function reset() {
     $.post('/reset-repo', function (data) {
+        setFileTree();
         $('#editor').val('');
         sendMarkdown();
         alert(data);
