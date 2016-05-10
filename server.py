@@ -346,10 +346,8 @@ class Commit_file:
                 out.write(web.input().get('data').encode(encoding="UTF-8"))
                 out.close()
 
-            result = subprocess.check_output(
-                    'git config user.name "mark2down" && git config user.email "mark2down@email.email"', shell=True, stderr=subprocess.STDOUT)
             # pull
-            result += subprocess.check_output(
+            result = subprocess.check_output(
                 "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
                     session.get('token'),
                     session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
@@ -415,6 +413,9 @@ class Create_repo:
             os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
                 token, session.userName, session.repository
             ))
+            os.system(
+                'cd repositories/{0}/{1} && git config --global user.name "mark2down" && git config -global user.email "mark2down@email.email"'.format(
+                    session.get('token'), session.get('repository')))
             # copy css
             if not os.path.exists('repositories/{0}/{1}/.css'.format(token, session.repository)):
                 os.makedirs('repositories/{0}/{1}/.css'.format(token, session.repository))
