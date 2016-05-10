@@ -414,7 +414,7 @@ class Create_repo:
                 token, session.userName, session.repository
             ))
             os.system(
-                'cd repositories/{0}/{1} && git config user.name "mark2down" && git config user.email "mark2down@email.email" $$ git config push.default simple'.format(
+                'cd repositories/{0}/{1} && git config user.name "mark2down" && git config user.email "mark2down@email.email" && git config push.default simple'.format(
                     session.get('token'), session.get('repository')))
             # copy css
             if not os.path.exists('repositories/{0}/{1}/.css'.format(token, session.repository)):
