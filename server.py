@@ -11,7 +11,7 @@ import markdown
 import alignment_extension
 import graph_com_ann_extension
 import highlight_extension
-from markdown_include.include import  MarkdownInclude
+from markdown_include.include import MarkdownInclude
 from markdown.extensions.toc import TocExtension
 from requests import get
 
@@ -140,7 +140,9 @@ class Markdown:
         highlight_ext = highlight_extension.HighlightExtension()
         alignment_ext = alignment_extension.Extensions()
         if session.get('token') is not None and session.get('repository') is not None:
-            include = MarkdownInclude(configs={'base_path': 'repositories/{0}/{1}/'.format(session.token, session.repository), 'encoding': 'UTF-8'})
+            include = MarkdownInclude(
+                configs={'base_path': 'repositories/{0}/{1}/'.format(session.token, session.repository),
+                         'encoding': 'UTF-8'})
         else:
             include = None
         md = markdown.Markdown(safe_mode='escape', extensions=[
@@ -207,7 +209,7 @@ class List_repos:
                 session.repository = data
                 Create_repo(session.token)
             else:
-                response = get(
+                response = get(  # github have limit to 60 requests
                     'https://api.github.com/users/{0}/repos'.format(session.userName),
                     headers={
                         'Accept': 'application/json'
@@ -264,8 +266,9 @@ class Commit_file:
                 out.close()
 
             result = subprocess.check_output(
-                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(session.get('token'),
-                        session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                    session.get('token'),
+                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
 
             result += subprocess.check_output(
                 "cd repositories/{0}/{2} && git add * && git commit -m {1} || exit 0 ".format(
@@ -279,6 +282,7 @@ class Commit_file:
                     session.userName, session.repository
                 ), shell=True, stderr=subprocess.STDOUT)
             return result.replace(session.token, '***')
+
 
 class Pull:
     def POST(self):
@@ -316,6 +320,7 @@ class Create_file:
                 session.openFile = data['fileName']
             return ''
 
+
 class Reset_repo:
     def POST(self):
         if session.get('token') is not None:
@@ -325,6 +330,7 @@ class Reset_repo:
 
             return result.replace(session.token, '***')
 
+
 class Status:
     def POST(self):
         login = session.get('token') is not None
@@ -332,15 +338,18 @@ class Status:
         repo = session.get('repository') is not None
         return "{0} {1} {2}".format(login, user, repo)
 
+
 class Create_repo:
     def __init__(self, token):
         print 'Testing folder'
         if not os.path.exists('repositories/{0}'.format(token)):
             os.makedirs('repositories/{0}'.format(token))
         if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
+            os.system('git config --global user.name "mark2down" && git config -global user.email "mark2down@email.email"')
             os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
                 token, session.userName, session.repository  # TODO
             ))
+
 
 if __name__ == "__main__":
     app.run()
