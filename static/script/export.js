@@ -78,19 +78,21 @@ function printPreview() {
             win.document.write('<link rel="stylesheet" href="/static/mermaid/mermaid.css">');
             win.document.write('<script>mermaid.init(undefined, ".mermaid");</script>');
         }
-        win.document.write('<link rel="stylesheet" href="/static/css/style_preview.css">');//todo
-        win.document.write('</head><body>');
-        win.document.write(document.getElementById('help').innerHTML);
-        win.document.write('</body></html>');
+        $.post('/get-css', function (data) {
+            win.document.write("<style>" + encodeURIComponent(data) + "</style>");
+            win.document.write('</head><body>');
+            win.document.write(document.getElementById('help').innerHTML);
+            win.document.write('</body></html>');
 
-        win.document.close(); // for IE
-        win.focus(); // for IE
+            win.document.close(); // for IE
+            win.focus(); // for IE
 
-        document.getElementById('help').innerHTML = '';
-        setTimeout(function () {
-            win.print();
-            win.close();
-        }, 100);
+            document.getElementById('help').innerHTML = '';
+            setTimeout(function () {
+                win.print();
+                win.close();
+            }, 100);
+        });
     }, 1000);
 }
 
@@ -111,14 +113,14 @@ function exportPreview() {
             mermaid.init(undefined, ".mermaid");
         }
 
-        $.when($.get("/static/css/style_preview.css"))
+        $.when($.post("/get-css"))
             .done(function (data) {
                 var text = "data:text/html,";
                 text += "<html><head><title>export</title><meta charset=\"UTF-8\"><style>";
                 text += encodeURIComponent(data) + "</style></head><body>";
                 text += encodeURIComponent(document.getElementById("help").innerHTML) + "</body></html>";
                 console.log(text);
-                a.href =  text;
+                a.href = text;
                 a.click();
                 helpDiv.css('display', 'none');
                 document.body.removeChild(a);

@@ -14,6 +14,7 @@ import highlight_extension
 from markdown_include.include import MarkdownInclude
 from markdown.extensions.toc import TocExtension
 from requests import get
+from shutil import copy
 
 import auth
 
@@ -49,7 +50,8 @@ urls = (
     '/logout', 'Logout',
     '/pull', 'Pull',
     '/status', 'Status',
-    '/reset-repo', 'Reset_repo'
+    '/reset-repo', 'Reset_repo',
+    '/get-css', 'Get_css'
 )
 
 # Application setup
@@ -57,6 +59,7 @@ app = web.application(urls, locals())
 templates = web.template.render('templates')
 web.config.debug = False  # Must be disabled because conflicts with sessions (disable only temporarily)
 
+# Session setup
 if web.config.get('_session') is None:
     session = web.session.Session(app, web.session.DiskStore('sessions'),
                                   initializer={'token': None, 'repository': None, 'userName': None, 'openFile': None})
@@ -65,11 +68,11 @@ else:
     session = web.config._session
 
 
-# Session setup
-
-
-
 class Index:
+    """
+    Render main window of application.
+    """
+
     def GET(self):
         login_link = auth.generate_auth_link(client_id, scopes)
         data = [
@@ -134,6 +137,10 @@ class Index:
 
 
 class Markdown:
+    """
+    Convert markdown text to html text.
+    """
+
     def POST(self):
         data = web.input()
         graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'], data['annotations'].split(',,,'))
@@ -165,20 +172,11 @@ class Markdown:
         return 'header' + separator + value
 
 
-class Set_repo_name:
-    def POST(self):
-        data = web.input()
-        print session.userName
-        print session.token
-        if data.get('userName') is None:
-            return session.get('token') is not None
-        else:
-            session.userName = data.get('userName')
-            session.repository = None
-        return ''
-
-
 class Auth:
+    """
+    Using for users login
+    """
+
     def GET(self):
         query = web.input()
         if 'code' in query:
@@ -194,6 +192,10 @@ class Auth:
 
 
 class Logout:
+    """
+    Using for logout users.
+    """
+
     def POST(self):
         session.repository = None
         session.token = None
@@ -201,7 +203,44 @@ class Logout:
         session.openFile = None
 
 
+class Get_css:
+    """
+    Return css from repository or default.
+    """
+
+    def POST(self):
+        if session.get('token') is not None:
+            if session.get('repository') is not None:
+                path = 'repositories/{0}/{1}/.css/style.css'.format(session.token, session.repository)
+                if os.path.exists(path):
+                    return open(path, "r").read()
+
+        return open('repositories/support_files/style.css', "r").read()
+
+
+# repository -----------------------------------------------------------------------------------------------------------
+
+
+class Set_repo_name:
+    """
+    Set name of user or team which have repositories.
+    """
+
+    def POST(self):
+        data = web.input()
+        if data.get('userName') is None:
+            return session.get('token') is not None
+        else:
+            session['userName'] = data.get('userName')
+            session.repository = None
+        return 'ok'
+
+
 class List_repos:
+    """
+    If post is empty return list of users repositories else set repository to value if post.
+    """
+
     def POST(self):
         if session.get('token') is not None:
             data = web.input().get('name')
@@ -220,19 +259,24 @@ class List_repos:
                 if len(json):
                     for one in json:
                         if 'name' in one:
-                            repo += '<button onClick="setRepo(\'{0}\')">{0}</button>'.format(one['name'])
+                            repo += '<button class="btnRepositories" onClick="setRepo(\'{0}\')">{0}</button>'.format(
+                                one['name'])
 
                     if repo is not '':
                         return '<div>' + repo + '</div>'
                     else:
                         return 'can\'t display repositories.'
 
-            return 'can\'t display repositories.'
+        return 'can\'t display repositories.'
 
 
 class List_repo_tree:
+    """
+    Return html list which contains file tree of open repository
+    """
+
     def POST(self):
-        if session.get('token') is not None:
+        if session.get('token') is not None and session.get('repository') is not None:
             return self.getDirTree('')
 
     def getDirTree(self, path):
@@ -250,52 +294,14 @@ class List_repo_tree:
                     list += '<li>' + file + self.getDirTree(new_path) + '</li>'
                 else:
                     list += '<li onClick="getFile(\'{0}\');">{1}</li>'.format(new_path, file)
-        print session.get('repository')
         return list + '</ul>'
 
 
-class Commit_file:
-    def POST(self):
-        if session.get('token') is not None and session.get('openFile') is not None:
-
-            if os.path.exists("repositories/{0}".format(session.get('token'))):
-                out = open(
-                    "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
-                                                      session.get('openFile').encode(encoding='UTF-8')), "w")
-                out.write(web.input().get('data').encode(encoding="UTF-8"))
-                out.close()
-
-            result = subprocess.check_output(
-                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
-                    session.get('token'),
-                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
-
-            result += subprocess.check_output(
-                "cd repositories/{0}/{2} && git add * && git commit -m {1} || exit 0 ".format(
-                    session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'),
-                    session.repository
-                ), shell=True, stderr=subprocess.STDOUT)
-
-            result += subprocess.check_output(
-                "cd repositories/{0}/{2} && git push https://{0}@github.com/{1}/{2}.git || exit 0 ".format(
-                    session.get('token'),
-                    session.userName, session.repository
-                ), shell=True, stderr=subprocess.STDOUT)
-            return result.replace(session.token, '***')
-
-
-class Pull:
-    def POST(self):
-        if session.get('token') is not None:
-            result = subprocess.check_output(
-                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
-                    session.get('token'),
-                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
-            session.openFile = None
-            return result.replace(session.token, '***')
-
-
 class Get_file:
+    """
+    Return text in file. File name is in post as fileName
+    """
+
     def POST(self):
         if session.get('token') is not None:
             data = web.input()
@@ -311,6 +317,10 @@ class Get_file:
 
 
 class Create_file:
+    """
+    Create new empty file
+    """
+
     def POST(self):
         if session.get('token') is not None:
             data = web.input()
@@ -321,7 +331,66 @@ class Create_file:
             return ''
 
 
+class Commit_file:
+    """
+    Commit actual file and return result
+    """
+
+    def POST(self):
+        if session.get('token') is not None and session.get('openFile') is not None:
+            # save edited file
+            if os.path.exists("repositories/{0}".format(session.get('token'))):
+                out = open(
+                    "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
+                                                      session.get('openFile').encode(encoding='UTF-8')), "w")
+                out.write(web.input().get('data').encode(encoding="UTF-8"))
+                out.close()
+
+            # pull
+            result = subprocess.check_output(
+                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                    session.get('token'),
+                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+
+            # commit
+            result += subprocess.check_output(
+                "cd repositories/{0}/{2} && git add * && git commit -m {1} || exit 0 ".format(
+                    session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'),
+                    session.repository
+                ), shell=True, stderr=subprocess.STDOUT)
+
+            # push
+            result += subprocess.check_output(
+                "cd repositories/{0}/{2} && git push https://{0}@github.com/{1}/{2}.git || exit 0 ".format(
+                    session.get('token'),
+                    session.userName, session.repository
+                ), shell=True, stderr=subprocess.STDOUT)
+            return result.replace(session.token, '***')
+
+
+class Pull:
+    """
+    Pull last version from git server.
+    """
+
+    def POST(self):
+        return self.pull()
+
+    def pull(self):
+        if session.get('token') is not None:
+            result = subprocess.check_output(
+                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                    session.get('token'),
+                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+            session.openFile = None
+            return result.replace(session.token, '***')
+
+
 class Reset_repo:
+    """
+    Reset repository to last success commit
+    """
+
     def POST(self):
         if session.get('token') is not None:
             result = subprocess.check_output(
@@ -331,7 +400,36 @@ class Reset_repo:
             return result.replace(session.token, '***')
 
 
+class Create_repo:
+    """
+    Clone repository
+    """
+
+    def __init__(self, token):
+        if not os.path.exists('repositories/{0}'.format(token)):
+            os.makedirs('repositories/{0}'.format(token))
+        if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
+            os.system(
+                'git config --global user.name "mark2down" && git config -global user.email "mark2down@email.email"')
+            # clone repository
+            os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
+                token, session.userName, session.repository
+            ))
+            # copy css
+            if not os.path.exists('repositories/{0}/{1}/.css'.format(token, session.repository)):
+                os.makedirs('repositories/{0}/{1}/.css'.format(token, session.repository))
+                copy('repositories/support_files/style.css',
+                     'repositories/{0}/{1}/.css'.format(token, session.repository))
+
+        else:
+            Pull().pull()
+
+
 class Status:
+    """
+    return status about login, user name, repository
+    """
+
     def POST(self):
         login = session.get('token') is not None
         user = session.get('userName') is not None
@@ -339,17 +437,7 @@ class Status:
         return "{0} {1} {2}".format(login, user, repo)
 
 
-class Create_repo:
-    def __init__(self, token):
-        print 'Testing folder'
-        if not os.path.exists('repositories/{0}'.format(token)):
-            os.makedirs('repositories/{0}'.format(token))
-        if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
-            os.system('git config --global user.name "mark2down" && git config -global user.email "mark2down@email.email"')
-            os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
-                token, session.userName, session.repository  # TODO
-            ))
-
+# ----------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     app.run()

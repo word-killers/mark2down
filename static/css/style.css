@@ -94,6 +94,11 @@ nav {
     left: -3px;
 }
 
+#help_dialog input{
+    width: 100%;
+    padding: 3px;
+}
+
 /*--------------------buttons--------------------*/
 .btn, .panel-btn {
     background-color: transparent;
@@ -116,7 +121,7 @@ nav {
     border-radius: 3px;
 }
 
-.btn:hover, .panel-btn:hover{
+.btn:hover, .panel-btn:hover {
     background-color: #CCCCFF;
 }
 
@@ -126,6 +131,18 @@ nav {
     padding: 0;
     display: none;
     float: left;
+}
+
+.btnRepositories{
+    border: none;
+    padding: 6px;
+    margin-bottom: 3px;
+    background-color: whitesmoke;
+    width: 100%;
+}
+
+.btnRepositories:hover {
+    background-color: #959595;
 }
 /*-------------------left panel-------------------*/
 #left_panel {

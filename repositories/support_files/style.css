@@ -1,0 +1,55 @@
+#documentView {
+    font-family: "Arial", serif;
+}
+
+/*---tables-----------------------------------------------------------------------------------------------------------*/
+#documentView table {
+    border-collapse: collapse;
+    width: auto;
+    font-size: 16px;
+}
+
+#documentView table, #documentView td, #documentView th {
+    border: 1px solid #ddd;
+}
+
+#documentView th, #documentView td {
+    padding: 5px;
+}
+
+#documentView th {
+    background-color: #c2c2c2;
+}
+
+#documentView tr:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+#documentView tr:nth-child(od) {
+    background-color: #ffffff;
+}
+
+#documentView img {
+    width: 100%;
+}
+
+/*----set Padding in real preview-------------------------------------------------------------------------------------*/
+#previewDialogIn {
+    padding: 30mm;
+}
+
+/*---only print style-------------------------------------------------------------------------------------------------*/
+@media print {
+    svg {
+        height: auto;
+    }
+
+    @page {
+        size: 0;
+        margin: 30mm;
+    }
+
+    body {
+        margin: 0;
+    }
+}
