@@ -346,6 +346,8 @@ class Commit_file:
                 out.write(web.input().get('data').encode(encoding="UTF-8"))
                 out.close()
 
+            os.system(
+                    'git config user.name "mark2down" && git config user.email "mark2down@email.email"')
             # pull
             result = subprocess.check_output(
                 "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
@@ -409,8 +411,6 @@ class Create_repo:
         if not os.path.exists('repositories/{0}'.format(token)):
             os.makedirs('repositories/{0}'.format(token))
         if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
-            os.system(
-                'git config --global user.name "mark2down" && git config -global user.email "mark2down@email.email"')
             # clone repository
             os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
                 token, session.userName, session.repository
