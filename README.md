@@ -7,47 +7,84 @@ Online [Markdown](https://daringfireball.net/projects/markdown/) editor with som
 Live Demo: https://mark2down.herokuapp.com/
 
 ## Instalation & Development Server
-- Make sure that the right version of Python - __Python 2.x.x__ is installed:
+Install Python 2 and virtualenv, e.g. on Debian:
 ```
-> python --version
+# apt-get install python python-virtualenv
 ```
-The output should be similar to this (the version might slightly differ):
+> The installation may differ on other systems.
+
+Clone this repository
 ```
-Python 2.7.11
+$ git clone https://github.com/word-killers/mark2down.git
 ```
 
-If not, you may use `python2` command instead or install the appropriate version.
-
-- And clone this repository:
+Create a virtual environment and install dependencies:
 ```
-> git clone https://github.com/word-killers/mark2down.git
-> cd mark2down
-```
-
-- Next, install required dependencies:
-
-```
-> pip install -r requirements.txt
-```
-> Note: Pip for Python 2 is required. ([Install howto](https://pip.pypa.io/en/stable/installing/))
-
-- Now, you should be able to run the development server.
-
-On Linux/Mac/UN*X:
-
-```
-> cd mark2down
-> chmod +x server.py
-> ./server.py
+$ virtualenv mark2down -p /usr/bin/python2
+$ cd mark2down
+$ source bin/activate
+$ pip install -r requirements.txt
 ```
 
-On Windows:
+Run the development server:
+- Make the server script executable:
 ```
-> python server.py
+$ chmod +x server.py
 ```
 
-The server should be running on [http://localhost:8080/].
+- Run without GitHub login:
+```
+$ ./server.py
+```
+
+- Or with GitHub login:
+```
+$ ./server.py 8080 <CLIENT_ID> <CLIENT_SECRET>
+```
+> Replace \<CLIENT_ID\> and \<CLIENT_SECRET\> with the values from GitHub OAuth [Application registration](https://github.com/settings/applications/new).
+
+Now, you should be able to access the application at [http://localhost:8080](http://localhost:8080) .
+
+Use [CTRL] + [C] to exit the server and `$ deactivate` command to exit from virtualenv.
 
 ## Production Server
-The steps are almost the same but instead of running the server from the python script, clone the project to the server root and run the web server. Server setup for Apache and Lighttpd is described in [web.py 
-documentation](http://webpy.org/install#prod).
+The configuration is similar to plain web.py (described [here](http://webpy.org/install#prod)) except the 'CLIENT_ID' and 'CLIENT_SECRET' values passed as command line arguments to the server script. As in the original configuration, Apache and Lighttpd servers are supported.
+
+Example config for lighttpd:
+```
+server.port = 80
+server.username = "http"
+server.groupname = "http"
+server.errorlog = "/var/log/lighttpd/error.log"
+dir-listing.activate = "disable"
+
+mimetype.assign = (
+	".html" => "text/html",
+	".txt" => "text/plain",
+	".css" => "text/css",
+	".js" => "application/x-javascript",
+	".png" => "image/png",
+	"" => "application/octet-stream"
+)
+
+server.modules = ("mod_fastcgi", "mod_rewrite")
+server.document-root = "/srv/http/"
+fastcgi.server = (
+	"/server.py" => ((
+		"socket" => "/tmp/fastcgi.socket",
+		"bin-path" => "/srv/http/server.py 80 <CLIENT_ID> <CLIENT_SECRET>",
+		"max-procs" => 1,
+		"bin-environment" => (
+			"REAL_SCRIPT_NAME" => ""
+		),
+		"check-local" => "disable"
+	))
+)
+
+url.rewrite-once = (
+	"^/favicon.ico$" => "/static/favicon.ico",
+	"^/static/(.*)$" => "/static/$1",
+	"^/(.*)$" => "/server.py/$1"
+)
+```
+> Replace \<CLIENT_ID\> and \<CLIENT_SECRET\> with the values from GitHub OAuth [Application registration](https://github.com/settings/applications/new).
