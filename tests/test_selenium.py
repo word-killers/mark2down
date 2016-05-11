@@ -3,15 +3,14 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 
 
 class PythonOrgSearch(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.PhantomJS()#executable_path='node_modules/phantomjs/lib/phantom/bin/phantomjs')
-        #self.driver = webdriver.Firefox()
+        self.driver = webdriver.PhantomJS()  # executable_path='node_modules/phantomjs/lib/phantom/bin/phantomjs')
+        # self.driver = webdriver.Firefox()
         self.driver.set_window_size(1024, 768)
-        #self.driver.get("http://localhost:8080")
+        # self.driver.get("http://localhost:8080")
         self.driver.get('https://mark2down.herokuapp.com/')
 
     """ don't work with phantomJS
@@ -185,7 +184,8 @@ class PythonOrgSearch(unittest.TestCase):
         btn = driver.find_element_by_id('btnImage')
         self.assertTrue(btn.is_displayed())
         btn.click()
-        self.assertEqual("![alt text](image path \"Tooltip text\")", driver.find_element_by_id("editor").get_attribute('value'))
+        self.assertEqual("![alt text](image path \"Tooltip text\")",
+                         driver.find_element_by_id("editor").get_attribute('value'))
 
     def test_code_btn(self):
         driver = self.driver
@@ -195,41 +195,34 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertEqual("```\n\t\n```", driver.find_element_by_id("editor").get_attribute('value'))
 
     def test_preview_btn(self):
-       driver = self.driver
-       btn = driver.find_element_by_id('previewOpen')
-       self.assertTrue(btn.is_displayed())
-       btn.click()
-       wait = WebDriverWait(driver, 5)
-       wait.until(EC.visibility_of(driver.find_element_by_id('previewDialog')))
-       self.assertTrue(driver.find_element_by_id('previewDialog').is_displayed())
-
-    def test_renderMermaid_btn(self):
         driver = self.driver
-        btn = driver.find_element_by_id('mermaidBtn')
+        btn = driver.find_element_by_id('previewOpen')
         self.assertTrue(btn.is_displayed())
         btn.click()
-        # TODO
+        wait = WebDriverWait(driver, 5)
+        wait.until(EC.visibility_of(driver.find_element_by_id('previewDialog')))
+        self.assertTrue(driver.find_element_by_id('previewDialog').is_displayed())
 
-    def test_export_btn(self):
+    def test_toc(self):
         driver = self.driver
-        btn = driver.find_element_by_id('btnExport')
-        self.assertTrue(btn.is_displayed())
-        btn.click()
-        # TODO
+        driver.find_element_by_id('contentBtn').click()
+        self.assertTrue('block' in driver.find_element_by_id('toc').get_attribute("style"))
+        self.assertFalse('block' in driver.find_element_by_id('comments').get_attribute("style"))
+        self.assertFalse('block' in driver.find_element_by_id('repository').get_attribute("style"))
 
-    def test_print_btn(self):
+    def test_comments(self):
         driver = self.driver
-        btn = driver.find_element_by_id('btnPrint')
-        self.assertTrue(btn.is_displayed())
-        btn.click()
-        # TODO
+        driver.find_element_by_id('commentsBtn').click()
+        self.assertTrue('block' in driver.find_element_by_id('comments').get_attribute("style"))
+        self.assertFalse('block' in driver.find_element_by_id('toc').get_attribute("style"))
+        self.assertFalse('block' in driver.find_element_by_id('repository').get_attribute("style"))
 
-    def test_login_btn(self):
+    def test_repository(self):
         driver = self.driver
-        btn = driver.find_element_by_id('btnLogin')
-        self.assertTrue(btn.is_displayed())
-        btn.click()
-        # TODO
+        driver.find_element_by_id('fileBtn').click()
+        self.assertTrue('block' in driver.find_element_by_id('repository').get_attribute("style"))
+        self.assertFalse('block' in driver.find_element_by_id('toc').get_attribute("style"))
+        self.assertFalse('block' in driver.find_element_by_id('comments').get_attribute("style"))
 
     def tearDown(self):
         self.driver.close()
