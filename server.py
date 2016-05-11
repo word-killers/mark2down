@@ -353,9 +353,13 @@ class Commit_file:
                     session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
 
             # commit
+            print "cd repositories/{0}/{2} && git add {2} && git commit -m \"rewrite {1}\" || exit 0 ".format(
+                    session.get('token'), session.openFile.encode(encoding='UTF-8').replace(' ', '// '),
+                    session.repository
+                )
             result += subprocess.check_output(
-                "cd repositories/{0}/{2} && git add * && git commit -m {1} || exit 0 ".format(
-                    session.get('token'), "rewrite " + session.get('openFile').encode(encoding='UTF-8'),
+                "cd repositories/{0}/{2} && git add \"{1}\" && git commit -m \"rewrite {1}\" || exit 0 ".format(
+                    session.get('token'), session.openFile.encode(encoding='UTF-8'),
                     session.repository
                 ), shell=True, stderr=subprocess.STDOUT)
 
