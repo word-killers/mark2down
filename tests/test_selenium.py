@@ -210,13 +210,6 @@ class PythonOrgSearch(unittest.TestCase):
         btn.click()
         # TODO
 
-    def test_share_btn(self):
-        driver = self.driver
-        btn = driver.find_element_by_id('btnShare')
-        self.assertTrue(btn.is_displayed())
-        btn.click()
-        # TODO
-
     def test_export_btn(self):
         driver = self.driver
         btn = driver.find_element_by_id('btnExport')

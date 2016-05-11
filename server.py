@@ -77,7 +77,6 @@ class Index:
         login_link = auth.generate_auth_link(client_id, scopes)
         data = [
             [
-                ["share", "<i class=\"fa fa-share-alt\"></i> Share", "id='btnShare'"],
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login",
