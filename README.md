@@ -7,9 +7,9 @@ Online [Markdown](https://daringfireball.net/projects/markdown/) editor with som
 Live Demo: https://mark2down.herokuapp.com/
 
 ## Instalation & Development Server
-Install Python 2 and virtualenv, e.g. on Debian:
+Install Python 2, virtualenv and git, e.g. on Debian:
 ```
-# apt-get install python python-virtualenv
+# apt-get install python python-virtualenv git
 ```
 > The installation may differ on other systems.
 
@@ -48,6 +48,7 @@ Now, you should be able to access the application at [http://localhost:8080](htt
 Use [CTRL] + [C] to exit the server and `$ deactivate` command to exit from virtualenv.
 
 ## Production Server
+Use the same setup as in the case of development server but clone the project into the document root of your server.
 The configuration is similar to plain web.py (described [here](http://webpy.org/install#prod)) except the 'CLIENT_ID' and 'CLIENT_SECRET' values passed as command line arguments to the server script. As in the original configuration, Apache and Lighttpd servers are supported.
 
 Example config for lighttpd:
