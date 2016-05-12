@@ -89,3 +89,23 @@ url.rewrite-once = (
 )
 ```
 > Replace \<CLIENT_ID\> and \<CLIENT_SECRET\> with the values from GitHub OAuth [Application registration](https://github.com/settings/applications/new).
+
+## Third-part programs
+* Mermaid - MIT
+* QUnit - MIT
+* Grunt - MIT
+* Dexter - MIT
+* Karma - MIT
+* Font-awesome - MIT & SIL
+* Nose - GNU LGPL
+* Markdown-include - GNU
+* PhantomJS - apache 2.0
+* Selenium - apache 2.0
+* HTML sheets of paper - apache 2.0
+* NPM
+* Travis
+* Codecov
+* GiHub
+* jQuery
+* jQuery-ui
+* Keyvent
