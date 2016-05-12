@@ -223,6 +223,49 @@ class PythonOrgSearch(unittest.TestCase):
         self.assertTrue('block' in driver.find_element_by_id('repository').get_attribute("style"))
         self.assertFalse('block' in driver.find_element_by_id('toc').get_attribute("style"))
         self.assertFalse('block' in driver.find_element_by_id('comments').get_attribute("style"))
+    
+    def test_table_del_row(self):
+        driver = self.driver
+        driver.find_element_by_id('tableButton').click()
+        self.assertTrue(driver.find_element_by_id('dialog').is_displayed())
+        table = driver.find_element_by_id('table')
+        self.assertTrue(table.is_displayed())
+        rows = len(table.find_elements_by_tag_name('tr'))
+        driver.find_element_by_id('dialog').parent.find_element_by_xpath("//*[contains(text(), 'Del Row')]").click()
+        self.assertEqual(rows-1, len(table.find_elements_by_tag_name('tr')))
+
+    def test_table_add_row(self):
+        driver = self.driver
+        driver.find_element_by_id('tableButton').click()
+        self.assertTrue(driver.find_element_by_id('dialog').is_displayed())
+        table = driver.find_element_by_id('table')
+        self.assertTrue(table.is_displayed())
+        rows = len(table.find_elements_by_tag_name('tr'))
+        driver.find_element_by_id('dialog').parent.find_element_by_xpath("//*[contains(text(), 'Add Row')]").click()
+        self.assertEqual(rows + 1, len(table.find_elements_by_tag_name('tr')))
+
+    def test_table_del_col(self):
+        driver = self.driver
+        driver.find_element_by_id('tableButton').click()
+        self.assertTrue(driver.find_element_by_id('dialog').is_displayed())
+        table = driver.find_element_by_id('table')
+        self.assertTrue(table.is_displayed())
+        cols = len(table.find_elements_by_tag_name('td'))/len(table.find_elements_by_tag_name('tr'))
+        driver.find_element_by_id('dialog').parent.find_element_by_xpath("//*[contains(text(), 'Del Col')]").click()
+        new_cols = len(table.find_elements_by_tag_name('td'))/len(table.find_elements_by_tag_name('tr'))
+        self.assertEqual(cols - 1, new_cols)
+
+    def test_table_add_col(self):
+        driver = self.driver
+        driver.find_element_by_id('tableButton').click()
+        self.assertTrue(driver.find_element_by_id('dialog').is_displayed())
+        table = driver.find_element_by_id('table')
+        self.assertTrue(table.is_displayed())
+        cols = len(table.find_elements_by_tag_name('td')) / len(table.find_elements_by_tag_name('tr'))
+        driver.find_element_by_id('dialog').parent.find_element_by_xpath("//*[contains(text(), 'Add Col')]").click()
+        new_cols = len(table.find_elements_by_tag_name('td')) / len(table.find_elements_by_tag_name('tr'))
+        self.assertEqual(cols + 1, new_cols)
+
 
     def tearDown(self):
         self.driver.close()
