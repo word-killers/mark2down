@@ -88,7 +88,9 @@ url.rewrite-once = (
 	"^/(.*)$" => "/server.py/$1"
 )
 ```
-> Replace \<CLIENT_ID\> and \<CLIENT_SECRET\> with the values from GitHub OAuth [Application registration](https://github.com/settings/applications/new).
+> Replace \<CLIENT\_ID\> and \<CLIENT\_SECRET\> with the values from GitHub OAuth [Application registration](https://github.com/settings/applications/new).
+
+For Apache configuration there are many posibilities described in [web.py documentation](http://webpy.org/install#prod). Use the one that allows you passing _PORT_, _\<CLIENT\_ID\>_ and _\<CLIENT\_SECRET\>_ as command line parameters.
 
 ## Third-part programs
 * Mermaid - MIT
