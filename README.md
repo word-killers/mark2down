@@ -47,6 +47,36 @@ Now, you should be able to access the application at [http://localhost:8080](htt
 
 Use [CTRL] + [C] to exit the server and `$ deactivate` command to exit from virtualenv.
 
+##Instalation & Development Server on Windows
+
+#Install Python and VirtualEnv
+
+#Install mark2down
+
+Clone this repository
+```
+git clone https://github.com/mikafilip/mark2down.git
+```
+
+goto mark2down direcotry
+
+```
+cd mark2down
+```
+
+create virtuel enviropmennt called venv
+
+```
+virtualenv venv
+```
+
+run virtual enviropmennt
+
+```
+.\venv\Scripts\activate.bat
+```
+
+
 ## Production Server
 Use the same setup as in the case of development server but clone the project into the document root of your server.
 The configuration is similar to plain web.py (described [here](http://webpy.org/install#prod)) except the 'CLIENT_ID' and 'CLIENT_SECRET' values passed as command line arguments to the server script. As in the original configuration, Apache and Lighttpd servers are supported.
@@ -111,3 +141,4 @@ For Apache configuration there are many posibilities described in [web.py docume
 * jQuery
 * jQuery-ui
 * Keyvent
+* github3.py 
