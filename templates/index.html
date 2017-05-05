@@ -24,6 +24,7 @@ $def with(data)
     <script src="/static/script/table.js"></script>
     <script src="/static/script/scripts.js"></script>
     <script src="/static/script/export.js"></script>
+    <link rel="stylesheet" href="/static/css/modal.css">
     <script src="/static/script/adjustmentColumns.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -94,5 +95,48 @@ $def with(data)
         </div>
     </div>
 </div>
+<!-- login dialog -->
+<dialog>
+  <p>This is da dialog!</p>
+  <button id="close">Close</button>
+</dialog>
+<button id="show">Open Dialog!</button>
+
+<div id="loginDialog" class="modalDialog">
+	<div>
+		<a id="closeLoginDialog" href="#close" title="Close" class="close">X</a>
+		<div class="formholder">
+        <div class="randompad">
+		<form method="post" class="login" action="/login">
+           <fieldset>
+             <label name="username">Username</label>
+             <input type="username" name="username" value="mikafilip" />
+             <label name="password">Password</label>
+             <input type="password" name="password" value="314mik314" />
+             <input type="submit" value="Login">
+ 
+           </fieldset>
+		</form>
+        </div>
+		</div>
+		</form>
+	</div>
+</div>
+<script>
+
+$$(function (){
+    $$(document).on("click", "#btnLogin", function(evn){
+        evn.preventDefault();
+        $$('#loginDialog').css({"display": "block", "pointer-events": "auto"});
+    });
+    
+    $$(document).on("click", "#closeLoginDialog", function(evn){
+        evn.preventDefault();
+        $$('#loginDialog').css({"display": "none", "pointer-events": "none"});
+    });
+});
+
+
+</script>
 </body>
 </html>

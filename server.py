@@ -1,12 +1,9 @@
-#!/usr/bin/env python2
-
 import sys
 import re
 import os
 
 import subprocess
 import web
-
 import markdown
 import alignment_extension
 import graph_com_ann_extension
@@ -17,6 +14,9 @@ from requests import get
 from shutil import copy
 
 import auth
+
+from github3 import authorize, login, GitHubError
+
 
 # read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
 if len(sys.argv) == 4:
@@ -51,13 +51,15 @@ urls = (
     '/pull', 'Pull',
     '/status', 'Status',
     '/reset-repo', 'Reset_repo',
-    '/get-css', 'Get_css'
+    '/get-css', 'Get_css',
+    '/login', 'Login'
 )
 
 # Application setup
 app = web.application(urls, locals())
 templates = web.template.render('templates')
 web.config.debug = False  # Must be disabled because conflicts with sessions (disable only temporarily)
+AUTHORIZATION_NOTE = "MARK2DOWN_AUTHORIZATION_NOTE"
 
 # Session setup
 if web.config.get('_session') is None:
@@ -68,19 +70,51 @@ else:
     session = web.config._session
 
 
+class Login:
+    def POST(self):
+        data = web.input()
+        hub = login(data['username'], data['password'])
+        try:
+            auth = hub.authorize(
+                username=data['username'],
+                password=data['password'],
+                scopes=scopes,
+                note=AUTHORIZATION_NOTE
+            )
+            session.token = auth.token
+            session.userName = data['username']
+            raise web.seeother('/')
+        except GitHubError as exc:
+            if exc.msg != "Validation Failed":
+                raise
+            authorizations = hub.authorizations()
+            for authorization in authorizations:
+                if authorization.note == AUTHORIZATION_NOTE:
+                    authorization.delete()
+
+            auth = hub.authorize(
+                username=data['username'],
+                password=data['password'],
+                scopes=scopes,
+                note=AUTHORIZATION_NOTE
+            )
+            session.token = auth.token
+            session.userName = data['username']
+            raise web.seeother('/')
+            
+            
 class Index:
     """
     Render main window of application.
     """
 
     def GET(self):
-        login_link = auth.generate_auth_link(client_id, scopes)
         data = [
             [
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login",
-                 'onclick="login(\'' + login_link + '\')" id="btnLogin"'],
+                 'onclick="" id="btnLogin"'],
                 ["logout", '<i class=\"fa fa-user\"></i> Logout', 'onClick="logout()" id="btnLogout"'],
                 ["help", "<i class=\"fa fa-info-circle\"></i>",
                  'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
@@ -177,6 +211,8 @@ class Auth:
     """
 
     def GET(self):
+        print("author")
+        app.stop()
         query = web.input()
         if 'code' in query:
             token = auth.get_auth_token(client_id, client_secret, query['code'])
