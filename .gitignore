@@ -72,3 +72,4 @@ sessions/
 #node.js
 node_modules/
 coverage/
+/venv/
