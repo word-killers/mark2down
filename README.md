@@ -47,35 +47,63 @@ Now, you should be able to access the application at [http://localhost:8080](htt
 
 Use [CTRL] + [C] to exit the server and `$ deactivate` command to exit from virtualenv.
 
-##Instalation & Development Server on Windows
 
-#Install Python and VirtualEnv
+## Instalation & Development Server on Windows
 
-#Install mark2down
+# Install Python and VirtualEnv
 
-Clone this repository
+Download and install Python from https://www.python.org.
+There is howto install Python on windows https://docs.python.org/2.7/using/windows.html.
+
+- Install virtualenv
+
+```
+pip install virtualenv
+```
+
+# Install mark2down
+
+- Clone the repository.
+
 ```
 git clone https://github.com/mikafilip/mark2down.git
 ```
 
-goto mark2down direcotry
+- Go to mark2down direcotry.
 
 ```
 cd mark2down
 ```
 
-create virtuel enviropmennt called venv
+- Create virtual enviropmennt called venv
 
 ```
 virtualenv venv
 ```
 
-run virtual enviropmennt
+- Activate virtualenv.
 
 ```
 .\venv\Scripts\activate.bat
 ```
 
+- Install requirment pacckages.
+
+```
+pip install -r requirment.txt
+```
+
+- Run the server
+
+```
+./server.py
+```
+
+- Run the server listening port 8080
+
+```
+./server.py 8080
+```
 
 ## Production Server
 Use the same setup as in the case of development server but clone the project into the document root of your server.
@@ -141,4 +169,4 @@ For Apache configuration there are many posibilities described in [web.py docume
 * jQuery
 * jQuery-ui
 * Keyvent
-* github3.py 
+* github3.py
