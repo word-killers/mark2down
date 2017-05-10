@@ -1,4 +1,4 @@
-$def with(data)
+$def with(data, logUrl)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,7 +30,6 @@ $def with(data)
 </head>
 
 <body onload="init()">
-
 <!-- Window with table -->
 <div id="dialog" title="Table">
 
@@ -107,7 +106,7 @@ $def with(data)
 		<a id="closeLoginDialog" href="#close" title="Close" class="close">X</a>
 		<div class="formholder">
         <div class="randompad">
-		<form method="post" class="login" action="/login">
+		<form method="post" class="login" action="$:logUrl">
            <fieldset>
              <label name="username">Username</label>
              <input type="username" name="username" />

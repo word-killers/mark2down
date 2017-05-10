@@ -2,6 +2,8 @@ import sys
 import re
 import os
 
+import json
+
 import subprocess
 import web
 import markdown
@@ -109,6 +111,12 @@ class Index:
     """
 
     def GET(self):
+        if (web.ctx.env.get('SERVER_PORT') == '80') or (web.ctx.env.get('SERVER_PORT') == '443' ):
+            #if SERVER_PORT is 80 or 443 we are in production mode
+            logUrl = ("https://%s/login" % web.ctx.env.get('HTTP_HOST'))
+        else:
+            #debug or try mode
+            logUrl = ("http://%s/login" % web.ctx.env.get('HTTP_HOST'))
         data = [
             [
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
@@ -166,7 +174,7 @@ class Index:
                 ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
             ]
         ]
-        return templates.index(data)
+        return templates.index(data, logUrl)
 
 
 class Markdown:
