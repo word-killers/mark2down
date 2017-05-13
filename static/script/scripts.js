@@ -107,9 +107,7 @@ function sendMarkdown() {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 var response = xhttp.responseXML;
                 $('#preview').off('scroll');
-                document.getElementById('previewValue').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
-                document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
-                document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
+                document.getElementById('previewValue').innerHTML = xhttp.responseText;
                 var respAnnotation = response.getElementsByTagName('annotations')[0].innerHTML;
                 if (respAnnotation == '') {
                     annotation = [];
