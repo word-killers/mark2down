@@ -1,4 +1,4 @@
-$def with(data, logUrl)
+$def with(data, logUrl, serverPort, t1, t2, t3)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,9 +22,10 @@ $def with(data, logUrl)
     <link rel="stylesheet" href="/static/mermaid/mermaid.css">
 
     <script src="/static/script/table.js"></script>
-    <script src="/static/script/scripts.js"></script>
+    <script src="/static/script/scripts.js?t=5"></script>
     <script src="/static/script/export.js"></script>
     <link rel="stylesheet" href="/static/css/modal.css">
+    <link rel="stylesheet" href="/static/css/markdown.css">
     <script src="/static/script/adjustmentColumns.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -121,6 +122,7 @@ $def with(data, logUrl)
 		</form>
 	</div>
 </div>
+<!-- server_port = $:serverPort  t1 = $:t1  t2 = $:t2  t3 = $:t3 -->
 <script>
 
 $$(function (){
