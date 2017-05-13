@@ -170,3 +170,6 @@ For Apache configuration there are many posibilities described in [web.py docume
 * jQuery-ui
 * Keyvent
 * github3.py
+* python-markdown2 - MIT
+* github-markdown-css - MIT
+* mistune - BSD 3
