@@ -75,7 +75,7 @@ else:
 
 
 class Login:
-    def POST(self):
+    def GET(self):
         data = web.input()
         hub = login(data['username'], data['password'])
         try:
@@ -87,6 +87,12 @@ class Login:
             )
             session.token = auth.token
             session.userName = data['username']
+            if not os.path.exists("users"):
+                os.makedirs("users")
+            if not os.path.exists("users/{0}".format(data['username'])):
+                os.makedirs("users/{0}".format(data['username']))
+            file = open("users/{0}/authorization.txt".format(data['username']), 'w');
+            file.write(auth.token)
             raise web.seeother('/')
         except GitHubError as exc:
             if exc.msg != "Validation Failed":
@@ -104,9 +110,60 @@ class Login:
             )
             session.token = auth.token
             session.userName = data['username']
+            file = open("users/{0}/authorization.txt".format(data['username']), 'r+');
+            last_authorazition = file.read()
+            os.rename("repositories/{0}".format(last_authorazition), "repositories/{0}".format(auth.token))
+            file.write(auth.token)
             raise web.seeother('/')
             
-            
+    def POST(self):
+        data = web.input()
+        hub = login(data['username'], data['password'])
+        try:
+            auth = hub.authorize(
+                username=data['username'],
+                password=data['password'],
+                scopes=scopes,
+                note=AUTHORIZATION_NOTE
+            )
+            session.token = auth.token
+            session.userName = data['username']
+            if not os.path.exists("users"):
+                os.makedirs("users")
+            if not os.path.exists("users/{0}".format(data['username'])):
+                os.makedirs("users/{0}".format(data['username']))
+            file = open("users/{0}/authorization.txt".format(data['username']), 'w');
+            file.write(auth.token)
+            file.close()
+            raise web.seeother('/')
+        except GitHubError as exc:
+            if exc.msg != "Validation Failed":
+                raise
+            authorizations = hub.authorizations()
+            for authorization in authorizations:
+                if authorization.note == AUTHORIZATION_NOTE:
+                    authorization.delete()
+
+            auth = hub.authorize(
+                username=data['username'],
+                password=data['password'],
+                scopes=scopes,
+                note=AUTHORIZATION_NOTE
+            )
+            file = open("users/{0}/authorization.txt".format(data['username']), 'r+');
+            last_authorazition = file.read()
+            file.close()
+            session.token = auth.token
+            session.userName = data['username']
+            try:
+                os.rename("repositories/{0}".format(last_authorazition), "repositories/{0}".format(auth.token))
+            except OSError as e:
+                print "cennot rename"
+            file = open("users/{0}/authorization.txt".format(data['username']), 'w')
+            file.write(auth.token)
+            file.close();
+            raise web.seeother('/')
+                
 class Index:
     """
     Render main window of application.
@@ -183,31 +240,6 @@ class Markdown:
     """
     Convert markdown text to html text.
     """
-
-    def GET(self):    
-        data = web.input()
-        graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'], data['annotations'].split(',,,'))
-        highlight_ext = highlight_extension.HighlightExtension()
-        alignment_ext = alignment_extension.Extensions()
-        if session.get('token') is not None and session.get('repository') is not None:
-            print "I am in if"
-            include = MarkdownInclude(
-                configs={'base_path': 'repositories/{0}/{1}/'.format(session.token, session.repository),
-                         'encoding': 'UTF-8'})
-            print 'repositories/{0}/{1}/'.format(session.token, session.repository)
-        else:
-            print "i am else"
-            include = None
-            
-        md = markdown.Markdown(safe_mode='escape', extensions=[
-            include,  # option to include other files
-            graph_com_ann_ext,  # graph, comment, annotation
-            highlight_ext,  # strong, italic, underline, cross
-            alignment_ext,  # alignment
-            'markdown.extensions.tables',  # tables
-            'markdown.extensions.sane_lists',  # using lists like in normal mardkown
-            TocExtension(slugify=self.code, separator='-')  # table of contents
-        ])
         
     def POST(self):
 
@@ -215,7 +247,6 @@ class Markdown:
         dd = mistune.markdown(data['data'], escape=True, hard_wrap=True)
         ddd = '<div id="documentView" class="markdown-body">' + dd + '</div>'
         
-        print(ddd)
         return ddd
 
     def code(self, value, separator):

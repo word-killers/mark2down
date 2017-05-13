@@ -78,3 +78,6 @@ venv/
 
 #repositories
 repositories/
+
+#users
+users/
