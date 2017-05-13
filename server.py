@@ -157,7 +157,7 @@ class Login:
                 os.makedirs("users")
             if not os.path.exists("users/{0}".format(data['username'])):
                 os.makedirs("users/{0}".format(data['username']))
-            if os.path.exist("users/{0}/authorization.txt".format(data['username'])):
+            if os.path.exists("users/{0}/authorization.txt".format(data['username'])):
                 file = open("users/{0}/authorization.txt".format(data['username']), 'r');
                 last_authorazition = file.read()
                 file.close()
