@@ -149,7 +149,11 @@ class Login:
                 scopes=scopes,
                 note=AUTHORIZATION_NOTE
             )
-            file = open("users/{0}/authorization.txt".format(data['username']), 'r+');
+            if not os.path.exists("users"):
+                os.makedirs("users")
+            if not os.path.exists("users/{0}".format(data['username'])):
+                os.makedirs("users/{0}".format(data['username']))
+            file = open("users/{0}/authorization.txt".format(data['username']), 'r');
             last_authorazition = file.read()
             file.close()
             session.token = auth.token
