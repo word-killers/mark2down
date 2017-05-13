@@ -169,12 +169,12 @@ class Index:
     """
 
     def GET(self):
-        if (web.ctx.env.get('SERVER_PORT') == '80') or (web.ctx.env.get('SERVER_PORT') == '443') or (web.ctx.env.get('SERVER_PROTOCOL').startswith("HTTPS")):
-            #if SERVER_PORT is 80 or 443 or protocol is HTTPS we are in production mode
-            logUrl = ("https://%s/login" % web.ctx.env.get('HTTP_HOST'))
-        else:
-            #debug or try mode
+        if (web.ctx.env.get('SERVER_PORT') == '8080'):
+            #if port is 8080 we are in develope or try mode
             logUrl = ("http://%s/login" % web.ctx.env.get('HTTP_HOST'))
+        else:
+            #production mode
+            logUrl = ("https://%s/login" % web.ctx.env.get('HTTP_HOST'))
         data = [
             [
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
@@ -232,7 +232,7 @@ class Index:
                 ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
             ]
         ]
-        return templates.index(data, logUrl, web.ctx.env.get('SERVER_PORT'), web.ctx.env.get('SERVER_PORT') == '80', web.ctx.env.get('SERVER_PORT') == '443', web.ctx.env.get('SERVER_PROTOCOL').startswith("HTTPS"))
+        return templates.index(data, logUrl)
 
 
 class Markdown:
