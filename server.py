@@ -18,6 +18,8 @@ from shutil import copy
 import auth
 
 from github3 import authorize, login, GitHubError
+import markdown2
+import mistune
 
 
 # read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
@@ -111,8 +113,8 @@ class Index:
     """
 
     def GET(self):
-        if (web.ctx.env.get('SERVER_PORT') == '80') or (web.ctx.env.get('SERVER_PORT') == '443' ):
-            #if SERVER_PORT is 80 or 443 we are in production mode
+        if (web.ctx.env.get('SERVER_PORT') == '80') or (web.ctx.env.get('SERVER_PORT') == '443') or (web.ctx.env.get('SERVER_PROTOCOL').startswith("HTTPS")):
+            #if SERVER_PORT is 80 or 443 or protocol is HTTPS we are in production mode
             logUrl = ("https://%s/login" % web.ctx.env.get('HTTP_HOST'))
         else:
             #debug or try mode
@@ -174,7 +176,7 @@ class Index:
                 ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
             ]
         ]
-        return templates.index(data, logUrl)
+        return templates.index(data, logUrl, web.ctx.env.get('SERVER_PORT'), web.ctx.env.get('SERVER_PORT') == '80', web.ctx.env.get('SERVER_PORT') == '443', web.ctx.env.get('SERVER_PROTOCOL').startswith("HTTPS"))
 
 
 class Markdown:
@@ -182,17 +184,21 @@ class Markdown:
     Convert markdown text to html text.
     """
 
-    def POST(self):
+    def GET(self):    
         data = web.input()
         graph_com_ann_ext = graph_com_ann_extension.Extensions(data['final'], data['annotations'].split(',,,'))
         highlight_ext = highlight_extension.HighlightExtension()
         alignment_ext = alignment_extension.Extensions()
         if session.get('token') is not None and session.get('repository') is not None:
+            print "I am in if"
             include = MarkdownInclude(
                 configs={'base_path': 'repositories/{0}/{1}/'.format(session.token, session.repository),
                          'encoding': 'UTF-8'})
+            print 'repositories/{0}/{1}/'.format(session.token, session.repository)
         else:
+            print "i am else"
             include = None
+            
         md = markdown.Markdown(safe_mode='escape', extensions=[
             include,  # option to include other files
             graph_com_ann_ext,  # graph, comment, annotation
@@ -202,10 +208,15 @@ class Markdown:
             'markdown.extensions.sane_lists',  # using lists like in normal mardkown
             TocExtension(slugify=self.code, separator='-')  # table of contents
         ])
+        
+    def POST(self):
 
-        data = '<?xml version="1.0" encoding="utf-8" ?><reply><preview><div id="documentView">' + md.convert(data[
-                                                                                                                 'data']) + '</div></preview><toc>' + md.toc + '</toc><comments>' + graph_com_ann_ext.comment_list + '</comments><annotations>' + graph_com_ann_ext.annotation_strings + '</annotations></reply>'
-        return data
+        data = web.input()
+        dd = mistune.markdown(data['data'], escape=True, hard_wrap=True)
+        ddd = '<div id="documentView" class="markdown-body">' + dd + '</div>'
+        
+        print(ddd)
+        return ddd
 
     def code(self, value, separator):
         value = re.sub(r"[^\w\s]", '', value)
