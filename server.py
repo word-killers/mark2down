@@ -18,7 +18,6 @@ from shutil import copy
 import auth
 
 from github3 import authorize, login, GitHubError
-import markdown2
 import mistune
 
 
