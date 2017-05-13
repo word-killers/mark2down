@@ -131,7 +131,7 @@ class Login:
                 os.makedirs("users")
             if not os.path.exists("users/{0}".format(data['username'])):
                 os.makedirs("users/{0}".format(data['username']))
-            file = open("users/{0}/authorization.txt".format(data['username']), 'w');
+            file = open("users/{0}/authorization.txt".format(data['username']), 'w+');
             file.write(auth.token)
             file.close()
             raise web.seeother('/')
@@ -149,19 +149,22 @@ class Login:
                 scopes=scopes,
                 note=AUTHORIZATION_NOTE
             )
+            
+            session.token = auth.token
+            session.userName = data['username']
+            
             if not os.path.exists("users"):
                 os.makedirs("users")
             if not os.path.exists("users/{0}".format(data['username'])):
                 os.makedirs("users/{0}".format(data['username']))
-            file = open("users/{0}/authorization.txt".format(data['username']), 'r');
-            last_authorazition = file.read()
-            file.close()
-            session.token = auth.token
-            session.userName = data['username']
-            try:
-                os.rename("repositories/{0}".format(last_authorazition), "repositories/{0}".format(auth.token))
-            except OSError as e:
-                print "cennot rename"
+            if os.path.exist("users/{0}/authorization.txt".format(data['username'])):
+                file = open("users/{0}/authorization.txt".format(data['username']), 'r');
+                last_authorazition = file.read()
+                file.close()
+                try:
+                    os.rename("repositories/{0}".format(last_authorazition), "repositories/{0}".format(auth.token))
+                except OSError as e:
+                    print "cennot rename"
             file = open("users/{0}/authorization.txt".format(data['username']), 'w')
             file.write(auth.token)
             file.close();
