@@ -108,7 +108,6 @@ function sendMarkdown() {
                 var response = xhttp.responseXML;
                 $('#preview').off('scroll');
                 document.getElementById('previewValue').innerHTML = xhttp.responseText;
-                var respAnnotation = response.getElementsByTagName('annotations')[0].innerHTML;
                 if (respAnnotation == '') {
                     annotation = [];
                 } else {

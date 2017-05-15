@@ -198,23 +198,19 @@ class Index:
                 ["Heading 4", "H4", "onclick=\"putChar('#### ', 5)\" id='btnH4'"],
                 ["Heading 5", "H5", "onclick=\"putChar('##### ', 6)\" id='btnH5'"],
                 ["Heading 6", "H6", "onclick=\"putChar('###### ', 7)\" id='btnH6'"],
+                
             ], [
-                ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('++  ++', 3)\" id='btnBold'"],
-                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('~~  ~~', 3)\" id='btnItalic'"],
-                ["Underline", "<i class=\"fa fa-underline\"></i>",
-                 "onclick=\"putChar('__  __', 3)\" id='btnUnderline'"],
+            
+                ["<HR>", "HR", "onclick=\"putChar('\\n___ \\n', 6)\" id='hr'"],
+            ],
+            [
+                ["Bold", "<i class=\"fa fa-bold\"></i>", "onclick=\"putChar('**  **', 3)\" id='btnBold'"],
+                ["Italic", "<i class=\"fa fa-italic\"></i>", "onclick=\"putChar('_  _', 2)\" id='btnItalic'"],
+                ["Bold Italic", "<i class=\"fa fa-bold-italic\">BI</i>",
+                 "onclick=\"putChar('**_  _**', 4)\" id='btnUnderline'"],
                 ["StrikeThrough", "<i class=\"fa fa-strikethrough\"></i>",
-                 "onclick=\"putChar('--  --', 3)\" id='btnStrikeThrough'"],
+                 "onclick=\"putChar('~~~~', 2)\" id='btnStrikeThrough'"],
                 ["typewriting", "T", "onclick=\"putChar('```  ```', 4)\" id='btnTypewriting'"],
-            ], [
-                ["align-left", "<i class=\"fa fa-align-left\"></i>",
-                 "onclick=\"putChar('{{\\n', 3)\" id='btnAlignLeft'"],
-                ["align-center", "<i class=\"fa fa-align-center\"></i>",
-                 "onclick=\"putChar('}{\\n', 3)\" id='btnAlignCenter'"],
-                ["align-block", "<i class=\"fa fa-align-justify\"></i>",
-                 "onclick=\"putChar('{}\\n', 3)\" id='btnAlignBlock'"],
-                ["align-right", "<i class=\"fa fa-align-right\"></i>",
-                 "onclick=\"putChar('}}\\n', 3)\" id='btnAlignRight'"],
             ], [
                 ["cislovany seznam", "<i class=\"fa fa-list-ol\"></i>",
                  "onclick=\"putChar('1. ', 3)\" id='btnNumerate'"],
