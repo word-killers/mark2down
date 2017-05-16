@@ -102,12 +102,15 @@ function sendMarkdown() {
         annotation = [];
 
     } else {
-        var xhttp = new XMLHttpRequest();
+         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 var response = xhttp.responseXML;
                 $('#preview').off('scroll');
-                document.getElementById('previewValue').innerHTML = xhttp.responseText;
+                document.getElementById('previewValue').innerHTML = response.getElementsByTagName("preview")[0].innerHTML;
+                document.getElementById('toc').innerHTML = response.getElementsByTagName('toc')[0].innerHTML;
+                document.getElementById('comments').innerHTML = response.getElementsByTagName('comments')[0].innerHTML;
+                var respAnnotation = response.getElementsByTagName('annotations')[0].innerHTML;
                 if (respAnnotation == '') {
                     annotation = [];
                 } else {

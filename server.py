@@ -18,6 +18,7 @@ from shutil import copy
 import auth
 
 from github3 import authorize, login, GitHubError
+from mistune_contrib.toc import TocMixin
 import mistune
 
 
@@ -73,6 +74,9 @@ else:
     session = web.config._session
 
 
+class TocRenderer(TocMixin, mistune.Renderer):
+    pass
+    
 class Login:
     def GET(self):
         data = web.input()
@@ -244,12 +248,15 @@ class Markdown:
     """
         
     def POST(self):
-
         data = web.input()
-        dd = mistune.markdown(data['data'], escape=True, hard_wrap=True)
-        ddd = '<div id="documentView" class="markdown-body">' + dd + '</div>'
-        
-        return ddd
+        toc = TocRenderer()
+        toc.options = {'escape' : True, 'hard_wrap' : True, 'use_xhtml' : True}
+        md = mistune.Markdown(renderer=toc)
+        toc.reset_toc() 
+        dd = md.parse(data['data'])
+        rv = toc.render_toc(level=3)
+        data = '<?xml version="1.0" encoding="utf-8" ?>\n<reply>\n<preview>\n<div id="documentView">\n' + dd + '\n</div>\n</preview>\n<toc>\n' + rv + '\n</toc>\n<comments>\n</comments>\n<annotations>\n</annotations>\n</reply>'
+        return data
 
     def code(self, value, separator):
         value = re.sub(r"[^\w\s]", '', value)

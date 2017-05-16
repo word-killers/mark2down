@@ -13,16 +13,13 @@ Install Python 2, virtualenv and git, e.g. on Debian:
 ```
 > The installation may differ on other systems.
 
-
 Clone this repository
 ```
 $ git clone https://github.com/word-killers/mark2down.git
 ```
- ~~ Scratch this .~~
- __ tewst __
-
 
 Create a virtual environment and install dependencies:
+
 ```
 $ virtualenv mark2down -p /usr/bin/python2
 $ cd mark2down
@@ -174,6 +171,6 @@ For Apache configuration there are many posibilities described in [web.py docume
 * jQuery-ui
 * Keyvent
 * github3.py
-* python-markdown2 - MIT
 * github-markdown-css - MIT
 * mistune - BSD 3
+* mistune-contrib - 
