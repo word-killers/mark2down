@@ -20,6 +20,8 @@ import auth
 from github3 import authorize, login, GitHubError
 from mistune_contrib.toc import TocMixin
 import mistune
+from xml.dom import minidom
+from xml.parsers.expat import ExpatError
 
 
 # read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
@@ -258,6 +260,11 @@ class Markdown:
         re_itm = re.search(r'<li>', rv)
         if not(re.search(r'<li>', rv)):
             rv = re.sub(r'<\/li>', '',  rv)
+        try:
+            rr = minidom.parseString(rv)
+        except ExpatError as exc:
+            rv = re.sub(r'<\/ul>\n<\/li>', '',  rv)
+            rv = re.sub(r'<ul>', '</li>',  rv)
         data = '<?xml version="1.0" encoding="utf-8" ?>\n<reply>\n<preview>\n<div id="documentView">\n' + dd + '\n</div>\n</preview>\n<toc>\n' + rv + '\n</toc>\n<comments>\n</comments>\n<annotations>\n</annotations>\n</reply>'
         return data
 
