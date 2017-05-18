@@ -254,7 +254,10 @@ class Markdown:
         md = mistune.Markdown(renderer=toc)
         toc.reset_toc() 
         dd = md.parse(data['data'])
-        rv = toc.render_toc(level=3)
+        rv = toc.render_toc(level=4)
+        re_itm = re.search(r'<li>', rv)
+        if not(re.search(r'<li>', rv)):
+            rv = re.sub(r'<\/li>', '',  rv)
         data = '<?xml version="1.0" encoding="utf-8" ?>\n<reply>\n<preview>\n<div id="documentView">\n' + dd + '\n</div>\n</preview>\n<toc>\n' + rv + '\n</toc>\n<comments>\n</comments>\n<annotations>\n</annotations>\n</reply>'
         return data
 
