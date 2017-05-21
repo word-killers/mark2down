@@ -1,4 +1,4 @@
-$def with(data, logUrl)
+$def with(data, logUrl, time)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,12 +22,12 @@ $def with(data, logUrl)
     <link rel="stylesheet" href="/static/mermaid/mermaid.css">
 
     <script src="/static/script/table.js"></script>
-    <script src="/static/script/scripts.js?t=5"></script>
+    <script src="/static/script/scripts.js?t=$time"></script>
     <script src="/static/script/export.js"></script>
     <link rel="stylesheet" href="/static/css/modal.css">
     <link rel="stylesheet" href="/static/css/markdown.css">
     <script src="/static/script/adjustmentColumns.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?t=$time">
     <style>
         .fa-bold-italic{font-weight: bold;font-style: italic;}
     </style>

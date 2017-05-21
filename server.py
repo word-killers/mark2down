@@ -16,8 +16,8 @@ from requests import get
 from shutil import copy
 
 import auth
-
-from github3 import authorize, login, GitHubError
+import time
+from github3 import authorize, login, GitHubError, users
 from mistune_contrib.toc import TocMixin
 import mistune
 from xml.dom import minidom
@@ -39,7 +39,7 @@ Application will run without OAuth (no ability to log in).
 """
 
 # OAuth scopes (permissions)
-scopes = ['repo', 'user']
+scopes = ['repo', 'user', 'user:email']
 
 # URL handling
 urls = (
@@ -58,7 +58,9 @@ urls = (
     '/status', 'Status',
     '/reset-repo', 'Reset_repo',
     '/get-css', 'Get_css',
-    '/login', 'Login'
+    '/login', 'Login', 
+    '/create-branch', 'Create_branch',
+    '/list-branches', 'List_branches'
 )
 
 # Application setup
@@ -80,46 +82,6 @@ class TocRenderer(TocMixin, mistune.Renderer):
     pass
     
 class Login:
-    def GET(self):
-        data = web.input()
-        hub = login(data['username'], data['password'])
-        try:
-            auth = hub.authorize(
-                username=data['username'],
-                password=data['password'],
-                scopes=scopes,
-                note=AUTHORIZATION_NOTE
-            )
-            session.token = auth.token
-            session.userName = data['username']
-            if not os.path.exists("users"):
-                os.makedirs("users")
-            if not os.path.exists("users/{0}".format(data['username'])):
-                os.makedirs("users/{0}".format(data['username']))
-            file = open("users/{0}/authorization.txt".format(data['username']), 'w');
-            file.write(auth.token)
-            raise web.seeother('/')
-        except GitHubError as exc:
-            if exc.msg != "Validation Failed":
-                raise
-            authorizations = hub.authorizations()
-            for authorization in authorizations:
-                if authorization.note == AUTHORIZATION_NOTE:
-                    authorization.delete()
-
-            auth = hub.authorize(
-                username=data['username'],
-                password=data['password'],
-                scopes=scopes,
-                note=AUTHORIZATION_NOTE
-            )
-            session.token = auth.token
-            session.userName = data['username']
-            file = open("users/{0}/authorization.txt".format(data['username']), 'r+');
-            last_authorazition = file.read()
-            os.rename("repositories/{0}".format(last_authorazition), "repositories/{0}".format(auth.token))
-            file.write(auth.token)
-            raise web.seeother('/')
             
     def POST(self):
         data = web.input()
@@ -155,7 +117,8 @@ class Login:
                 scopes=scopes,
                 note=AUTHORIZATION_NOTE
             )
-            
+            email = hub.me().email
+            print("email = {0}".format(email))
             session.token = auth.token
             session.userName = data['username']
             
@@ -235,13 +198,14 @@ class Index:
             ], [
                 ["set user", 'Set user', 'onClick="setUser()" id="btnSetUser"'],
                 ["set repository", 'Set repo', 'onClick="getRepos()" id="btnSetRepo"'],
+                ["set branch", 'Set branch', 'onClick="getBranches()" id="btnSetBranch"'],
                 ["create new file", 'New file', 'onClick="newFileDialog()" id="btnNewFile"'],
                 ["commit", 'Commit', 'onClick="commit()" id="btnCommit"'],
                 ["pull", 'Pull', 'onClick="pull()" id="btnPull"'],
                 ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
             ]
         ]
-        return templates.index(data, logUrl)
+        return templates.index(data, logUrl, time.time())
 
 
 class Markdown:
@@ -350,7 +314,7 @@ class List_repos:
             data = web.input().get('name')
             if data is not None:
                 session.repository = data
-                Create_repo(session.token)
+                Create_repo(session.userName)
             else:
                 response = get(  # github have limit to 60 requests
                     'https://api.github.com/users/{0}/repos'.format(session.userName),
@@ -374,6 +338,85 @@ class List_repos:
         return 'can\'t display repositories.'
 
 
+class Create_branch:
+    def GET(self):
+        dd = Branches().getAll()
+        html = "<div><form id=\"createBranchForm\" action=\"#\">"
+        html += "<input type=\"text\" name=\"newBranch\" id=\"newBranchTextField\" />"
+        html += "</form></div><br/>"
+        html += "<div><button class=\"btnBranches\" onClick=\"createNewBranch()\" >create branch</button></div><hr />"
+        
+        for d in dd:
+            if(d['selected']):
+                html += "<div class=\"lblBranches selectedBranch\" >{0}</div>".format(d['name'])
+            else :
+                 html += "<div class=\"lblBranches\" >{0}</div>".format(d['name'])
+        return html
+    def POST(self):
+        data = web.input();
+        result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git branch --no-track {2} || exit 0 ".format(
+                    session.userName, session.repository, data['branch']
+                ), shell=True, stderr=subprocess.STDOUT)
+        print(" result = {0}".format(result))
+        if(re.search(r'fatal:', result)):
+            print("error occurted")
+            raise web.BadRequest(result)
+        else :
+            result = subprocess.check_output(
+                    "cd repositories/{0}/{1} && git checkout {2}  || exit 0 ".format(
+                        session.userName, session.repository, data['branch']
+                    ), shell=True, stderr=subprocess.STDOUT)
+        return "branch = {0}<br/>{1}".format(data['branch'], result)
+        
+class List_branches:
+    def GET(self):
+        data = web.input()
+        dd = Branches().getAll()
+        html = "<div><button class=\"btnBranches\" onClick=\"createBranch()\" >new branch</button></div><hr />"
+        
+        for d in dd:
+            if(d['selected']):
+                html += "<div><button class=\"btnBranches\" onClick=\"setBranch(\'{0}\')\" disabled>{0}</button></div>".format(d['name'])
+            else :
+                html += "<div><button class=\"btnBranches\" onClick=\"setBranch(\'{0}\')\">{0}</button></div>".format(d['name'])
+        return html
+        
+    def POST(self):
+        data = web.input();
+        result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git checkout {2}  || exit 0 ".format(
+                    session.userName, session.repository, data['name']
+                ), shell=True, stderr=subprocess.STDOUT)
+        return result
+ 
+class Branches:
+
+    def getAll(self):
+        dd = []
+        result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git branch --list  || exit 0 ".format(
+                    session.userName, session.repository
+                ), shell=True, stderr=subprocess.STDOUT)
+        branches = re.split(r'[\r\n]+', result)
+        for line in branches:
+            columns = re.split(r"[\s]+", line)
+            i = 0
+            hash = {}
+            if(len(columns) > 1):
+                for col in columns:
+                    if i == 0 :
+                        if len(col) > 0 :
+                            hash['selected'] = True
+                        else :
+                            hash['selected'] = False
+                    if i == 1 :
+                        hash['name'] = col
+                    i += 1
+                    
+                dd.append(hash)
+        return dd
+        
 class List_repo_tree:
     """
     Return html list which contains file tree of open repository
@@ -386,7 +429,7 @@ class List_repo_tree:
     def getDirTree(self, path):
         list = '<ul>'
 
-        long_path = 'repositories/{0}/{1}/{2}'.format(session.token, session.repository, path)
+        long_path = 'repositories/{0}/{1}/{2}'.format(session.userName, session.repository, path)
         for file in os.listdir(long_path):
             if file != '.git':
                 if len(path) == 0:
@@ -413,7 +456,7 @@ class Get_file:
             if data.get('fileName'):
                 if data['fileName'].find('..') is -1:
                     file = open(
-                        "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
+                        "repositories/{0}/{1}/{2}".format(session.get('userName'), session.repository,
                                                           data['fileName'].encode(encoding='UTF-8')), "r")
                     text = file.read()
                     session.openFile = data['fileName']
@@ -443,33 +486,33 @@ class Commit_file:
     def POST(self):
         if session.get('token') is not None and session.get('openFile') is not None:
             # save edited file
-            if os.path.exists("repositories/{0}".format(session.get('token'))):
+            if os.path.exists("repositories/{1}".format(session.get('token'))):
                 out = open(
-                    "repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
+                    "repositories/{1}/{1}/{2}".format(session.get('token'), session.repository,
                                                       session.get('openFile').encode(encoding='UTF-8')), "w")
                 out.write(web.input().get('data').encode(encoding="UTF-8"))
                 out.close()
 
             # pull
             result = subprocess.check_output(
-                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                "cd repositories/{1}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
                     session.get('token'),
                     session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
 
             # commit
-            print "cd repositories/{0}/{2} && git add {2} && git commit -m \"rewrite {1}\" || exit 0 ".format(
+            print "cd repositories/{1}/{2} && git add {2} && git commit -m \"rewrite {1}\" || exit 0 ".format(
                     session.get('token'), session.openFile.encode(encoding='UTF-8').replace(' ', '// '),
                     session.repository
                 )
             result += subprocess.check_output(
-                "cd repositories/{0}/{2} && git add \"{1}\" && git commit -m \"rewrite {1}\" || exit 0 ".format(
+                "cd repositories/{1}/{2} && git add \"{1}\" && git commit -m \"rewrite {1}\" || exit 0 ".format(
                     session.get('token'), session.openFile.encode(encoding='UTF-8'),
                     session.repository
                 ), shell=True, stderr=subprocess.STDOUT)
 
             # push
             result += subprocess.check_output(
-                "cd repositories/{0}/{2} && git push https://{0}@github.com/{1}/{2}.git || exit 0 ".format(
+                "cd repositories/{1}/{2} && git push https://{0}@github.com/{1}/{2}.git || exit 0 ".format(
                     session.get('token'),
                     session.userName, session.repository
                 ), shell=True, stderr=subprocess.STDOUT)
@@ -487,11 +530,11 @@ class Pull:
     def pull(self):
         if session.get('token') is not None:
             result = subprocess.check_output(
-                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                "cd repositories/{1}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
                     session.get('token'),
                     session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
             session.openFile = None
-            return result.replace(session.token, '***')
+            return result.replace(session.userName, '***')
 
 
 class Reset_repo:
@@ -513,26 +556,25 @@ class Create_repo:
     Clone repository
     """
 
-    def __init__(self, token):
-        if not os.path.exists('repositories/{0}'.format(token)):
-            os.makedirs('repositories/{0}'.format(token))
-        if not os.path.exists('repositories/{0}/{1}'.format(token, session.repository)):
+    def __init__(self, userName):
+        if not os.path.exists('repositories/{0}'.format(userName)):
+            os.makedirs('repositories/{0}'.format(userName))
+        if not os.path.exists('repositories/{0}/{1}'.format(userName, session.repository)):
             # clone repository
-            os.system("cd repositories/{0} && git clone https://{0}@github.com/{1}/{2}.git".format(
-                token, session.userName, session.repository
+            os.system("cd repositories/{1} && git clone https://{0}@github.com/{1}/{2}.git".format(
+                session.get('token'), userName, session.repository
             ))
             os.system(
                 'cd repositories/{0}/{1} && git config user.name "mark2down" && git config user.email "mark2down@email.email" && git config push.default simple'.format(
-                    session.get('token'), session.get('repository')))
+                    session.get('userName'), session.get('repository')))
             # copy css
-            if not os.path.exists('repositories/{0}/{1}/.css'.format(token, session.repository)):
-                os.makedirs('repositories/{0}/{1}/.css'.format(token, session.repository))
+            if not os.path.exists('repositories/{0}/{1}/.css'.format(userName, session.repository)):
+                os.makedirs('repositories/{0}/{1}/.css'.format(userName, session.repository))
                 copy('repositories/support_files/style.css',
-                     'repositories/{0}/{1}/.css'.format(token, session.repository))
+                     'repositories/{0}/{1}/.css'.format(userName, session.repository))
 
         else:
             Pull().pull()
-
 
 class Status:
     """

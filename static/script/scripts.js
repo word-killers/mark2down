@@ -455,6 +455,7 @@ function getRepos() {
     dialog.dialog("open");
 }
 
+
 /**
  * Set name of using repository.
  * @param repoName name of using repository.
@@ -464,6 +465,75 @@ function setRepo(repoName) {
         setFileTree();
     });
     $('#help_dialog').dialog("close");
+}
+
+/**
+ * Show dialog which contains local branches.
+ */
+function getBranches() {
+    var dialog = $("#help_dialog");
+    dialog.dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'Branches',
+        buttons: []
+    });
+    dialog.html("");
+
+    $.get("/list-branches", function (data) {
+        dialog.html(data);
+    });
+
+    dialog.dialog("open");
+}
+
+
+/**
+ * Set name of using repository.
+ * @param repoName name of using repository.
+ */
+function setBranch(branchName) {
+    $.post("/list-branches", {name: branchName}, function () {
+        setFileTree();
+    });
+    $('#help_dialog').dialog("close");
+}
+
+/**
+ * Show dialog which contains local branches.
+ */
+function createBranch() {
+    var dialog = $("#help_dialog");
+    dialog.dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'new branch',
+        buttons: []
+    });
+    dialog.html("");
+
+    $.get("/create-branch", function (data) {
+        dialog.html(data);
+    });
+
+    dialog.dialog("open");
+}
+
+function createNewBranch() {
+    var branchName;
+    branchName = $('#newBranchTextField').val();
+    $.post("/create-branch", {branch: branchName}, function () {
+    }).done(function (data){
+        $('#help_dialog').dialog("close");
+    }). fail(function (data){
+        $('#help_dialog').html(data.responseText);
+    });
 }
 
 /**
