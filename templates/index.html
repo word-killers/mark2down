@@ -24,7 +24,6 @@ $def with(data, logUrl, time)
     <script src="/static/script/table.js"></script>
     <script src="/static/script/scripts.js?t=$time"></script>
     <script src="/static/script/export.js"></script>
-    <link rel="stylesheet" href="/static/css/modal.css">
     <link rel="stylesheet" href="/static/css/markdown.css">
     <script src="/static/script/adjustmentColumns.js"></script>
     <link rel="stylesheet" href="/static/css/style.css?t=$time">
@@ -105,41 +104,16 @@ $def with(data, logUrl, time)
 </dialog>
 <button id="show" style="display: none; position : asolute;" >Open Dialog!</button>
 
-<div id="loginDialog" class="modalDialog">
-	<div>
-		<a id="closeLoginDialog" href="#close" title="Close" class="close">X</a>
-		<div class="formholder">
-        <div class="randompad">
-		<form method="post" class="login" action="$:logUrl">
-           <fieldset>
-             <label name="username">Username</label>
-             <input type="username" name="username" />
-             <label name="password">Password</label>
-             <input type="password" name="password" />
-             <input type="submit" value="Login">
- 
-           </fieldset>
-		</form>
-        </div>
-		</div>
-		</form>
-	</div>
+<div style="">
+<form id="loginFormId" method="post" class="loginForm" action="$:logUrl">
+     <label name="username">Username</label>
+     <input type="username" name="username" />
+     <label name="password">Password</label>
+     <input type="password" name="password" />
+     <input type="button" onClick="loginToGitHub()" value="Login">
+
+</form>
 </div>
-<script>
 
-$$(function (){
-    $$(document).on("click", "#btnLogin", function(evn){
-        evn.preventDefault();
-        $$('#loginDialog').css({"display": "block", "pointer-events": "auto"});
-    });
-    
-    $$(document).on("click", "#closeLoginDialog", function(evn){
-        evn.preventDefault();
-        $$('#loginDialog').css({"display": "none", "pointer-events": "none"});
-    });
-});
-
-
-</script>
 </body>
 </html>

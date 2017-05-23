@@ -357,6 +357,7 @@ function hideButtons() {
 
         if (status[1] == 'True' && status[2] == 'True') {
             $('#btnSetRepo').show();
+            $('#btnSetBranch').show();
             $('#btnCommit').show();
             $('#btnNewFile').show();
             $('#btnPull').show();
@@ -364,12 +365,14 @@ function hideButtons() {
         } else {
             if (status[1] == 'True') {
                 $('#btnSetRepo').show();
+                $('#btnSetBranch').show();
                 $('#btnCommit').hide();
                 $('#btnNewFile').hide();
                 $('#btnPull').hide();
                 $('#btnReset').hide();
             } else {
                 $('#btnSetRepo').hide();
+                $('#btnSetBranch').hide();
                 $('#btnCommit').hide();
                 $('#btnNewFile').hide();
                 $('#btnPull').hide();
@@ -534,6 +537,40 @@ function createNewBranch() {
     }). fail(function (data){
         $('#help_dialog').html(data.responseText);
     });
+}
+
+function openLoginDialog() {
+    var dialog = $("#help_dialog");
+    dialog.dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'Branches',
+        buttons: []
+    });
+    var send_form = $('#loginFormId').clone();
+    send_form.prop('id', "sendLoginFormId");
+    dialog.html(send_form.prop('outerHTML'));
+    dialog.dialog("open");
+}
+
+function loginToGitHub() {
+    var fd = new FormData($('#sendLoginFormId')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       data: fd,
+       processData: false,
+       contentType: false,
+       url: $('#sendLoginFormId').prop('action')
+    }).done(function (data){
+        window.location.reload();
+    }). fail(function (data){
+        $('#help_dialog').html(data.responseText);
+    });
+    
 }
 
 /**

@@ -17,7 +17,7 @@ from shutil import copy
 
 import auth
 import time
-from github3 import authorize, login, GitHubError, users
+from github3 import authorize, login, GitHubError, users, AuthenticationFailed
 from mistune_contrib.toc import TocMixin
 import mistune
 from xml.dom import minidom
@@ -82,10 +82,13 @@ class TocRenderer(TocMixin, mistune.Renderer):
     pass
     
 class Login:
-            
     def POST(self):
         data = web.input()
-        hub = login(data['username'], data['password'])
+        try:
+            hub = login(data['username'], data['password'])
+            print("user = {0}".format(hub.me()))
+        except AuthenticationFailed as ex:
+            raise web.Unauthorized()
         try:
             auth = hub.authorize(
                 username=data['username'],
@@ -95,17 +98,10 @@ class Login:
             )
             session.token = auth.token
             session.userName = data['username']
-            if not os.path.exists("users"):
-                os.makedirs("users")
-            if not os.path.exists("users/{0}".format(data['username'])):
-                os.makedirs("users/{0}".format(data['username']))
-            file = open("users/{0}/authorization.txt".format(data['username']), 'w+');
-            file.write(auth.token)
-            file.close()
             raise web.seeother('/')
         except GitHubError as exc:
             if exc.msg != "Validation Failed":
-                raise
+                raise web.Unauthorized()
             authorizations = hub.authorizations()
             for authorization in authorizations:
                 if authorization.note == AUTHORIZATION_NOTE:
@@ -121,22 +117,6 @@ class Login:
             print("email = {0}".format(email))
             session.token = auth.token
             session.userName = data['username']
-            
-            if not os.path.exists("users"):
-                os.makedirs("users")
-            if not os.path.exists("users/{0}".format(data['username'])):
-                os.makedirs("users/{0}".format(data['username']))
-            if os.path.exists("users/{0}/authorization.txt".format(data['username'])):
-                file = open("users/{0}/authorization.txt".format(data['username']), 'r');
-                last_authorazition = file.read()
-                file.close()
-                try:
-                    os.rename("repositories/{0}".format(last_authorazition), "repositories/{0}".format(auth.token))
-                except OSError as e:
-                    print "cennot rename"
-            file = open("users/{0}/authorization.txt".format(data['username']), 'w')
-            file.write(auth.token)
-            file.close();
             raise web.seeother('/')
                 
 class Index:
@@ -156,7 +136,7 @@ class Index:
                 ["export", "<i class=\"fa fa-download\"></i> Export", "onclick='exportDocument()' id='btnExport'"],
                 ["print", "<i class=\"fa fa-print\"></i> Print", "onclick='printDocument()' id='btnPrint'"],
                 ["login", "<i class=\"fa fa-user\"></i> Login",
-                 'onclick="" id="btnLogin"'],
+                 'onclick="openLoginDialog()" id="btnLogin"'],
                 ["logout", '<i class=\"fa fa-user\"></i> Logout', 'onClick="logout()" id="btnLogout"'],
                 ["help", "<i class=\"fa fa-info-circle\"></i>",
                  'onclick="window.open(\'https://github.com/word-killers/mark2down/wiki/U%C5%BEivatelsk%C3%A1-dokumentace\')\" id="btnHelp"']
