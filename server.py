@@ -61,7 +61,8 @@ urls = (
     '/login', 'Login', 
     '/create-branch', 'Create_branch',
     '/list-branches', 'List_branches',
-    '/title', 'Title'
+    '/title', 'Title',
+    "/css/(.*)", 'Css'
 )
 
 # Application setup
@@ -186,7 +187,7 @@ class Index:
                 ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
             ]
         ]
-        return templates.index(data, logUrl, time.time())
+        return templates.index(data, logUrl, time.time(), Css().css())
 
 
 class Markdown:
@@ -210,7 +211,7 @@ class Markdown:
         except ExpatError as exc:
             rv = re.sub(r'<\/ul>\n<\/li>', '',  rv)
             rv = re.sub(r'<ul>', '</li>',  rv)
-        data = '<?xml version="1.0" encoding="utf-8" ?>\n<reply>\n<preview>\n<div id="documentView">\n' + dd + '\n</div>\n</preview>\n<toc>\n' + rv + '\n</toc>\n<comments>\n</comments>\n<annotations>\n</annotations>\n</reply>'
+        data = '<?xml version="1.0" encoding="utf-8" ?>\n<reply>\n<preview>\n<div id="documentView" class="markdown-body">\n' + dd + '\n</div>\n</preview>\n<toc>\n' + rv + '\n</toc>\n<comments>\n</comments>\n<annotations>\n</annotations>\n</reply>'
         return data
 
     def code(self, value, separator):
@@ -231,7 +232,33 @@ class Logout:
         session.openFile = None
         session.branch = None
 
-
+class Css:
+    def GET(self, file):
+        web.header('Content-Type', 'text/css')
+        if session.get('userName') is not None:
+            if session.get('repository') is not None:
+                path = 'repositories/{0}/{1}/css/{2}'.format(session.userName, session.repository, file)
+                if os.path.exists(path):
+                    return open(path, "r").read()
+                
+        return open('repositories/support_files/style.css', "r").read()
+   
+    def css(self):
+        if session.get('userName') is not None:
+            if session.get('repository') is not None:
+                path = 'repositories/{0}/{1}/css'.format(session.userName, session.repository)
+                if os.path.exists(path):
+                    files = [f for f in os.listdir(path) if f.lower().endswith(('.css'))]
+                    for f in files:
+                        if(f == "defailt.css"):
+                            return files
+                    files.append("default.css")
+                    return files
+                else :
+                    print("path dont exist {0}".format(path))
+        print "files failed"
+        return []
+                
 class Get_css:
     """
     Return css from repository or default.
@@ -240,7 +267,7 @@ class Get_css:
     def POST(self):
         if session.get('token') is not None:
             if session.get('repository') is not None:
-                path = 'repositories/{0}/{1}/.css/style.css'.format(session.token, session.repository)
+                path = 'repositories/{0}/{1}/css/style.css'.format(session.userName, session.repository)
                 if os.path.exists(path):
                     return open(path, "r").read()
 
@@ -386,9 +413,7 @@ class Branches:
     def current(self):
         branches = self.getAll()
         for branch in branches:
-            print "test branch is {0} {1}".format(branch['name'], branch['selected'])
             if(branch['selected'] == True):
-                print "current branch is {0}".format(branch['name'])
                 return branch;
         return None
     

@@ -1,4 +1,4 @@
-$def with(data, logUrl, time)
+$def with(data, logUrl, time, css_files)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,7 +24,7 @@ $def with(data, logUrl, time)
     <script src="/static/script/table.js"></script>
     <script src="/static/script/scripts.js?t=$time"></script>
     <script src="/static/script/export.js"></script>
-    <link rel="stylesheet" href="/static/css/markdown.css">
+    <link id="mark_down_style" rel="stylesheet" href="/css/default.css">
     <script src="/static/script/adjustmentColumns.js"></script>
     <link rel="stylesheet" href="/static/css/style.css?t=$time">
     <style>
@@ -54,10 +54,15 @@ $def with(data, logUrl, time)
     <div class="btn-group"
          $if loop.first:
          style="float: right"
-    >
+    >   
         $for button in groups
         <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
     </div>
+    
+<select id="selectCss">
+    $for file in css_files:
+    <option value=$:"\css\{0}".format(file)>$:file</option>
+</select>
 </nav>
 
 <!-- content -->
@@ -92,18 +97,16 @@ $def with(data, logUrl, time)
         <!-- preview -->
         <button id="showPreview" title="Show preview" type="button" class="show_left_panel_btn" onclick="showPreview()"><</button>
         <div id="preview" class="max-percent-height">
-            <article id="previewValue">
+            <article id="previewValue" class="markdown-body">
 
             </article>
         </div>
     </div>
 </div>
-<!-- login dialog -->
-<dialog>
-  <p>This is da dialog!</p>
-  <button id="close">Close</button>
-</dialog>
-<button id="show" style="display: none; position : asolute;" >Open Dialog!</button>
+<!--
+    $for file in css_files:
+        <file>$:file</file>
+-->
 
 <div style="">
 <form id="loginFormId" method="post" class="loginForm" action="$:logUrl">

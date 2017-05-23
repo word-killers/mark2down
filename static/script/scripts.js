@@ -19,6 +19,10 @@ $(document).ready(function () {
             mermaid.init(undefined, '.mermaid');
         }
     });
+    
+    $("#selectCss").on('change', function(){
+        $('#mark_down_style').prop("href", this.value);
+    });
 });
 
 
