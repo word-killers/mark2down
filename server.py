@@ -60,7 +60,8 @@ urls = (
     '/get-css', 'Get_css',
     '/login', 'Login', 
     '/create-branch', 'Create_branch',
-    '/list-branches', 'List_branches'
+    '/list-branches', 'List_branches',
+    '/title', 'Title'
 )
 
 # Application setup
@@ -218,27 +219,6 @@ class Markdown:
         return 'header' + separator + value
 
 
-class Auth:
-    """
-    Using for users login
-    """
-
-    def GET(self):
-        print("author")
-        app.stop()
-        query = web.input()
-        if 'code' in query:
-            token = auth.get_auth_token(client_id, client_secret, query['code'])
-
-            if token is None:
-                return 'Login failed - no access token received.'
-
-            session.token = token
-            raise web.seeother('/')  # redirect users back to the editor
-        else:
-            return 'Login failed - no auth. code received.'
-
-
 class Logout:
     """
     Using for logout users.
@@ -249,6 +229,7 @@ class Logout:
         session.token = None
         session.userName = None
         session.openFile = None
+        session.branch = None
 
 
 class Get_css:
@@ -281,6 +262,7 @@ class Set_repo_name:
         else:
             session['userName'] = data.get('userName')
             session.repository = None
+            session.branch = None
         return 'ok'
 
 
@@ -295,6 +277,7 @@ class List_repos:
             if data is not None:
                 session.repository = data
                 Create_repo(session.userName)
+                session.branch = Branches().currentName()
             else:
                 response = get(  # github have limit to 60 requests
                     'https://api.github.com/users/{0}/repos'.format(session.userName),
@@ -347,6 +330,8 @@ class Create_branch:
                     "cd repositories/{0}/{1} && git checkout {2}  || exit 0 ".format(
                         session.userName, session.repository, data['branch']
                     ), shell=True, stderr=subprocess.STDOUT)
+                    
+        session.branch = data['branch']
         return "branch = {0}<br/>{1}".format(data['branch'], result)
         
 class List_branches:
@@ -368,6 +353,7 @@ class List_branches:
                 "cd repositories/{0}/{1} && git checkout {2}  || exit 0 ".format(
                     session.userName, session.repository, data['name']
                 ), shell=True, stderr=subprocess.STDOUT)
+        session.branch = data['name']
         return result
  
 class Branches:
@@ -396,6 +382,21 @@ class Branches:
                     
                 dd.append(hash)
         return dd
+        
+    def current(self):
+        branches = self.getAll()
+        for branch in branches:
+            print "test branch is {0} {1}".format(branch['name'], branch['selected'])
+            if(branch['selected'] == True):
+                print "current branch is {0}".format(branch['name'])
+                return branch;
+        return None
+    
+    def currentName(self):
+        branch = self.current()
+        if branch is not None:
+            return branch['name']
+        return None
         
 class List_repo_tree:
     """
@@ -556,6 +557,10 @@ class Create_repo:
         else:
             Pull().pull()
 
+class Title:
+    def GET(self):
+        return "<strong>{0}</strong> (<i>{1}</i>)".format(session.repository, session.branch)
+
 class Status:
     """
     return status about login, user name, repository
@@ -565,7 +570,8 @@ class Status:
         login = session.get('token') is not None
         user = session.get('userName') is not None
         repo = session.get('repository') is not None
-        return "{0} {1} {2}".format(login, user, repo)
+        branch = session.get("branch") is not None
+        return "{0} {1} {2} {3}".format(login, user, repo, branch)
 
 
 # ----------------------------------------------------------------------------------------------------------------------

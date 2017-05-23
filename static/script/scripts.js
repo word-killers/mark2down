@@ -325,6 +325,7 @@ function init() {
     }, 1000);
     hideButtons();
     setFileTree();
+    setTitle();
     $(window).resize();
 }
 
@@ -435,6 +436,7 @@ function setFileTree() {
     });
 }
 
+
 /**
  * Show dialog which contains users repositories.
  */
@@ -464,12 +466,25 @@ function getRepos() {
  * @param repoName name of using repository.
  */
 function setRepo(repoName) {
-    $.post("/list-repos", {name: repoName}, function () {
+    $.ajax({
+        url: "/list-repos", 
+        data: {name: repoName},
+        method: 'POST'
+    }).done( function(data){
         setFileTree();
+        setTitle();
     });
     $('#help_dialog').dialog("close");
 }
 
+function setTitle(){
+    $.ajax({
+       method:"GET",
+       url: "/title"
+    }).done(function(data){
+        $("#projectTitle").html(data);
+    });
+}
 /**
  * Show dialog which contains local branches.
  */
@@ -501,6 +516,7 @@ function getBranches() {
 function setBranch(branchName) {
     $.post("/list-branches", {name: branchName}, function () {
         setFileTree();
+        setTitle();
     });
     $('#help_dialog').dialog("close");
 }
@@ -523,6 +539,7 @@ function createBranch() {
 
     $.get("/create-branch", function (data) {
         dialog.html(data);
+        setTitle();
     });
 
     dialog.dialog("open");
