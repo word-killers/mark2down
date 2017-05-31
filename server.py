@@ -22,6 +22,7 @@ from mistune_contrib.toc import TocMixin
 import mistune
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
+from web import http
 
 
 # read client_id and client_secret from CLI, otherwise set to 0 (causes credentials err.)
@@ -49,9 +50,11 @@ urls = (
     '/test', 'Test',
     '/list-repos', 'List_repos',
     '/list-repo-tree', 'List_repo_tree',
+    '/save-file', 'Save_file',
     '/commit-file', 'Commit_file',
     '/get-file', 'Get_file',
     '/create-file', 'Create_file',
+    '/create-dir', 'Create_dir',
     '/set-repo-name', 'Set_repo_name',
     '/logout', 'Logout',
     '/pull', 'Pull',
@@ -60,8 +63,10 @@ urls = (
     '/get-css', 'Get_css',
     '/login', 'Login', 
     '/create-branch', 'Create_branch',
+    '/delete', 'Delete',
     '/list-branches', 'List_branches',
     '/title', 'Title',
+    '/modified', 'Modified',
     "/css/(.*)", 'Css'
 )
 
@@ -178,13 +183,16 @@ class Index:
                 ["preview", "Preview", "id=\"previewOpen\""],
                 ["render", 'Render Mermaid', "onclick='switchMermaid();' id='mermaidBtn'"]
             ], [
-                ["set user", 'Set user', 'onClick="setUser()" id="btnSetUser"'],
                 ["set repository", 'Set repo', 'onClick="getRepos()" id="btnSetRepo"'],
                 ["set branch", 'Set branch', 'onClick="getBranches()" id="btnSetBranch"'],
-                ["create new file", 'New file', 'onClick="newFileDialog()" id="btnNewFile"'],
                 ["commit", 'Commit', 'onClick="commit()" id="btnCommit"'],
                 ["pull", 'Pull', 'onClick="pull()" id="btnPull"'],
                 ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
+            ], [
+                ["create new file", 'New file', 'onClick="newFileDialog()" id="btnNewFile"'],
+                ["create new file", 'New dir', 'onClick="newDirDialog()" id="btnNewDir"'],
+                ["save", 'Save', 'onClick="save()" id="btnSave"'],
+                ["save", 'Delete', 'onClick="deleteDialog()" id="btnDelete"']
             ]
         ]
         return templates.index(data, logUrl, time.time(), Css().css())
@@ -250,7 +258,7 @@ class Css:
                 if os.path.exists(path):
                     files = [f for f in os.listdir(path) if f.lower().endswith(('.css'))]
                     for f in files:
-                        if(f == "defailt.css"):
+                        if(f == "default.css"):
                             return files
                     files.append("default.css")
                     return files
@@ -446,10 +454,85 @@ class List_repo_tree:
                 if os.path.isdir(os.path.join(long_path, file)):
                     list += '<li>' + file + self.getDirTree(new_path) + '</li>'
                 else:
-                    list += '<li onClick="getFile(\'{0}\');">{1}</li>'.format(new_path, file)
+                    list += '<li onClick="getFile(\'/{0}\');">{1}</li>'.format(new_path, file)
         return list + '</ul>'
 
+class Delete:
+    def GET(self):
+        data = web.input()
+        path = "/"
+        if(data.get("path") is not None):
+            path = data.get("path")
+        to_prnt = ''
+        parent  = '/'
+        long_path = 'repositories/{0}/{1}/{2}'.format(session.userName, session.repository, path)
+        if(data.get('path') is not None and len(data.get('path').encode(encoding='UTF-8')) > 1):
+            arr = re.split(r'\/', data.get('path').encode(encoding='UTF-8'))
+            cnt = len(arr)
+            idx = 2
+            pth = "/"
+            for a in arr:
+                if(idx < cnt and len(a) > 0):
+                    pth += a + "/"
+                idx += 1
+            to_prnt += '<a href="#" onClick="change_delete_dir(\'{0}\', \'{1}\');">'.format(pth, web.http.urlencode({'path' : pth , 'time' : time.time() }))
+            to_prnt += '..</a></br>'
+            parent = pth
+        can_delete = True
+        has_files = False
+        
+        if(os.path.exists(long_path) == False):
+            long_path = 'repositories/{0}/{1}/{2}'.format(session.userName, session.repository, parent)
+            path = parent
+            
+        result = "current dir : <br/>";
+        result += path + "<br/> avialable subdirs : <br/>"
+        result += to_prnt
+        
+        for file in os.listdir(long_path):
+            if file != '.git' and file != '.gitignore':
+                can_delete = False
+                if len(path) == 0:
+                    new_path = file
+                
+                else:
+                    new_path = path + file+'/'
+                if os.path.isdir(os.path.join(long_path, file)):
+                    result += '<a href="#" onClick="change_delete_dir(\'{0}\', \'{1}\');">'.format(new_path, web.http.urlencode({'path' : new_path , 'time' : time.time() }))
+                    result += file + '</a></br>'
+                else:
+                    has_files = True
+        result += "<HR/>files : <br/>";           
+        if has_files:
+            for file in os.listdir(long_path):
+                if file != '.git' and file != '.gitignore':
+                    if len(path) == 0:
+                        new_path = file
+                    else:
+                        new_path = path + file
 
+                    if not (os.path.isdir(os.path.join(long_path, file))):
+                        result += '<a href="#" onClick="delete_file(\'{0}\', \'{1}\', \'{2}\', \'{3}\');">'.format(file, path, web.http.urlencode({'path' : path , 'time' : time.time(), 'file': file }), new_path)
+                        result += file + '</a></br>'
+        if can_delete:
+            result+= '<button onClick="delete_dir(\'{0}\', \'{1}\');">delete current dir</button>'.format(path, web.http.urlencode({'path' : path , 'time' : time.time()}))
+        return result;
+        
+        
+        
+    def POST(self):
+        data = web.input();
+        print(" data = {0} full_path = {1}".format(data, data.get('full_path')))
+        if(data.get("full_path") is not None):
+            if(data.get("type") == "file"):
+                long_path = 'repositories/{0}/{1}/{2}'.format(session.userName, session.repository, data.get('full_path') )
+                print "long_path = {0}".format(long_path)
+                os.remove(long_path)
+            else:
+                long_path = 'repositories/{0}/{1}{2}'.format(session.userName, session.repository, data.get('full_path') )
+                print "long_path = {0}".format(long_path)
+                os.rmdir(long_path)
+        return "ok"
 class Get_file:
     """
     Return text in file. File name is in post as fileName
@@ -462,7 +545,7 @@ class Get_file:
             if data.get('fileName'):
                 if data['fileName'].find('..') is -1:
                     file = open(
-                        "repositories/{0}/{1}/{2}".format(session.get('userName'), session.repository,
+                        "repositories/{0}/{1}{2}".format(session.get('userName'), session.repository,
                                                           data['fileName'].encode(encoding='UTF-8')), "r")
                     text = file.read()
                     session.openFile = data['fileName']
@@ -477,13 +560,77 @@ class Create_file:
     def POST(self):
         if session.get('token') is not None:
             data = web.input()
-            if data.get('fileName') and data['fileName'].find('..') is -1:
-                open("repositories/{0}/{1}/{2}".format(session.get('token'), session.repository,
-                                                       data['fileName'].encode(encoding='UTF-8')), "a").close()
-                session.openFile = data['fileName']
+            print("name = {0} path = {1}".format(data.get('file'), data.get('dir')))
+            path = "{0}{1}".format( data.get("dir"), data.get('file'))
+            long_path = "repositories/{0}/{1}{2}{3}".format(session.get('userName'), session.repository, data.get("dir"), data.get('file'))
+            print("path = {0}".format(path))
+            print("long_path = {0}".format(long_path))
+            
+            try:
+                open(long_path, "a").close()
+            except:
+                raise web.Unauthorized()
+            result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git add . || exit 0".format(
+                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+            print result
+            session.openFile = path
             return ''
 
+class Save_file:
+    def POST(self):
+        data = web.input().get('data').encode(encoding="UTF-8")
+        long_path = "repositories/{0}/{1}{2}".format(session.get('userName'), session.repository, session.get('openFile').encode(encoding='UTF-8'))
+        if session.get('token') is not None and session.get('openFile') is not None:
+            # save edited file
+            if os.path.exists("repositories/{0}".format(session.get('userName'))):
+                out = open(
+                    "repositories/{0}/{1}{2}".format(session.get('userName'), session.repository,
+                                                      session.get('openFile').encode(encoding='UTF-8')), "w")
+                out.write(web.input().get('data').encode(encoding="UTF-8"))
+                out.close()
+                return " saved "
 
+class Create_dir:
+    def GET(self):
+        data = web.input()
+        path = "/"
+        if(data.get('path') is not None) :
+            path = data.get('path')
+        result = "current dir : <br/>";
+        result += path + "<br/> avialable subdirs : <br/>"
+        long_path = 'repositories/{0}/{1}/{2}'.format(session.userName, session.repository, path)
+        if(data.get('path') is not None and len(data.get('path').encode(encoding='UTF-8')) > 1):
+            arr = re.split(r'\/', data.get('path').encode(encoding='UTF-8'))
+            cnt = len(arr)
+            idx = 2
+            pth = "/"
+            for a in arr:
+                if(idx < cnt and len(a) > 0):
+                    pth += a + "/"
+                idx += 1
+            result += '<a href="#" onClick="change_target_dir(\'{0}\', \'{1}\');">'.format(pth, web.http.urlencode({'path' : pth , 'time' : time.time() }))
+            result += '..</a></br>'
+        for file in os.listdir(long_path):
+            if file != '.git':
+                if len(path) == 0:
+                    new_path = file
+                else:
+                    new_path = path + file+'/'
+
+                if os.path.isdir(os.path.join(long_path, file)):
+                    result += '<a href="#" onClick="change_target_dir(\'{0}\', \'{1}\');">'.format(new_path, web.http.urlencode({'path' : new_path , 'time' : time.time() }))
+                    result += file + '</a></br>'
+        return result
+        
+    def POST(self): 
+        data = web.input()
+        print("name = {0} path = {1}".format(data.get('dir'), data.get('path')))
+        long_path = "repositories/{0}/{1}/{2}{3}".format(session.get('userName'), session.repository, data.get('path').encode(encoding='UTF-8'), data.get('dir').encode(encoding='UTF-8'))
+        
+        print("long path = {0}".format(long_path))
+        os.makedirs(long_path);
+        
 class Commit_file:
     """
     Commit actual file and return result
@@ -492,12 +639,13 @@ class Commit_file:
     def POST(self):
         if session.get('token') is not None and session.get('openFile') is not None:
             # save edited file
-            if os.path.exists("repositories/{1}".format(session.get('token'))):
+            if os.path.exists("repositories/{0}".format(session.get('userName'))):
                 out = open(
-                    "repositories/{1}/{1}/{2}".format(session.get('token'), session.repository,
+                    "repositories/{0}/{1}{2}".format(session.get('userName'), session.repository,
                                                       session.get('openFile').encode(encoding='UTF-8')), "w")
                 out.write(web.input().get('data').encode(encoding="UTF-8"))
                 out.close()
+                return " "
 
             # pull
             result = subprocess.check_output(
@@ -552,7 +700,7 @@ class Reset_repo:
         if session.get('token') is not None:
             result = subprocess.check_output(
                 "cd repositories/{0}/{1} && git fetch --all && git clean -f && git reset --hard @{{upstream}} || exit 0".format(
-                    session.get('token'), session.repository), shell=True, stderr=subprocess.STDOUT)
+                    session.get('userName'), session.repository), shell=True, stderr=subprocess.STDOUT)
 
             return result.replace(session.token, '***')
 
@@ -568,7 +716,7 @@ class Create_repo:
         if not os.path.exists('repositories/{0}/{1}'.format(userName, session.repository)):
             # clone repository
             os.system("cd repositories/{1} && git clone https://{0}@github.com/{1}/{2}.git".format(
-                session.get('token'), userName, session.repository
+                session.get('userName'), userName, session.repository
             ))
             os.system(
                 'cd repositories/{0}/{1} && git config user.name "mark2down" && git config user.email "mark2down@email.email" && git config push.default simple'.format(
@@ -586,6 +734,12 @@ class Title:
     def GET(self):
         return "<strong>{0}</strong> (<i>{1}</i>)".format(session.repository, session.branch)
 
+class Modified:
+    def GET(self):
+        result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git diff --name-only || exit 0".format(
+                    session.get('userName'), session.repository), shell=True, stderr=subprocess.STDOUT)
+        return result;
 class Status:
     """
     return status about login, user name, repository
