@@ -4,7 +4,7 @@ Online [Markdown](https://daringfireball.net/projects/markdown/) editor with som
 [![Build Status](https://travis-ci.org/word-killers/mark2down.svg?branch=master)](https://travis-ci.org/word-killers/mark2down)
 [![codecov.io](https://codecov.io/github/word-killers/mark2down/coverage.svg?branch=master)](https://codecov.io/github/word-killers/mark2down?branch=master)
 
-Live Demo: https://mark2down.herokuapp.com/
+Live Demo :  https://mark2down-parafin.herokuapp.com/
 
 ## Instalation & Development Server
 Install Python 2, virtualenv and git, e.g. on Debian:
@@ -19,6 +19,7 @@ $ git clone https://github.com/word-killers/mark2down.git
 ```
 
 Create a virtual environment and install dependencies:
+
 ```
 $ virtualenv mark2down -p /usr/bin/python2
 $ cd mark2down
@@ -46,6 +47,64 @@ $ ./server.py 8080 <CLIENT_ID> <CLIENT_SECRET>
 Now, you should be able to access the application at [http://localhost:8080](http://localhost:8080) .
 
 Use [CTRL] + [C] to exit the server and `$ deactivate` command to exit from virtualenv.
+
+
+## Instalation & Development Server on Windows
+
+# Install Python and VirtualEnv
+
+Download and install Python from https://www.python.org.
+There is howto install Python on windows https://docs.python.org/2.7/using/windows.html.
+
+- Install virtualenv
+
+```
+pip install virtualenv
+```
+
+# Install mark2down
+
+- Clone the repository.
+
+```
+git clone https://github.com/mikafilip/mark2down.git
+```
+
+- Go to mark2down direcotry.
+
+```
+cd mark2down
+```
+
+- Create virtual enviropmennt called venv
+
+```
+virtualenv venv
+```
+
+- Activate virtualenv.
+
+```
+.\venv\Scripts\activate.bat
+```
+
+- Install requirment pacckages.
+
+```
+pip install -r requirment.txt
+```
+
+- Run the server
+
+```
+./server.py
+```
+
+- Run the server listening port 8080
+
+```
+./server.py 8080
+```
 
 ## Production Server
 Use the same setup as in the case of development server but clone the project into the document root of your server.
@@ -111,3 +170,7 @@ For Apache configuration there are many posibilities described in [web.py docume
 * jQuery
 * jQuery-ui
 * Keyvent
+* github3.py
+* github-markdown-css - MIT
+* mistune - BSD 3
+* mistune-contrib - 
