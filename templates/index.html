@@ -1,4 +1,4 @@
-$def with(data)
+$def with(data, logUrl, time, css_files)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,14 +22,17 @@ $def with(data)
     <link rel="stylesheet" href="/static/mermaid/mermaid.css">
 
     <script src="/static/script/table.js"></script>
-    <script src="/static/script/scripts.js"></script>
+    <script src="/static/script/scripts.js?t=$time"></script>
     <script src="/static/script/export.js"></script>
+    <link id="mark_down_style" rel="stylesheet" href="/css/default.css">
     <script src="/static/script/adjustmentColumns.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?t=$time">
+    <style>
+        .fa-bold-italic{font-weight: bold;font-style: italic;}
+    </style>
 </head>
 
 <body onload="init()">
-
 <!-- Window with table -->
 <div id="dialog" title="Table">
 
@@ -43,17 +46,23 @@ $def with(data)
 <div id="help_dialog"></div>
 
 <div id="help" style="display: none"></div>
-
 <!-- navigation bar -->
 <nav id="navigation">
+    
+    <div id="projectTitle"></div>
     $for groups in data:
     <div class="btn-group"
          $if loop.first:
          style="float: right"
-    >
+    >   
         $for button in groups
         <Button title="$button[0]" type="button" class="btn" $:button[2]>$:button[1]</Button>
     </div>
+    
+<select id="selectCss">
+    $for file in css_files:
+    <option value=$:"\css\{0}".format(file)>$:file</option>
+</select>
 </nav>
 
 <!-- content -->
@@ -88,11 +97,27 @@ $def with(data)
         <!-- preview -->
         <button id="showPreview" title="Show preview" type="button" class="show_left_panel_btn" onclick="showPreview()"><</button>
         <div id="preview" class="max-percent-height">
-            <article id="previewValue">
+            <article id="previewValue" class="markdown-body">
 
             </article>
         </div>
     </div>
 </div>
+<!--
+    $for file in css_files:
+        <file>$:file</file>
+-->
+
+<div style="">
+<form id="loginFormId" method="post" class="loginForm" action="$:logUrl">
+     <label name="username">Username</label>
+     <input type="username" name="username" />
+     <label name="password">Password</label>
+     <input type="password" name="password" />
+     <input type="button" onClick="loginToGitHub()" value="Login">
+
+</form>
+</div>
+
 </body>
 </html>
