@@ -54,7 +54,7 @@ urls = (
     '/create-dir', 'Create_dir',
     '/set-repo-name', 'Set_repo_name',
     '/logout', 'Logout',
-    '/pull', 'Pull',
+    '/merge', 'Merge',
     '/status', 'Status',
     '/reset-repo', 'Reset_repo',
     '/get-css', 'Get_css',
@@ -159,7 +159,7 @@ class Index:
                 ["set branch", 'Set branch', 'onClick="getBranches()" id="btnSetBranch"'],
                 ["commit", 'Commit', 'onClick="commitDialog()" id="btnCommit"'],
                 ["push", 'Push', 'onClick="push()" id="btnPush"'],
-                ["pull", 'Pull', 'onClick="pullDialog()" id="btnPull"'],
+                ["merge", 'Merge', 'onClick="mergeDialog()" id="btnMerge"'],
                 ["fetch", 'Fetch', 'onClick="fetchDialog()" id="btnFetch"']
             ], [
                 ["create new file", 'New file', 'onClick="newFileDialog()" id="btnNewFile"'],
@@ -668,15 +668,24 @@ class Fetch:
     def GET(self):
         data = web.input()
         branches = GitHub().branches()
-class Pull:
+        res = '<div>Select branch for fetch</div><form id="fetch_form"><select name="branch">'
+        for index, item in enumerate(branches):
+            res += '<option value="{0}" >{0}</option>'.format(item.get('name'))
+        res += "</select></form>"
+        return res
+    def POST(self):
+        data = web.input()
+        result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git fetch  https://{2}:x-oauth-basic@github.com/{0}/{1}.git {3} || exit 0".format(
+                    session.get('userName'), session.repository, session.token, data.get('branch')), shell=True, stderr=subprocess.STDOUT)
+        print(" result = {0}".format(result))
+        return result
+class Merge:
     """
     Pull last version from git server.
     """
- 
+   
     def POST(self):
-        return self.PULL()
-            
-    def PULL(self):
         if session.get('token') is not None and session.get('repository') is not None:
             data = web.input()
             title = data.get('title') if 'title' in data else 'Pull title'
@@ -694,9 +703,10 @@ class Pull:
                 raise web.HTTPError('500 Internal Server Error', {}, "Error in pull request : {0}".format(res))
             
             res = GitHub().merge(title, number, sha)
-            
-            print(" res = ".format(res))
-            return res
+            if('sha' in res):
+                return res.get('message')
+            else:
+                return web.HTTPError('500 Internal Server Error', {}, "Error in merge request : {0}".format(res))
             
     def pull(self):
         if session.get('token') is not None:
@@ -828,14 +838,15 @@ class GitHub:
             print "data = {0}".format(data)
             res = requests.put('https://api.github.com/repos/{0}/{1}/pulls/{2}/merge'.format(session.userName, session.repository, number), headers=headers, data=data)
             print("res = {0}".format(res.text))
-            return res
+            return res.json()
         else:
             return None
             
-    def branches():
+    def branches(self):
         if(session.token is not None and session.repository is not None):
             headers = {'content-type': 'application/json', 'Authorization': 'token {0}'.format(session.token)}
-            url = 'https://api.github.com/repos/{0}/{1}/branches'.format(session.userName, session.repository, number)
+            url = 'https://api.github.com/repos/{0}/{1}/branches'.format(session.userName, session.repository)
+            print "url = {0}".format(url)
             res = requests.get(url, headers=headers)
             return res.json()
         else :

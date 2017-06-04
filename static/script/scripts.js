@@ -958,7 +958,7 @@ function push() {
  * Call push request to server.
  */
  
-function pullDailog(){
+function mergeDialog(){
    var dialog = $("#help_dialog"); 
     dialog.dialog({
         autoOpen: false,
@@ -966,24 +966,24 @@ function pullDailog(){
         modal: true,
         height: 450,
         width: 450,
-        title: 'File name',
+        title: 'Merge dialog',
         buttons: [
             {
-                text: 'PULL',
+                text: 'MERGE',
                 click: function () {
-                    pull();
+                    merge();
                 }
             }
         ]
     });
 
-    var html = '<form id="pull_request_form"><label>Label for pull request.</label><input id="pull_title" type="text" name="title" /><br/><label>message :</label><textarea name="message"></textarea></form>';
+    var html = '<form id="pull_request_form"><label>Label for pull request :</label><input id="pull_title" type="text" name="title" /><br/><label>message :</label><br/><div><textarea name="body"></textarea></div></form>';
     dialog.html(html);
     
     dialog.dialog('open');
 }
 
-function pull() {
+function merge() {
     var fd = new FormData($('#pull_request_form')[0]);
     $.ajax({
        type: 'POST',
@@ -991,7 +991,7 @@ function pull() {
        processData: false,
        contentType: false,
        data: fd,
-       url: 'pull'
+       url: '/merge'
     }).done(function (data){
         var dialog = $("#help_dialog"); 
         dialog.dialog('close');
@@ -1022,8 +1022,8 @@ function fetchDialog(){
         autoOpen: false,
         resizable: true,
         modal: true,
-        height: 450,
-        width: 450,
+        height: 250,
+        width: 250,
         title: 'File name',
         buttons: [
             {
@@ -1046,6 +1046,39 @@ function fetchDialog(){
     });
     
     dialog.dialog('open');
+}
+
+function fetch(){
+    var fd = new FormData($('#fetch_form')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       processData: false,
+       contentType: false,
+       data: fd,
+       url: '/fetch'
+    }).done(function (data){
+        var dialog = $("#help_dialog"); 
+        dialog.dialog('close');
+        dialog.dialog({
+            resizable: true,
+            modal: true,
+            height: 250,
+            width: 250,
+            title: 'Fetch',
+            buttons: [
+                {
+                    text: 'CLOSE',
+                    click: function () {
+                        $("#help_dialog").dialog('close');
+                    }
+                }
+            ]
+        });
+        dialog.html(data);
+        
+    }). fail(function (data){
+    });
 }
 /**
  * Call request on reset repository on server.
