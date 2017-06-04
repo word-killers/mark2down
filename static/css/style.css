@@ -48,6 +48,11 @@ nav {
     text-align: left;
 }
 
+.only_one_line{
+    white-space:nowrap;
+    width: auto;
+}
+
 .ui-resizable-helper-right{
     border-right: 2px solid #7f7f7f;
 }
