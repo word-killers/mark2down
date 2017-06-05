@@ -382,8 +382,8 @@ function hideButtons() {
             $('#btnCommit').show();
             $('#btnNewFile').show();
             $('#btnPush').show();
-            $('#btnPull').show();
-            $('#btnReset').show();
+            $('#btnFetch').show();
+            $('#btnMerge').show();
         } else {
             if (status[1] == 'True') {
                 $('#btnSetRepo').show();
@@ -391,16 +391,16 @@ function hideButtons() {
                 $('#btnCommit').hide();
                 $('#btnNewFile').hide();
                 $('#btnPush').hide();
-                $('#btnPull').hide();
-                $('#btnReset').hide();
+                $('#btnFetch').hide();
+                $('#btnMerrge').hide();
             } else {
                 $('#btnSetRepo').hide();
                 $('#btnSetBranch').hide();
                 $('#btnCommit').hide();
                 $('#btnNewFile').hide();
                 $('#btnPush').hide();
-                $('#btnPull').hide();
-                $('#btnReset').hide();
+                $('#btnFetch').hide();
+                $('#btnMerge').hide();
             }
         }
 
@@ -590,7 +590,7 @@ function openLoginDialog() {
         modal: true,
         height: 300,
         width: 300,
-        title: 'Branches',
+        title: 'Login',
         buttons: []
     });
     var send_form = $('#loginFormId').clone();
