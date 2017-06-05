@@ -707,7 +707,7 @@ class Merge:
                 return res.get('message')
             else:
                 return web.HTTPError('500 Internal Server Error', {}, "Error in merge request : {0}".format(res))
-            
+class Pull:          
     def pull(self):
         if session.get('token') is not None:
             result = subprocess.check_output(
