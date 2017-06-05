@@ -133,7 +133,7 @@ nav {
     float: left;
 }
 
-.btnRepositories{
+.btnRepositories, .btnBranches, .lblBranches{
     border: none;
     padding: 6px;
     margin-bottom: 3px;
@@ -141,9 +141,15 @@ nav {
     width: 100%;
 }
 
-.btnRepositories:hover {
+.btnRepositories:hover , .btnBranches:hover, .selectedBranch{
     background-color: #959595;
 }
+
+.lblBranches{
+   text-align: center;
+   padding: 5px;
+}
+
 /*-------------------left panel-------------------*/
 #left_panel {
     float: left;

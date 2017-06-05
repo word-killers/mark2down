@@ -72,3 +72,12 @@ sessions/
 #node.js
 node_modules/
 coverage/
+
+#venv
+venv/
+
+#repositories
+repositories/
+
+#users
+users/
