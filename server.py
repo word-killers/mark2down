@@ -6,18 +6,15 @@ import json
 
 import subprocess
 import web
-import markdown
-import alignment_extension
-import graph_com_ann_extension
-import highlight_extension
-from markdown_include.include import MarkdownInclude
-from markdown.extensions.toc import TocExtension
+
 from requests import get
 from shutil import copy
 
 import auth
 import time
-from github3 import authorize, login, GitHubError, users, AuthenticationFailed
+import requests
+from requests_oauthlib import OAuth1
+
 from mistune_contrib.toc import TocMixin
 import mistune
 from xml.dom import minidom
@@ -57,7 +54,7 @@ urls = (
     '/create-dir', 'Create_dir',
     '/set-repo-name', 'Set_repo_name',
     '/logout', 'Logout',
-    '/pull', 'Pull',
+    '/merge', 'Merge',
     '/status', 'Status',
     '/reset-repo', 'Reset_repo',
     '/get-css', 'Get_css',
@@ -67,6 +64,9 @@ urls = (
     '/list-branches', 'List_branches',
     '/title', 'Title',
     '/modified', 'Modified',
+    '/commit', 'Commit',
+    '/push', 'Push',
+    '/fetch', 'Fetch',
     "/css/(.*)", 'Css'
 )
 
@@ -91,40 +91,12 @@ class TocRenderer(TocMixin, mistune.Renderer):
 class Login:
     def POST(self):
         data = web.input()
-        try:
-            hub = login(data['username'], data['password'])
-            print("user = {0}".format(hub.me()))
-        except AuthenticationFailed as ex:
+        auth = GitHub().authorize(data['username'], data['password'])
+        if auth is not None:
+            raise web.seeother('/')
+        else :
             raise web.Unauthorized()
-        try:
-            auth = hub.authorize(
-                username=data['username'],
-                password=data['password'],
-                scopes=scopes,
-                note=AUTHORIZATION_NOTE
-            )
-            session.token = auth.token
-            session.userName = data['username']
-            raise web.seeother('/')
-        except GitHubError as exc:
-            if exc.msg != "Validation Failed":
-                raise web.Unauthorized()
-            authorizations = hub.authorizations()
-            for authorization in authorizations:
-                if authorization.note == AUTHORIZATION_NOTE:
-                    authorization.delete()
 
-            auth = hub.authorize(
-                username=data['username'],
-                password=data['password'],
-                scopes=scopes,
-                note=AUTHORIZATION_NOTE
-            )
-            email = hub.me().email
-            print("email = {0}".format(email))
-            session.token = auth.token
-            session.userName = data['username']
-            raise web.seeother('/')
                 
 class Index:
     """
@@ -185,9 +157,10 @@ class Index:
             ], [
                 ["set repository", 'Set repo', 'onClick="getRepos()" id="btnSetRepo"'],
                 ["set branch", 'Set branch', 'onClick="getBranches()" id="btnSetBranch"'],
-                ["commit", 'Commit', 'onClick="commit()" id="btnCommit"'],
-                ["pull", 'Pull', 'onClick="pull()" id="btnPull"'],
-                ["reset repository", 'Reset', 'onClick="reset()" id="btnReset"']
+                ["commit", 'Commit', 'onClick="commitDialog()" id="btnCommit"'],
+                ["push", 'Push', 'onClick="push()" id="btnPush"'],
+                ["merge", 'Merge', 'onClick="mergeDialog()" id="btnMerge"'],
+                ["fetch", 'Fetch', 'onClick="fetchDialog()" id="btnFetch"']
             ], [
                 ["create new file", 'New file', 'onClick="newFileDialog()" id="btnNewFile"'],
                 ["create new file", 'New dir', 'onClick="newDirDialog()" id="btnNewDir"'],
@@ -565,14 +538,15 @@ class Create_file:
             long_path = "repositories/{0}/{1}{2}{3}".format(session.get('userName'), session.repository, data.get("dir"), data.get('file'))
             print("path = {0}".format(path))
             print("long_path = {0}".format(long_path))
-            
+            path = re.sub(r'^\/', '', path);
+            print("path = {0}".format(path))
             try:
                 open(long_path, "a").close()
             except:
                 raise web.Unauthorized()
             result = subprocess.check_output(
-                "cd repositories/{0}/{1} && git add . || exit 0".format(
-                    session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
+                "cd repositories/{0}/{1} && git add {2} || exit 0".format(
+                    session.userName, session.repository, path), shell=True, stderr=subprocess.STDOUT)
             print result
             session.openFile = path
             return ''
@@ -591,6 +565,7 @@ class Save_file:
                 out.close()
                 return " saved "
 
+                
 class Create_dir:
     def GET(self):
         data = web.input()
@@ -672,24 +647,75 @@ class Commit_file:
                 ), shell=True, stderr=subprocess.STDOUT)
             return result.replace(session.token, '***')
 
-
-class Pull:
+class Push:
+    def POST(self):
+        return self.PUSH()
+        
+    def PUSH(self):
+        if session.get('token') is not None:
+            result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git remote set-url origin https://{2}:x-oauth-basic@github.com/{0}/{1}.git || exit 0".format(
+                    session.get('userName'), session.repository, session.token), shell=True, stderr=subprocess.STDOUT)
+                    
+            result += subprocess.check_output(
+                "cd repositories/{0}/{1} && git push https://{2}:x-oauth-basic@github.com/{0}/{1}.git {3}|| exit 0".format(
+                    session.get('userName'), session.repository, session.token, session.branch), shell=True, stderr=subprocess.STDOUT)
+                
+            #print("result = {0}".format(result))
+        return "Push finished"
+ 
+class Fetch:
+    def GET(self):
+        data = web.input()
+        branches = GitHub().branches()
+        res = '<div>Select branch for fetch</div><form id="fetch_form"><select name="branch">'
+        for index, item in enumerate(branches):
+            res += '<option value="{0}" >{0}</option>'.format(item.get('name'))
+        res += "</select></form>"
+        return res
+    def POST(self):
+        data = web.input()
+        result = subprocess.check_output(
+                "cd repositories/{0}/{1} && git fetch  https://{2}:x-oauth-basic@github.com/{0}/{1}.git {3} || exit 0".format(
+                    session.get('userName'), session.repository, session.token, data.get('branch')), shell=True, stderr=subprocess.STDOUT)
+        print(" result = {0}".format(result))
+        return result
+class Merge:
     """
     Pull last version from git server.
     """
-
+   
     def POST(self):
-        return self.pull()
-
+        if session.get('token') is not None and session.get('repository') is not None:
+            data = web.input()
+            title = data.get('title') if 'title' in data else 'Pull title'
+            body = data.get('body') if 'body' in data else 'Pull comment'
+            head = "{0}:{1}".format(session.userName, session.branch)
+            base ='master'
+            res = GitHub().pull(title, body, head, base)
+            number = None
+            sha = None
+            print(" res = ".format(res))
+            if 'number' in res and 'head' in res and 'sha' in res.get('head'):
+                number = res.get('number')
+                sha = res.get('head').get('sha')
+            else:
+                raise web.HTTPError('500 Internal Server Error', {}, "Error in pull request : {0}".format(res))
+            
+            res = GitHub().merge(title, number, sha)
+            if('sha' in res):
+                return res.get('message')
+            else:
+                return web.HTTPError('500 Internal Server Error', {}, "Error in merge request : {0}".format(res))
+            
     def pull(self):
         if session.get('token') is not None:
             result = subprocess.check_output(
-                "cd repositories/{1}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
+                "cd repositories/{0}/{2} && git pull https://{0}@github.com/{1}/{2}.git || exit 0".format(
                     session.get('token'),
                     session.userName, session.repository), shell=True, stderr=subprocess.STDOUT)
             session.openFile = None
-            return result.replace(session.userName, '***')
-
+            return result
 
 class Reset_repo:
     """
@@ -732,14 +758,124 @@ class Create_repo:
 
 class Title:
     def GET(self):
-        return "<strong>{0}</strong> (<i>{1}</i>)".format(session.repository, session.branch)
-
-class Modified:
+        if(session.get('repository') is not None):
+            return "<strong>{0}</strong> (<i>{1}</i>)".format(session.repository, session.branch)
+        else:
+            return ""
+        
+class Commit:
     def GET(self):
-        result = subprocess.check_output(
+        result = ''
+        res = subprocess.check_output(
                 "cd repositories/{0}/{1} && git diff --name-only || exit 0".format(
                     session.get('userName'), session.repository), shell=True, stderr=subprocess.STDOUT)
-        return result;
+        arr = res.splitlines()
+        result+= '<form id="commit_form" >'
+        result += '<input type="text" name="title" id="commit_form_title" /><br/>'
+        for a in arr:
+            result += '<div class="only_one_line"><input style="width:auto;" type="checkbox" name="file" value="{0}" checked />{0}</div>'.format(a)
+        result += '</form>'
+        return result
+    def POST(self):
+        files = web.input(file=[]).get('file')
+        title = web.input().get('title')
+        sfiles = ""
+        for file in files:
+            sfiles += " {0}".format(file)
+        print "sfiles = {0}".format(sfiles)
+        
+        res = subprocess.check_output(
+                "cd repositories/{0}/{1} && git remote set-url origin https://{2}:x-oauth-basic@github.com/{0}/{1}.git || exit 0".format(
+                    session.get('userName'), session.repository, session.token, sfiles), shell=True, stderr=subprocess.STDOUT)
+        res += subprocess.check_output(
+                "cd repositories/{0}/{1} && git add --force -- {2} || exit 0".format(
+                    session.get('userName'), session.repository, sfiles), shell=True, stderr=subprocess.STDOUT)
+        res += subprocess.check_output(
+                "cd repositories/{0}/{1} && git commit -m {2} || exit 0".format(
+                    session.get('userName'), session.repository, title), shell=True, stderr=subprocess.STDOUT)
+                    
+        print("res = {0}".format(res))
+ 
+class GitHub:
+    """
+    GitHub very very simple GitHub API wrapper
+    """
+    def authorize(self, name, pswd):
+        headers = {'content-type': 'application/json'}
+        stranka = requests.get('https://api.github.com/authorizations', auth=(name, pswd), headers=headers)
+        json_o = json.loads(stranka.text)
+        for index, item in enumerate(json_o):
+            if('note' in item and item['note'] == AUTHORIZATION_NOTE ):
+                res = requests.delete('https://api.github.com/authorizations/{0}'.format(item['id']), auth=(name, pswd), headers=headers)
+                
+        data = {'scopes': scopes , 'note': AUTHORIZATION_NOTE}
+        stranka = requests.post('https://api.github.com/authorizations', data=json.dumps(data), auth=(name, pswd), headers=headers)
+        json_o = stranka.json()
+        if('token' in json_o):
+            session.token = json_o.get('token')
+            session.userName = name
+            session.repository = None
+            session.branch = None
+            return json_o.get('token')
+        else:
+            return None
+    
+    def pull(self, title, body, head, base):
+        if(session.token is not None):
+            headers = {'content-type': 'application/json', 'Authorization': 'token {0}'.format(session.token)}
+            data = {'base': base, 'title': title, 'body': body, 'head': head}
+            res = requests.post('https://api.github.com/repos/{0}/{1}/pulls'.format(session.userName, session.repository), headers=headers, data=json.dumps(data))
+            print("res= {0}".format(res.text))
+            return res.json()
+        else:
+            return None
+            
+    def merge(self, title, number, sha):
+        if(session.token is not None):
+            headers = {'content-type': 'application/json', 'Authorization': 'token {0}'.format(session.token)}
+            data = json.dumps({'sha' : sha, 'commit_title': title, 'commit_message': 'none', 'merge_method': 'merge'})
+            print('url = https://api.github.com/repos/{0}/{1}/pulls/{2}/merge'.format(session.userName, session.repository, number))
+            print "data = {0}".format(data)
+            res = requests.put('https://api.github.com/repos/{0}/{1}/pulls/{2}/merge'.format(session.userName, session.repository, number), headers=headers, data=data)
+            print("res = {0}".format(res.text))
+            return res.json()
+        else:
+            return None
+            
+    def branches(self):
+        if(session.token is not None and session.repository is not None):
+            headers = {'content-type': 'application/json', 'Authorization': 'token {0}'.format(session.token)}
+            url = 'https://api.github.com/repos/{0}/{1}/branches'.format(session.userName, session.repository)
+            print "url = {0}".format(url)
+            res = requests.get(url, headers=headers)
+            return res.json()
+        else :
+            return None
+            
+class Modified:
+    def GET(self):
+        headers = {'content-type': 'application/json'}
+        stranka = requests.get('https://api.github.com/authorizations', auth=('mikafilip', '8aut00ga'), headers=headers)
+        #stranka.raise_for_status()
+        json_o = json.loads(stranka.text)
+        for index, item in enumerate(json_o):
+            print(" [{0}] = {1}".format(index, item))
+            
+            if(item['note'] == AUTHORIZATION_NOTE ):
+                print "\nfinded at {0}\n".format(index)
+                res = requests.delete('https://api.github.com/authorizations/{0}'.format(item['id']), auth=('mikafilip', '8aut00ga'), headers=headers)
+                print " \n {0} \n".format(res)
+        data = {'scopes': scopes , 'note': AUTHORIZATION_NOTE}
+        stranka = requests.post('https://api.github.com/authorizations', data=json.dumps(data), auth=('mikafilip', '8aut00ga'), headers=headers)
+        return stranka.json()
+    def GETe(self):
+        headers = {'Authorization': 'token deca4a320125d6759c29ee88485eb6c4dc8aeb47'}
+        
+        stranka = requests.get('https://api.github.com/user', headers=headers)
+        stranka.raise_for_status()
+        #https://deca4a320125d6759c29ee88485eb6c4dc8aeb47:x-oauth-basic@github.com 384fc5713743af26a3daa52160562f063bb7a17636500d4cec60f2b66d07b272
+        return stranka.text
+        
 class Status:
     """
     return status about login, user name, repository
