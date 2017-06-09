@@ -1000,7 +1000,7 @@ function merge() {
             modal: true,
             height: 450,
             width: 450,
-            title: 'File name',
+            title: 'mERGE',
             buttons: [
                 {
                     text: 'CLOSE',
@@ -1013,6 +1013,25 @@ function merge() {
         dialog.html(data);
         
     }). fail(function (data){
+        var dialog = $("#help_dialog"); 
+        dialog.dialog('close');
+        dialog.dialog({
+            resizable: true,
+            modal: true,
+            height: 450,
+            width: 450,
+            title: 'MERGE',
+            buttons: [
+                {
+                    text: 'CLOSE',
+                    click: function () {
+                        $("#help_dialog").dialog('close');
+                    }
+                }
+            ]
+        });
+        dialog.html("Merge failed see https://github.com");
+        dialog.dialog("open");
     });
 }
 
