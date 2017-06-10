@@ -19,6 +19,11 @@ $(document).ready(function () {
             mermaid.init(undefined, '.mermaid');
         }
     });
+    
+    $("#selectCss").on('change', function(){
+        $('#mark_down_style').prop("href", this.value);
+    });
+    
 });
 
 
@@ -102,7 +107,7 @@ function sendMarkdown() {
         annotation = [];
 
     } else {
-        var xhttp = new XMLHttpRequest();
+         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (xhttp.readyState == 4 && xhttp.status == 200) {
                 var response = xhttp.responseXML;
@@ -126,6 +131,21 @@ function sendMarkdown() {
         };
         sendAjax("False", xhttp, []);
     }
+}
+
+function save(){
+    $.ajax({
+       type: "POST",
+       cache: false,
+       processData: false,
+       contentType:  "application/x-www-form-urlencoded",
+       data : "data=" + encodeURIComponent(document.getElementById('editor').value),
+       url: "/save-file"
+    }).done(function(data){
+        
+    }).fail(function(data){
+        console.log("error data");
+    });
 }
 
 /**
@@ -325,6 +345,7 @@ function init() {
     }, 1000);
     hideButtons();
     setFileTree();
+    setTitle();
     $(window).resize();
 }
 
@@ -357,23 +378,29 @@ function hideButtons() {
 
         if (status[1] == 'True' && status[2] == 'True') {
             $('#btnSetRepo').show();
+            $('#btnSetBranch').show();
             $('#btnCommit').show();
             $('#btnNewFile').show();
-            $('#btnPull').show();
-            $('#btnReset').show();
+            $('#btnPush').show();
+            $('#btnFetch').show();
+            $('#btnMerge').show();
         } else {
             if (status[1] == 'True') {
                 $('#btnSetRepo').show();
+                $('#btnSetBranch').hide();
                 $('#btnCommit').hide();
                 $('#btnNewFile').hide();
-                $('#btnPull').hide();
-                $('#btnReset').hide();
+                $('#btnPush').hide();
+                $('#btnFetch').hide();
+                $('#btnMerrge').hide();
             } else {
                 $('#btnSetRepo').hide();
+                $('#btnSetBranch').hide();
                 $('#btnCommit').hide();
                 $('#btnNewFile').hide();
-                $('#btnPull').hide();
-                $('#btnReset').hide();
+                $('#btnPush').hide();
+                $('#btnFetch').hide();
+                $('#btnMerge').hide();
             }
         }
 
@@ -432,6 +459,7 @@ function setFileTree() {
     });
 }
 
+
 /**
  * Show dialog which contains users repositories.
  */
@@ -455,15 +483,137 @@ function getRepos() {
     dialog.dialog("open");
 }
 
+
 /**
  * Set name of using repository.
  * @param repoName name of using repository.
  */
 function setRepo(repoName) {
-    $.post("/list-repos", {name: repoName}, function () {
+    $.ajax({
+        url: "/list-repos", 
+        data: {name: repoName},
+        method: 'POST'
+    }).done( function(data){
         setFileTree();
+        setTitle();
     });
     $('#help_dialog').dialog("close");
+}
+
+function setTitle(){
+    $.ajax({
+       method:"GET",
+       url: "/title"
+    }).done(function(data){
+        $("#projectTitle").html(data);
+    });
+}
+/**
+ * Show dialog which contains local branches.
+ */
+function getBranches() {
+    var dialog = $("#help_dialog");
+    dialog.dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'Branches',
+        buttons: []
+    });
+    dialog.html("");
+
+    $.get("/list-branches", function (data) {
+        dialog.html(data);
+    });
+
+    dialog.dialog("open");
+}
+
+
+/**
+ * Set name of using repository.
+ * @param repoName name of using repository.
+ */
+function setBranch(branchName) {
+    $.post("/list-branches", {name: branchName}, function () {
+        setFileTree();
+        setTitle();
+    });
+    $('#help_dialog').dialog("close");
+}
+
+/**
+ * Show dialog which contains local branches.
+ */
+function createBranch() {
+    var dialog = $("#help_dialog");
+    dialog.dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'new branch',
+        buttons: []
+    });
+    dialog.html("");
+
+    $.get("/create-branch", function (data) {
+        dialog.html(data);
+        setTitle();
+    });
+
+    dialog.dialog("open");
+}
+
+/**
+ * Create new branch.
+ */
+function createNewBranch() {
+    var branchName;
+    branchName = $('#newBranchTextField').val();
+    $.post("/create-branch", {branch: branchName}, function () {
+    }).done(function (data){
+        $('#help_dialog').dialog("close");
+    }). fail(function (data){
+        $('#help_dialog').html(data.responseText);
+    });
+}
+
+function openLoginDialog() {
+    var dialog = $("#help_dialog");
+    dialog.dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'Login',
+        buttons: []
+    });
+    var send_form = $('#loginFormId').clone();
+    send_form.prop('id', "sendLoginFormId");
+    dialog.html(send_form.prop('outerHTML'));
+    dialog.dialog("open");
+}
+
+function loginToGitHub() {
+    var fd = new FormData($('#sendLoginFormId')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       data: fd,
+       processData: false,
+       contentType: false,
+       url: $('#sendLoginFormId').prop('action')
+    }).done(function (data){
+        window.location.reload();
+    }). fail(function (data){
+        $('#help_dialog').html(data.responseText);
+    });
+    
 }
 
 /**
@@ -479,12 +629,73 @@ function getFile(fileName) {
 }
 
 /**
- * Commit actual file and show information about result.
+ * Commit all modifed files.
  */
-function commit() {
-    $.post("/commit-file", {data: $('#editor').val()}, function (data) {
-        alert(data);
-    })
+ 
+function commitDialog() {
+    
+    
+    var dialog = $("#help_dialog"); 
+    dialog.dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 400,
+        width: 400,
+        title: 'Commit',
+        buttons: [
+            {
+                text: 'Commit',
+                click: function () {
+                    commit();
+                }
+            }
+        ]
+    });
+    
+    var html;
+    
+    $.ajax({
+       type: 'GET',
+       cache: false,
+       processData: false,
+       contentType: false,
+       url: '/commit'
+    }).done(function (data){
+        html = data;
+        dialog.html(html)
+    }). fail(function (data){
+        dialog.dialog('close');
+        console.log(data.responseText);
+    });
+    
+
+    dialog.dialog('open');
+}
+
+function commit(){
+    var fd = new FormData($('#commit_form')[0]);
+    var dialog = $("#help_dialog"); 
+    if($('#commit_form_title').val().length < 1){
+        if($( "#commit_error" ).length > 0){
+           $( "#commit_error" ).html("title must be preseneted");
+        } else {
+            dialog.prepend("<div id='commit_error'>title must be preseneted</div>");
+        }
+    }else {
+        $.ajax({
+           type: 'POST',
+           cache: false,
+           data: fd,
+           processData: false,
+           contentType: false,
+           url: '/commit'
+        }).done(function (data){
+            $('#help_dialog').dialog('close');
+        }). fail(function (data){
+            $('#help_dialog').html(data.responseText);
+        });
+    }
 }
 
 /**
@@ -501,36 +712,194 @@ function newFileDialog() {
         title: 'File name',
         buttons: [
             {
-                text: 'OK',
+                text: 'Create file',
                 click: function () {
                     var textArea = $('#fileName'); 
                     if (textArea.val() != '') {
-                        newFile(textArea.val());
+                        newFile();
                     }
                 }
             }
         ]
     });
 
-    var html = '<label>Write name of new file.</label></label><input id="fileName" type="text" name="repository">';
+    var html = '<form id="create_file_form"><label>Write name of new file.</label></label><input id="fileName" type="text" name="file" /><input type="hidden" id="create_target_dir_hidden" name="dir" value="/"/><form><div id="create_target_dir_div"></div>';
     dialog.html(html);
-
+    $.ajax({
+       type: 'GET',
+       processData: false,
+       contentType: false,
+       url: '/create-dir'
+    }).done(function (data){
+        console.log("response = "+data);
+        $('#create_target_dir_div').html(data);
+    });
     dialog.dialog('open');
+}
+
+/**
+ * Show dialog for deleting
+ */
+function deleteDialog() {
+    var dialog = $("#help_dialog"); 
+    dialog.dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'delete',
+        buttons: [
+            
+        ]
+    });
+
+    $.ajax({
+       type: 'GET',
+       processData: false,
+       contentType: false,
+       url: '/delete'
+    }).done(function (data){
+        console.log("response = "+data);
+        dialog.html(data);
+    });
+    dialog.dialog('open');
+}
+
+function change_delete_dir(path, data){
+    var dialog = $("#help_dialog"); 
+    
+    $.ajax({
+       type: 'GET',
+       processData: false,
+       contentType: false,
+       url: '/delete?'+data
+    }).done(function (data){
+        //console.log("response = "+data);
+        $("#help_dialog").html(data);
+    });
+    dialog.dialog('open'); 
+}
+
+function delete_file(file, path, data, full_path){
+    $("#help_dialog").html("Are you sure delete file?<br/><br/> in path: "+path+"<br/> file name: "+file+" <br/></br><table style='width:100%;'><tr><td style=\"align:center;\" ><button onClick=\"delete_go_balck('"+path+"', '"+data+"');\" >Go back</button></td><td style=\"align:center;\"><button onClick=\"delete_confirmed('"+path+"', '"+data+"');\">DELETE</button></td></tr></table><form id=\"delete_confirmed_form\" ><input type=\"hidden\" name=\"full_path\" value=\""+full_path+"\" /><input type=\"hidden\" name=\"path\" value=\""+path+"\" /><input type=\"hidden\" name=\"file\" value=\""+file+"\" /><input type=\"hidden\" name=\"data\" value=\""+data+"\" /><input type=\"hidden\" name=\"type\" value=\"file\" /></form>");
+}
+
+function delete_dir(path, data){
+    console.log("deleted ");
+    $("#help_dialog").html("Are you sure delete dir?<br/><br/> path: "+path+"<br/></br><table style='width:100%;'><tr><td style=\"align:center;\" ><button onClick=\"delete_go_balck('"+path+"', '"+data+"');\" >Go back</button></td><td style=\"align:center;\"><button onClick=\"delete_confirmed('/', '"+data+"');\">DELETE</button></td></tr></table><form id=\"delete_confirmed_form\" ><input type=\"hidden\" name=\"full_path\" value=\""+path+"\" /><input type=\"hidden\" name=\"path\" value=\""+path+"\" /><input type=\"hidden\" name=\"data\" value=\""+data+"\" /><input type=\"hidden\" name=\"type\" value=\"dir\" /></form>");
+}
+
+function delete_go_balck(path, data){
+   change_delete_dir(path, data); 
+}
+
+function delete_confirmed(path, data){
+    var h = $('#delete_confirmed_form');
+    var fd = new FormData($('#delete_confirmed_form')[0]);
+   $.ajax({
+       type: 'POST',
+       processData: false,
+       contentType: false,
+       url: '/delete',
+       data: fd
+    }).done(function (response){
+        change_delete_dir(path, data);
+        setFileTree();
+    });
+}
+/**
+ * Show dialog for creating new dir
+ */
+function newDirDialog() {
+    var dialog = $("#help_dialog"); 
+    dialog.dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 300,
+        width: 300,
+        title: 'File name',
+        buttons: [
+            {
+                text: 'Create dir',
+                click: function () {
+                    var textArea = $('#fileName'); 
+                    if (textArea.val() != '') {
+                        newDir();
+                    }
+                }
+            }
+        ]
+    });
+
+    var html = '<form id="create_dir_form"><label>Write name of new file.</label><input id="fileName" type="text" name="dir" /><input type="hidden" id="create_target_dir_hidden" name="path" value="/"/><form><div id="create_target_dir_div"></div>';
+    dialog.html(html);
+    $.ajax({
+       type: 'GET',
+       processData: false,
+       contentType: false,
+       url: '/create-dir'
+    }).done(function (data){
+        console.log("response = "+data);
+        $('#create_target_dir_div').html(data);
+    });
+    dialog.dialog('open');
+}
+
+function change_target_dir(path, uri){
+    $('#create_target_dir_hidden').val(path);
+    $.ajax({
+       type: 'GET',
+       processData: false,
+       contentType: false,
+       url: '/create-dir'+'?'+uri
+    }).done(function (data){
+        console.log("response = "+data);
+        $('#create_target_dir_div').html(data);
+    });
 }
 
 /**
  * Create new file and reload componenst on page.
  * @param fileName name of new file.
  */
-function newFile(fileName) {
-    $.post("/create-file", {fileName: fileName}, function (data) {
-        $.post("/list-repo-tree", function (data) {
-            $('#repository').html(data)
-        });
-        $('#editor').val(data);
+function newFile() {
+    var fd = new FormData($('#create_file_form')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       data: fd,
+       processData: false,
+       contentType: false,
+       url: 'create-file'
+    }).done(function (data){
         $('#help_dialog').dialog('close');
-        sendMarkdown();
-    })
+        setFileTree();
+    }). fail(function (data){
+        $('#help_dialog').html(data.responseText);
+    });
+}
+
+/**
+ * Create new dir and reload componenst on page.
+ * @param fileName name of new file.
+ */
+function newDir() {
+    var fd = new FormData($('#create_dir_form')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       data: fd,
+       processData: false,
+       contentType: false,
+       url: 'create-dir'
+    }).done(function (data){
+        $('#help_dialog').dialog('close');
+        setFileTree();
+    }). fail(function (data){
+        $('#help_dialog').html(data.responseText);
+    });
 }
 
 /**
@@ -555,14 +924,181 @@ function logout() {
 /**
  * Call pull request to server.
  */
-function pull() {
-    $.post('/pull', function (data) {
-        $('#editor').val('');
-        sendMarkdown();
-        alert(data);
-    })
+function push() {
+    $.ajax({
+       type: 'PUSH',
+       cache: false,
+       processData: false,
+       contentType: false,
+       url: 'push'
+    }).done(function (data){
+        var dialog = $("#help_dialog"); 
+        dialog.dialog({
+            autoOpen: false,
+            resizable: true,
+            modal: true,
+            height: 250,
+            width: 250,
+            title: 'Push',
+            buttons: [
+{
+                text: 'close',
+                click: function () {
+                    $("#help_dialog").dialog('close');
+                }
+            }            ]
+        });
+        dialog.html(data);
+        dialog.dialog('open');
+    }). fail(function (data){
+    });
 }
 
+/**
+ * Call push request to server.
+ */
+ 
+function mergeDialog(){
+   var dialog = $("#help_dialog"); 
+    dialog.dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 450,
+        width: 450,
+        title: 'Merge dialog',
+        buttons: [
+            {
+                text: 'MERGE',
+                click: function () {
+                    merge();
+                }
+            }
+        ]
+    });
+
+    var html = '<form id="pull_request_form"><label>Label for pull request :</label><input id="pull_title" type="text" name="title" /><br/><label>message :</label><br/><div><textarea name="body"></textarea></div></form>';
+    dialog.html(html);
+    
+    dialog.dialog('open');
+}
+
+function merge() {
+    var fd = new FormData($('#pull_request_form')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       processData: false,
+       contentType: false,
+       data: fd,
+       url: '/merge'
+    }).done(function (data){
+        var dialog = $("#help_dialog"); 
+        dialog.dialog('close');
+        dialog.dialog({
+            resizable: true,
+            modal: true,
+            height: 450,
+            width: 450,
+            title: 'mERGE',
+            buttons: [
+                {
+                    text: 'CLOSE',
+                    click: function () {
+                        $("#help_dialog").dialog('close');
+                    }
+                }
+            ]
+        });
+        dialog.html(data);
+        
+    }). fail(function (data){
+        var dialog = $("#help_dialog"); 
+        dialog.dialog('close');
+        dialog.dialog({
+            resizable: true,
+            modal: true,
+            height: 450,
+            width: 450,
+            title: 'MERGE',
+            buttons: [
+                {
+                    text: 'CLOSE',
+                    click: function () {
+                        $("#help_dialog").dialog('close');
+                    }
+                }
+            ]
+        });
+        dialog.html("Merge failed see https://github.com");
+        dialog.dialog("open");
+    });
+}
+
+function fetchDialog(){
+    var dialog = $("#help_dialog"); 
+    dialog.dialog({
+        autoOpen: false,
+        resizable: true,
+        modal: true,
+        height: 250,
+        width: 250,
+        title: 'File name',
+        buttons: [
+            {
+                text: 'Fetch',
+                click: function () {
+                    fetch();
+                }
+            }
+        ]
+    });
+
+    $.ajax({
+       type: 'GET',
+       cache: false,
+       processData: false,
+       contentType: false,
+       url: 'fetch'
+    }).done(function (data){
+        dialog.html(data);
+    });
+    
+    dialog.dialog('open');
+}
+
+function fetch(){
+    var fd = new FormData($('#fetch_form')[0]);
+    $.ajax({
+       type: 'POST',
+       cache: false,
+       processData: false,
+       contentType: false,
+       data: fd,
+       url: '/fetch'
+    }).done(function (data){
+        var dialog = $("#help_dialog"); 
+        dialog.dialog('close');
+        dialog.dialog({
+            resizable: true,
+            modal: true,
+            height: 250,
+            width: 250,
+            title: 'Fetch',
+            buttons: [
+                {
+                    text: 'CLOSE',
+                    click: function () {
+                        $("#help_dialog").dialog('close');
+                    }
+                }
+            ]
+        });
+        dialog.html(data);
+        
+    }). fail(function (data){
+    });
+}
 /**
  * Call request on reset repository on server.
  */
